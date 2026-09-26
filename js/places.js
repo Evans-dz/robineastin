@@ -36,8 +36,8 @@ const PLACES = [
   /* ── the cabins (map anchor) ─────────────────────────────── */
   { id: 'cabins', name: 'Wilderness Escape cabins', short: 'The cabins', chapter: null, cat: 'cabins',
     seasons: ['summer', 'fall', 'winter', 'spring'], drive: null, label: 1,
-    blurb: 'Three cabins in the lodgepole pines on the northeast side of Island Park Reservoir. Everything on this map is measured from here.',
-    lat: 44.4446, lng: -111.3945 },   // approximate (public parcel point), see research §1
+    blurb: 'Pine Shadows and Wilderness Escape Retreat, next door to each other in the pines on the northeast side of Island Park Reservoir. Every drive time on this map is measured from here.',
+    lat: 44.4448, lng: -111.3945 },   // Pine Shadows pin on the OwnerRez site (old-site audit §3)
 
   /* ── ISLAND PARK ─────────────────────────────────────────── */
   { id: 'island-park-reservoir', name: 'Island Park Reservoir', short: 'Island Park Reservoir', chapter: 'island-park', cat: 'island-park',

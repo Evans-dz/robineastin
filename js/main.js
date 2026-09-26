@@ -34,6 +34,27 @@
     });
   }
 
+  /* ---- OwnerRez widgets: only on the approved domain -----------------
+     OwnerRez refuses (403) widget requests from any other host, so a
+     preview would show empty boxes. Load widget.js where it works;
+     everywhere else, say plainly what appears here at launch. */
+  const orMeta = document.querySelector('meta[name="ownerrez"]');
+  if (orMeta) {
+    const hosts = (orMeta.dataset.hosts || '').split(' ');
+    if (hosts.includes(location.hostname)) {
+      const s = document.createElement('script');
+      s.src = orMeta.content;
+      document.body.append(s);
+    } else {
+      document.querySelectorAll('.or-widget').forEach(w => {
+        const type = (w.querySelector('.ownerrez-widget') || {}).dataset?.widgetType || '';
+        const name = { 'Booking/Inquiry': 'booking form', 'Reviews': 'guest reviews' }[type] || 'availability calendar';
+        w.classList.add('or-widget--preview');
+        w.innerHTML = `<p>The live ${name} from OwnerRez loads here on ${hosts[0] || 'the live site'}.</p>`;
+      });
+    }
+  }
+
   /* ---- mobile menu -------------------------------------------------- */
   const menuBtn = document.querySelector('.menu-btn');
   const menu = document.getElementById('menu');

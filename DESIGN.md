@@ -1,8 +1,10 @@
 # DESIGN.md: Wilderness Escape Rentals
 
 > The contract. Every session reads this before touching markup or CSS.
-> Client: Robyn Eastin. Three cabins in the lodgepole pine at 3810 Mortensen Ln,
-> Island Park, Idaho, on the Idaho side of Yellowstone's West Entrance.
+> Client: Robyn Eastin. Two cabins next door to each other in the lodgepole
+> pine, Pine Shadows (3810 Mortensen Ln) and Wilderness Escape Retreat (3808),
+> with a shared game garage, Island Park, Idaho, 45 minutes from Yellowstone's
+> West Entrance.
 > Booking engine stays OwnerRez (calendar sync with Airbnb/VRBO, payments,
 > taxes, agreements). This site sells the stay and the place; OwnerRez takes
 > the money.
@@ -14,8 +16,9 @@
 **Name:** Canopy descent.
 
 **Where it comes from:** the property only makes sense from above. From the
-road it is trees. From 120 feet up it is three metal roofs, two aqua and one
-mauve, in a clearing cut out of solid lodgepole pine, with the reservoir
+road it is trees. From 120 feet up it is three metal roofs, Pine Shadows and
+its game garage in aqua and Wilderness Escape Retreat in mauve, in a clearing
+cut out of solid lodgepole pine, with the reservoir
 nearby. Every photo that sells it came off a drone (the shoot in
 `../photos/`, 4 to 7 Sept 2026). So the page behaves like the drone coming in to land: things arrive
 from above and settle down onto the ground. Nothing on this site rises.
@@ -103,8 +106,8 @@ The mauve roof (`#BFA9BB`) is **not** a UI colour. It exists in photos only.
 | Drive-time tag | Every guide item carries "38 min from the cabins" in `--marker`, tabular | The guide's real question is always "how far from where we sleep?" Answered on every card, from one data file |
 | Season switch | Four square segments: Summer, Fall, Winter, Spring. Filters the guide in place, remembers the choice | Island Park is four different places. A winter guest does not need huckleberry picking |
 | Forest-sign label | Small section eyebrow set in Besley caps on `--fg` board with `--bg` letters, 2 px radius | Borrowed from the USFS routed signs; used for guide chapter labels only |
-| Cabin card | Photo, name, sleeps · beds · baths row in tabular figures, one "Check dates" button | Three cabins, three facts that decide a booking. Amenities live on the cabin page |
-| Booking slot | OwnerRez widget container per cabin. Until the widget code arrives it shows an honest "Online booking connects at launch. Call or email for dates." | Forms honestly unwired; no fake calendar |
+| Cabin card | Photo, name, sleeps · bedrooms · baths · sq ft in tabular figures, "See the cabin" and "Check dates" | Two cabins, four facts that decide a booking. Amenities live on the cabin page |
+| Booking slot | Robyn's real OwnerRez widgets (booking, calendar, reviews). OwnerRez only serves them to approved domains, so main.js loads widget.js on wildernessescaperentals.com and shows a plain note anywhere else | No empty boxes and no fake calendar on previews |
 | The map | Hand-built inline SVG: projected from lat/lng in `js/places.js`, no tile server, no Leaflet. Category filter, tap a pin for its card, "Zoom to the cabins" | Zero-dep, works offline in the cabin with bad signal, prints in the pamphlet |
 | Buttons | 3 px radius, never pills. Primary = `--accent` ground, white text | Polish standard |
 
@@ -113,8 +116,8 @@ The mauve roof (`#BFA9BB`) is **not** a UI colour. It exists in photos only.
 - Container 76rem, gutter `clamp(1rem, 4vw, 2.5rem)`.
 - Breakpoints that exist: 40rem (cards go 2-up), 64rem (3-up, guide gets its
   sticky filter rail). Nothing else.
-- Home is a single column story: hero, the three cabins, where you are (drive
-  times), guide by season, reviews, plan your stay, contact.
+- Home is a single column story: hero, the two cabins, where you are (drive
+  times), guide by season, reviews, plan your stay, book.
 - `/guide/` is a long reference page: sticky season switch + chapter nav on
   desktop, a top bar of the same on mobile.
 

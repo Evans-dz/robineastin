@@ -126,6 +126,7 @@ function crumbsNav(trail) {
 }
 
 function page({ route, title, desc, body, ld = [], index = true, current = '', progress = false, preload = [] }) {
+  const usesWidgets = body.includes('ownerrez-widget');
   if (title.length > 65) warnings.push(`title over 65 chars (${title.length}) on ${route}: ${title}`);
   const robots = (!index || !C.launched) ? '<meta name="robots" content="noindex, nofollow">' : '';
   return `<!doctype html>
@@ -152,6 +153,7 @@ ${list(preload, p => p, '\n')}
 <link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/motion.css">
 <script>document.documentElement.classList.add('js')</script>
+${usesWidgets && OR.script ? `<meta name="ownerrez" content="${esc(OR.script)}" data-hosts="${esc((OR.hosts || []).join(' '))}">` : ''}
 ${list(ld, o => `<script type="application/ld+json">${JSON.stringify(o)}</script>`)}
 </head>
 <body>
@@ -197,15 +199,25 @@ function guideCard(p, { photo = false } = {}) {
   return `<li class="guide-card reveal" data-seasons="${p.seasons.join(' ')}">${inner}</li>`;
 }
 
+/* OwnerRez widgets: widget.js swaps each placeholder for an iframe.
+   Without JS the placeholder stays empty, so every slot carries a
+   noscript line and a call/email row that always works.           */
+const OR = C.booking || {};
+const orWidget = (type, widgetId, propertyKey) => widgetId ? `<div class="or-widget or-widget--${type.toLowerCase().replace(/[^a-z]+/g, '-')}"><div class="ownerrez-widget" data-widget-type="${type}" data-widgetId="${widgetId}"${propertyKey ? ` data-propertyId="${propertyKey}"` : ''}></div></div>` : '';
+const contactRow = subject => `<div class="row">
+        ${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call ${esc(phone)}</a>` : ''}
+        ${email ? `<a class="btn btn--quiet" href="mailto:${esc(email)}?subject=${encodeURIComponent(subject)}">Email Robyn</a>` : ''}
+      </div>`;
 function bookSlot(cabin) {
-  if (cabin && cabin.widget) return `<div class="book-widget" data-cabin="${cabin.slug}">${cabin.widget}</div>`;
+  const widget = cabin
+    ? orWidget('Booking/Inquiry', (OR.perCabin || {}).booking, cabin.ownerrez && cabin.ownerrez.key)
+    : orWidget('Booking/Inquiry', (OR.all || {}).booking);
   return `<div class="book-slot">
-      <h3>${cabin ? `Book ${esc(cabin.name)}` : 'Check dates'}</h3>
-      <p>Online booking with live availability connects here at launch. Until then, reach Robyn directly for dates and rates.</p>
-      <div class="row">
-        ${phone ? `<a class="btn btn--book" href="${telHref(phone)}">${icon.phone}Call ${esc(phone)}</a>` : ''}
-        ${email ? `<a class="btn btn--quiet" href="mailto:${esc(email)}?subject=${encodeURIComponent(`Dates${cabin ? ` for ${cabin.name}` : ''}`)}">Email for dates</a>` : ''}
-      </div>
+      <h3>${cabin ? `Book ${esc(cabin.name)}` : 'Pick your dates'}</h3>
+      ${widget || '<p>Online booking with live availability connects here at launch.</p>'}
+      <noscript><p>The booking calendar needs JavaScript. Call or email Robyn for dates.</p></noscript>
+      <p class="note">Prefer to talk it through, or booking both cabins?</p>
+      ${contactRow(`Dates${cabin ? ` for ${cabin.name}` : ''}`)}
     </div>`;
 }
 
@@ -291,12 +303,12 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   const cabinsHtml = list(C.cabins, c => `<li class="cabin-card reveal">
         <figure>${pic(c.photos[0], { sizes: '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw' })}</figure>
         <h3><a href="/cabins/${c.slug}/">${esc(c.name)}</a></h3>
-        <ul class="facts">${[c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`].filter(Boolean).map(f => `<li>${f}</li>`).join('')}</ul>
+        <ul class="facts">${[c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean).map(f => `<li>${f}</li>`).join('')}</ul>
         <p class="blurb">${esc(c.summary)}</p>
         <div class="row"><a class="btn btn--quiet" href="/cabins/${c.slug}/">See the cabin</a><a class="btn btn--book" href="/cabins/${c.slug}/#book">Check dates</a></div>
       </li>`);
 
-  const reviews = (C.reviews || []).filter(r => r.text && r.name);
+  const R = C.ratings || { items: [] };
   const policies = (C.policies || []).filter(p => p.value);
 
   const body = `
@@ -358,15 +370,19 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   </div>
 </section>
 
-${reviews.length ? `<section class="raised" id="reviews" aria-labelledby="reviews-h">
+<section class="raised" id="reviews" aria-labelledby="reviews-h">
   <div class="wrap">
     <div class="sec-head">
       <span class="sign">Guests</span>
       <h2 id="reviews-h" class="reveal">What guests have said</h2>
+      <p>Reviews from real stays, pulled straight from Robyn's booking system as they come in.</p>
     </div>
-    <ul class="reviews">${list(reviews, r => `<li><figure class="review"><blockquote><p>${esc(r.text)}</p></blockquote><figcaption>${esc(r.name)}${r.date ? ` · ${esc(r.date)}` : ''}${r.source ? ` · ${esc(r.source)}` : ''}</figcaption></figure></li>`)}</ul>
+    ${R.items.length ? `<ul class="ratings">${list(R.items, r => `<li><a href="${esc(r.url)}" rel="noopener"><b>${esc(r.score)}</b><span>${esc(r.where)} · ${esc(r.what)}</span><small>${r.count} reviews</small></a></li>`, '')}</ul>
+    <p class="note" style="margin:.75rem 0 2rem">Ratings as shown on each site, ${esc(R.asOf)}.</p>` : ''}
+    ${orWidget('Reviews', (OR.all || {}).reviews)}
+    <noscript><p>Guest reviews load from our booking system and need JavaScript.</p></noscript>
   </div>
-</section>` : ''}
+</section>
 
 <section id="plan" aria-labelledby="plan-h">
   <div class="wrap plan">
@@ -388,7 +404,13 @@ ${reviews.length ? `<section class="raised" id="reviews" aria-labelledby="review
       <h2 id="book-h" class="reveal">Check dates with Robyn</h2>
       <p>${esc(H.bookLede)}</p>
     </div>
-    ${bookSlot(null)}
+    <div class="book-grid">
+      ${bookSlot(null)}
+      <div class="stack">
+        ${orWidget('Ribbon Calendar', (OR.all || {}).calendar)}
+        ${H.hosts ? `<div class="hosts"><h3>Your hosts</h3><p>${esc(H.hosts)}</p></div>` : ''}
+      </div>
+    </div>
   </div>
 </section>`;
 
@@ -410,34 +432,54 @@ ${reviews.length ? `<section class="raised" id="reviews" aria-labelledby="review
 }
 
 /* ---- cabin pages --------------------------------------------------------------- */
+const orPhoto = (g, size, eager) => `<img src="https://uc.orez.io/i/${g.id}-${size}" alt="${esc(g.alt)}" width="1200" height="900"${eager ? '' : ' loading="lazy" decoding="async"'}>`;
 for (const c of C.cabins) {
   const route = `/cabins/${c.slug}/`;
   const trail = [['Home', '/'], [c.name, route]];
-  const facts = [c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.beds && c.beds, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`].filter(Boolean);
+  const other = C.cabins.find(x => x.slug !== c.slug);
+  const facts = [c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean);
+  const gal = c.gallery || [];
   const body = `
 <div class="wrap page-head">
   ${crumbsNav(trail)}
-  <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
+  <span class="sign">${esc(c.address)}, ${esc(B.city)}</span>
   <h1 style="margin-top:.9rem">${esc(c.name)}</h1>
   <ul class="facts" style="margin-top:1rem">${facts.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
 </div>
 <div class="wrap">
-  <div class="gallery">${list(c.photos.slice(0, 3), (k, i) => pic(k, { sizes: i === 0 ? '(min-width: 64rem) 50vw, 100vw' : '(min-width: 64rem) 25vw, 50vw', eager: i === 0 }), '')}</div>
+  <div class="gallery">${pic(c.photos[0], { sizes: '(min-width: 64rem) 50vw, 100vw', eager: true })}${list(gal.slice(0, 4), (g, i) => orPhoto(g, 'Medium', false), '')}</div>
 </div>
 <section>
   <div class="wrap cabin-body">
     <div class="stack" style="--stack:1.25rem">
       <h2 class="reveal">${esc(c.headline || 'The cabin')}</h2>
       ${list(c.description, para => `<p>${esc(para)}</p>`)}
+      <p class="note">Sleeps ${c.sleeps}: ${esc(c.beds)}.</p>
       ${c.amenities && c.amenities.length ? `<h3 style="margin-top:2rem">What's here</h3><ul class="amenities">${list(c.amenities, a => `<li>${esc(a)}</li>`, '')}</ul>` : ''}
+      ${gal.length > 4 ? `<h3 style="margin-top:2rem">More photos</h3><div class="more-photos">${list(gal.slice(4), g => orPhoto(g, 'Medium', false), '')}</div>` : ''}
+      ${other ? `<div class="book-slot" style="margin-top:2rem"><h3>Bringing everyone?</h3><p>${esc(other.name)} is right next door and sleeps ${other.sleeps}. Book both and keep the whole group together.</p><p><a class="btn btn--quiet" href="/cabins/${other.slug}/">See ${esc(other.name)} ${icon.arrow}</a></p></div>` : ''}
     </div>
     <aside id="book">${bookSlot(c)}</aside>
+  </div>
+</section>
+<section class="raised" aria-labelledby="avail-h">
+  <div class="wrap">
+    <div class="sec-head"><span class="sign">Availability</span><h2 id="avail-h" class="reveal">Open dates</h2></div>
+    ${orWidget('Multiple Month Calendar', (OR.perCabin || {}).calendar, c.ownerrez && c.ownerrez.key)}
+    <noscript><p>The calendar needs JavaScript. Call or email Robyn for dates.</p></noscript>
+  </div>
+</section>
+<section aria-labelledby="rev-h">
+  <div class="wrap">
+    <div class="sec-head"><span class="sign">Guests</span><h2 id="rev-h" class="reveal">Reviews of ${esc(c.name)}</h2></div>
+    ${orWidget('Reviews', (OR.perCabin || {}).reviews, c.ownerrez && c.ownerrez.key)}
+    <noscript><p>Guest reviews load from our booking system and need JavaScript.</p></noscript>
   </div>
 </section>`;
   emit(`cabins/${c.slug}/index.html`, page({
     route, current: '/#cabins',
-    title: `${c.name} · Cabin in ${B.city}, ${B.region} | ${B.short}`,
-    desc: c.metaDesc || `${c.name}: ${facts.join(', ')}. A cabin in the ${B.city} pines near Yellowstone. Book direct.`,
+    title: `${c.name} · ${B.city} Cabin | ${B.short}`,
+    desc: c.metaDesc || `${c.name}: ${facts.join(', ')}. A family cabin in the ${B.city} pines, 45 minutes from Yellowstone. Book direct with the owner.`,
     ld: [crumbsLd(trail)], body,
   }), { route });
 }
@@ -608,33 +650,48 @@ for (const c of C.cabins) {
   }), { route });
 }
 
-/* ---- checkout (QR code inside each cabin points here; never indexed) -------------- */
+/* ---- checkout (the QR code inside each cabin points here; never indexed) ---------- */
 {
-  const route = '/checkout/';
-  const trail = [['Home', '/'], ['Checkout guide', route]];
   const X = C.checkout;
-  const body = `
+  const trail = [['Home', '/'], ['Checkout guide', '/checkout/']];
+  emit('checkout/index.html', page({
+    route: '/checkout/', index: false, title: `Checkout Guide | ${B.short}`,
+    desc: `How to check out of your ${B.name} cabin in ${B.city}, ${B.state}.`,
+    ld: [crumbsLd(trail)], body: `
 <div class="wrap page-head">
   ${crumbsNav(trail)}
   <span class="sign">For guests</span>
   <h1 style="margin-top:.9rem">Checking out</h1>
-  <p class="lede">${X.time ? `Checkout is by ${esc(X.time)}. ` : ''}${esc(X.lede)}</p>
+  <p class="lede">Which cabin are you in?</p>
+  <p style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.6rem">${list(C.cabins, c => `<a class="btn btn--book" href="/checkout/${c.slug}/">${esc(c.name)}</a>`, '')}</p>
+</div>`,
+  }), { route: '/checkout/', sitemap: false });
+
+  for (const c of C.cabins) {
+    const route = `/checkout/${c.slug}/`;
+    const t = [...trail, [c.name, route]];
+    emit(`checkout/${c.slug}/index.html`, page({
+      route, index: false, title: `Checking Out of ${c.name} | ${B.short}`,
+      desc: `Checkout steps for ${c.name}, ${B.city}, ${B.state}.`,
+      ld: [crumbsLd(t)], body: `
+<div class="wrap page-head">
+  ${crumbsNav(t)}
+  <span class="sign">${esc(c.name)}</span>
+  <h1 style="margin-top:.9rem">Checking out</h1>
+  <p class="lede">${esc(X.lede)}</p>
 </div>
 <section style="padding-top:0">
   <div class="wrap">
-    <ol class="checklist">${list(X.steps, s => `<li><div><b>${esc(s.title)}</b>${s.detail ? `<p>${esc(s.detail)}</p>` : ''}</div></li>`, '')}</ol>
+    <ol class="checklist">${list(c.checkout, st => `<li><div><b>${esc(st.title)}</b>${st.detail ? `<p>${esc(st.detail)}</p>` : ''}</div></li>`, '')}</ol>
     <div class="book-slot" style="margin-top:2.5rem">
       <h2 style="font-size:var(--step-2)">${esc(X.returnHead)}</h2>
       <p>${esc(X.returnLede)}</p>
-      <div class="row"><a class="btn btn--book" href="/#book">Book your next stay</a>${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call Robyn</a>` : ''}</div>
+      <div class="row"><a class="btn btn--book" href="/cabins/${c.slug}/#book">Book your next stay</a>${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call Robyn</a>` : ''}</div>
     </div>
   </div>
-</section>`;
-  emit('checkout/index.html', page({
-    route, index: false, title: `Checkout Guide | ${B.short}`,
-    desc: `How to check out of your ${B.name} cabin in ${B.city}, ${B.state}.`,
-    ld: [crumbsLd(trail)], body,
-  }), { route, sitemap: false });
+</section>`,
+    }), { route, sitemap: false });
+  }
 }
 
 /* ---- 404 ------------------------------------------------------------------------ */
@@ -703,6 +760,143 @@ emit('404.html', page({
     desc: `The terms for using the ${B.name} website.`,
     ld: [crumbsLd([['Home', '/'], ['Terms of use', '/terms/']])], body: termsBody,
   }), { route: '/terms/' });
+}
+
+/* ---- pamphlet: Letter tri-fold for each cabin (print, never indexed) ------------------
+   Outside: [inside flap | back | cover]   Inside: [Yellowstone | seasons | safety + QR]
+   PDF: node tools/pdf.mjs  →  ../Docs/Wilderness-Escape-Pamphlet-DRAFT.pdf            */
+{
+  const blank = s => `<mark class="blank">[${esc(s)}]</mark>`;
+  const sup = name => G.SUPPLIES.find(x => x.name === name);
+  const near = [
+    ['Elk Creek Station', 'Groceries, gas, propane, ATM'],
+    ['Island Park Liquor and Sports', 'Liquor store, Wed to Sat'],
+    ['Island Park Post Office', 'Closed Sundays'],
+    ['Sam Patch Co. Grocer and Sundries', 'Biggest grocery, firewood, licenses'],
+  ].map(([n, what]) => ({ name: n, what, drive: (sup(n) || {}).drive }));
+  const seasonsBlock = G.SEASONS.map(s => {
+    const ids = (C.home.picks || {})[s.id] || [];
+    return `<div class="p-season"><h3>${esc(s.label)}</h3><ul>${ids.map(id => placeById(id)).filter(Boolean).map(p =>
+      `<li><span>${esc(p.short || p.name)}</span>${p.drive != null ? `<b>${drive(p.drive)}</b>` : ''}</li>`).join('')}</ul></div>`;
+  }).join('');
+  const qr = f => read(`assets/qr/${f}.svg`).replace('<svg ', '<svg aria-hidden="true" ');
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Guest pamphlet (print) | ${esc(B.short)}</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/css/main.css">
+<style>
+  @page{ size: 11in 8.5in; margin: 0 }
+  html, body{ background: #D9D4C7 }
+  body{ margin: 0; font-size: 8.4pt; line-height: 1.38 }
+  .sheet{ inline-size: 11in; block-size: 8.5in; margin: .4in auto; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr);
+          background: var(--bg); overflow: hidden; break-after: page }
+  .sheet:last-child{ break-after: auto }
+  @media print{ html, body{ background: #fff } .sheet{ margin: 0 } }
+  .panel{ padding: .34in .32in; display: flex; flex-direction: column; gap: .13in; min-inline-size: 0; overflow: hidden }
+  .panel + .panel{ border-inline-start: 1px dashed #CFC8B6 }
+  .panel h2{ font-size: 15pt; line-height: 1.05 }
+  .panel h3{ font: 700 9pt/1.2 var(--font-display) }
+  .panel p, .panel li{ max-inline-size: none }
+  .sign{ font-size: 6.8pt }
+  .rows{ list-style: none; display: grid; border-block-start: 1px solid var(--line) }
+  .rows li{ display: grid; grid-template-columns: 1fr auto; gap: .08in; padding-block: .05in; border-block-end: 1px solid var(--line) }
+  .rows small{ display: block; color: var(--fg-2); font-size: 7.4pt }
+  .rows b, .p-season b{ color: var(--marker); font-variant-numeric: tabular-nums; white-space: nowrap }
+  .p-season ul{ list-style: none; display: grid; gap: .02in }
+  .p-season li{ display: flex; justify-content: space-between; gap: .1in; border-block-end: 1px dotted var(--line); padding-block: .02in }
+  .p-season + .p-season{ margin-block-start: .02in }
+  .note{ font-size: 7.4pt; color: var(--fg-2) }
+  .box{ padding: .1in .12in; background: var(--bg-2); border-radius: 3px }
+  .blank{ background: #FFE58A; color: #17231D; padding: 0 .04in }
+  .qrs{ display: grid; grid-template-columns: 1fr 1fr; gap: .14in; margin-block-start: auto }
+  .qr{ display: grid; gap: .04in; justify-items: center; text-align: center; font-weight: 600; font-size: 7.6pt }
+  .qr svg{ inline-size: 1.15in; block-size: 1.15in }
+  .rules-p{ list-style: none; display: grid; gap: .05in }
+  .rules-p li{ padding-inline-start: .14in; position: relative }
+  .rules-p li::before{ content: ""; position: absolute; left: 0; top: .055in; inline-size: .06in; block-size: .06in; background: var(--fg) }
+  .cover{ padding: 0; background: var(--dusk); color: var(--dusk-fg); position: relative }
+  .cover img{ inline-size: 100%; block-size: 5.3in; object-fit: cover; object-position: 50% 12% }
+  .cover .in{ padding: .26in .32in .3in; display: grid; gap: .1in }
+  .cover h1{ font-size: 25pt; color: var(--dusk-fg) }
+  .cover p{ color: var(--dusk-fg-2) }
+  .cover .draft{ position: absolute; top: .12in; right: .12in; background: var(--warn); color: #fff; font-size: 7pt; padding: .03in .08in; border-radius: 2px }
+  .back-cta{ display: grid; gap: .1in; justify-items: start }
+  .back-cta svg{ inline-size: 1.3in; block-size: 1.3in }
+</style>
+</head>
+<body>
+<main>
+<section class="sheet" aria-label="Outside">
+  <div class="panel">
+    <span class="sign">Close to the cabins</span>
+    <h2>Groceries, gas and help</h2>
+    <ul class="rows">${near.map(n => `<li><span>${esc(n.name)}<small>${esc(n.what)}</small></span>${n.drive != null ? `<b>${drive(n.drive)}</b>` : ''}</li>`).join('')}
+      <li><span>Island Park Medical Clinic<small>By Pond's Lodge. Weekdays 8 to 5, walk-ins</small></span><b>10 min</b></li>
+      <li><span>Nearest ER: Madison Memorial<small>Rexburg. Call 911 in an emergency</small></span><b>1 hr 15 min</b></li>
+    </ul>
+    <p class="note">There is no pharmacy in Island Park. The nearest are in West Yellowstone and Ashton, weekdays only.</p>
+    <div class="box"><h3>Wi-Fi</h3><p>Network ${blank('network name')}<br>Password ${blank('password')}</p></div>
+    <p class="note">Cell service is patchy in the forest. Download offline maps before you head out.</p>
+  </div>
+  <div class="panel">
+    <span class="sign">Book direct</span>
+    <h2>Come back in another season</h2>
+    <p>Island Park is a different place in every season. Returning guests can book directly with Robyn: no platform fees, and you deal with the owner.</p>
+    <div class="back-cta">${qr('home')}<b>${esc(B.domain.replace(/^www\./, ''))}</b></div>
+    <div class="box">
+      <p>${phone ? esc(phone) : blank('phone')}<br>${email ? esc(email) : blank('email')}</p>
+      <p class="note" style="margin-top:.05in">${esc(B.street)}, ${esc(B.city)}, ${esc(B.region)} ${esc(B.zip)}</p>
+    </div>
+    <p class="note" style="margin-top:auto">Guide facts checked September 2026. Hours, fees and road openings change; check before you go.</p>
+  </div>
+  <div class="panel cover">
+    ${SAMPLE ? '<span class="draft">Draft</span>' : ''}
+    ${pic('teal-cabins-drive', { sizes: '4in', alt: C.photos['teal-cabins-drive'].alt }).replace(' loading="lazy" decoding="async"', '')}
+    <div class="in">
+      <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
+      <h1>${esc(B.short)}</h1>
+      <p>Your guide to Island Park and Yellowstone, with drive times from the cabins.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sheet" aria-label="Inside">
+  <div class="panel">
+    <span class="sign">Yellowstone</span>
+    <h2>In through the West Entrance</h2>
+    <ul class="rows">
+      <li><span>West Entrance<small>Cars mid-April to Oct 31. Mid-Dec to mid-March, snowcoach and snowmobile tours only</small></span><b>45 min</b></li>
+      <li><span>Entrance pass<small>$35 per vehicle for 7 days. No reservation needed (2026)</small></span><b>$35</b></li>
+    </ul>
+    <h3>Day plans</h3>
+    <ul class="rows">${G.DAYS.slice(0, 4).map(d => `<li><span>${esc(d.title)}<small>${esc(d.stops[d.stops.length - 1])}</small></span><b>${esc(d.driveNote.replace(/^About /, '').replace(/ each way.*$/, '').replace(/ to .*$/, ''))}</b></li>`).join('')}</ul>
+    <p class="note">Times are one way, with no stops or traffic. Be at the gate before 7 am, or come in after noon. No gas at Madison or Norris: fill up in West Yellowstone.</p>
+  </div>
+  <div class="panel">
+    <span class="sign">Island Park</span>
+    <h2>What to do, by season</h2>
+    ${seasonsBlock}
+  </div>
+  <div class="panel">
+    <span class="sign">Wildlife</span>
+    <h2>How close is too close</h2>
+    <ul class="rules-p">${G.PARK_RULES.slice(0, 5).map(r => `<li>${esc(r)}</li>`).join('')}</ul>
+    <div class="qrs">
+      <div class="qr">${qr('map')}<span>Map and full guide</span></div>
+      <div class="qr">${qr('checkout')}<span>Checking out</span></div>
+    </div>
+  </div>
+</section>
+</main>
+</body>
+</html>
+`;
+  emit('print/pamphlet/index.html', html, { sitemap: false });
 }
 
 /* ---- write, guard, site files ---------------------------------------------------------- */

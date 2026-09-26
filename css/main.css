@@ -549,3 +549,23 @@ h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1re
   .policy div{ grid-template-columns: 1fr; gap: .2rem }
   .guide-bar .wrap{ gap: .4rem 1rem; padding-block: .45rem }
 }
+
+/* ---- OwnerRez widgets, ratings, hosts ------------------------------------ */
+.or-widget{ min-block-size: 8rem }
+.or-widget iframe{ inline-size: 100% !important; border: 0 }
+.book-grid{ display: grid; gap: clamp(1.5rem, 4vw, 2.5rem) }
+@media (min-width: 64rem){ .book-grid{ grid-template-columns: 1fr 1fr; align-items: start } }
+.hosts{ padding: 1.25rem 1.4rem; background: var(--bg); border-radius: var(--radius-box) }
+.hosts p{ color: var(--fg-2); margin-block-start: .5rem }
+.ratings{ list-style: none; display: grid; gap: .75rem }
+@media (min-width: 40rem){ .ratings{ grid-template-columns: repeat(2, 1fr) } }
+@media (min-width: 64rem){ .ratings{ grid-template-columns: repeat(4, 1fr) } }
+.ratings a{ display: grid; gap: .15rem; padding: 1rem 1.1rem; background: var(--bg); border-radius: var(--radius-box); text-decoration: none; border-block-start: 3px solid var(--accent) }
+.ratings b{ font: 700 var(--step-2)/1.1 var(--font-display) }
+.ratings span{ font-weight: 600 }
+.ratings small{ color: var(--fg-2) }
+.more-photos{ display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr) }
+.more-photos img{ inline-size: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-box) }
+.or-widget--preview{ min-block-size: 0; display: grid; place-items: center; padding: 1.25rem; border: 1px dashed var(--line-ui); border-radius: var(--radius-box); background: var(--bg); text-align: center }
+.or-widget--preview p{ color: var(--fg-2); font-size: var(--step--1); max-inline-size: 36ch }
+.site-foot .stack p > a:not(.btn){ display: inline-flex; align-items: center; min-block-size: 44px }

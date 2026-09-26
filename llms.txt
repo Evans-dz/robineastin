@@ -1,14 +1,17 @@
 # Wilderness Escape Rentals
 
-> Wilderness Escape Rentals is three privately owned vacation rental cabins in the lodgepole pines of Island Park, Idaho, near the West Entrance of Yellowstone National Park. Guests book directly with the owner. The site also has a free seasonal guide to Island Park and Yellowstone with drive times from the cabins.
+> Wilderness Escape Rentals is two family vacation cabins, Pine Shadows (sleeps 12) and Wilderness Escape Retreat (sleeps 10), next door to each other in the lodgepole pines of Island Park, Idaho, about 45 minutes from the West Entrance of Yellowstone National Park. Owners Robyn and Eric Eastin host them directly. The site also has a free seasonal guide to Island Park and Yellowstone with drive times from the cabins.
 
-Address: 3810 Mortensen Ln, Island Park, ID 83445
+Address: 3810 Mortensen Ln, Island Park, ID 83429
+Phone: (208) 351-1033
+Email: info@wildernessescaperentals.com
 Booking: direct through this website (OwnerRez booking engine)
 
 ## Pages
 
 - [Home](https://www.wildernessescaperentals.com/): the cabins, where they are, what to do by season, booking
-
+- [Pine Shadows](https://www.wildernessescaperentals.com/cabins/pine-shadows/): sleeps 12, 3 bedrooms, 2.5 baths
+- [Wilderness Escape Retreat](https://www.wildernessescaperentals.com/cabins/wilderness-escape-retreat/): sleeps 10, 3 bedrooms, 2 baths
 - [Things to do](https://www.wildernessescaperentals.com/guide/): Yellowstone and Island Park guide with drive times, food, groceries, wildlife, events
 - [Map](https://www.wildernessescaperentals.com/map/): interactive map of Yellowstone and Island Park with the cabins marked
 - [Privacy policy](https://www.wildernessescaperentals.com/privacy/)
