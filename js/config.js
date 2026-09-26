@@ -64,6 +64,13 @@ const CONFIG = {
     seasonHead:  'Four different places, one address',
     seasonLede:  'Island Park changes completely with the seasons. Pick yours.',
     defaultSeason: 'summer',
+    /* the home page's short list per season (ids from js/places.js) */
+    picks: {
+      summer: ['island-park-reservoir', 'big-springs-float', 'old-faithful', 'grand-prismatic', 'mesa-falls', 'playmill'],
+      fall:   ['canyon', 'mammoth', 'lamar-valley', 'mesa-falls', 'box-canyon', 'harriman'],
+      winter: ['snowmobiling', 'yellowstone-winter', 'harriman-winter', 'grizzly-wolf', 'island-park-reservoir', 'playmill'],
+      spring: ['old-faithful', 'lamar-valley', 'grizzly-wolf', 'big-springs'],
+    },
     bookLede:    'Booking direct means no platform service fees and you deal with the owner, not a call center.',
   },
 

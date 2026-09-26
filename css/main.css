@@ -545,3 +545,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1rem) }
 .chapter h2[id]{ scroll-margin-top: calc(var(--head-h) + 7.5rem) }
 .chapter, .guide-card h3[id]{ scroll-margin-top: calc(var(--head-h) + 7.5rem) }
+@media (max-width: 40rem){
+  .policy div{ grid-template-columns: 1fr; gap: .2rem }
+  .guide-bar .wrap{ gap: .4rem 1rem; padding-block: .45rem }
+}

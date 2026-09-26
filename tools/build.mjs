@@ -190,7 +190,7 @@ function guideCard(p, { photo = false } = {}) {
       <p>${esc(p.blurb)}</p>
       ${p.tip ? `<p class="tip">${esc(p.tip)}</p>` : ''}
       ${meta ? `<p class="meta">${meta}</p>` : ''}
-      <p class="meta"><span>Best: ${esc(p.seasons.map(seasonLabel).join(', '))}</span>${p.url ? `<a href="${esc(p.url)}" rel="noopener">Official info</a>` : ''}</p>`;
+      <p class="meta"><span>Best: ${esc((p.bestSeasons || p.seasons).map(seasonLabel).join(', '))}</span>${p.url ? `<a href="${esc(p.url)}" rel="noopener">Official info</a>` : ''}</p>`;
   if (photo && p.photo) {
     return `<li class="guide-card guide-card--photo reveal" data-seasons="${p.seasons.join(' ')}">${pic(p.photo, { sizes: '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw' })}<div class="in">${inner}</div></li>`;
   }
@@ -281,7 +281,13 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
 {
   const H = C.home;
   const featuredDrives = (H.drives || []).map(id => placeById(id)).filter(Boolean);
-  const picks = G.PLACES.filter(p => p.pick);
+  /* curated per season: a card shows in the seasons it is PICKED for */
+  const pickSeasons = new Map();
+  for (const [season, ids] of Object.entries(H.picks || {})) for (const id of ids) {
+    if (!placeById(id)) throw new Error(`home pick "${id}" is not in PLACES`);
+    pickSeasons.set(id, [...(pickSeasons.get(id) || []), season]);
+  }
+  const picks = [...pickSeasons.keys()].map(id => ({ ...placeById(id), seasons: pickSeasons.get(id), bestSeasons: placeById(id).seasons }));
   const cabinsHtml = list(C.cabins, c => `<li class="cabin-card reveal">
         <figure>${pic(c.photos[0], { sizes: '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw' })}</figure>
         <h3><a href="/cabins/${c.slug}/">${esc(c.name)}</a></h3>

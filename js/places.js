@@ -18,7 +18,7 @@ const SEASONS = [
   { id: 'summer', label: 'Summer', note: 'Mid-June to August. Everything is open, Yellowstone is busy, and nights still drop into the 40s. Bring layers.' },
   { id: 'fall',   label: 'Fall',   note: 'September and October. Fewer people, rutting elk, golden aspens and great fishing. Campgrounds and some businesses start closing after Labor Day.' },
   { id: 'winter', label: 'Winter', note: 'December to March. Deep snow (over 200 inches a year) and hundreds of miles of groomed snowmobile trail. Yellowstone\'s roads close to cars; snowcoach and snowmobile tours run instead.' },
-  { id: 'spring', label: 'Spring', note: 'April to early June. The quiet season: snow melts, baby bison arrive, Yellowstone roads open in stages, and seasonal businesses reopen around Memorial Day.' },
+  { id: 'spring', label: 'Spring', note: 'April to early June. The quiet season: the snow melts, Yellowstone\'s roads open in stages from mid-April, and seasonal businesses reopen around Memorial Day.' },
 ];
 
 /* map pin colours sit on the dusk ground; every one is ≥3:1 there */
