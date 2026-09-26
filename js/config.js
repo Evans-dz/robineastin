@@ -27,8 +27,8 @@ const CONFIG = {
     state:  'Idaho',
     region: 'ID',
     zip:    '83445',
-    lat:    null,                         // filled from research (approximate)
-    lng:    null,
+    lat:    44.4446,                      // approximate (public parcel point), research §1
+    lng:    -111.3945,
   },
 
   /* Each channel turns itself on the moment it has a real value.
@@ -47,16 +47,20 @@ const CONFIG = {
   },
 
   home: {
-    h1:    'Three cabins in the Island Park pines, near Yellowstone.',
+    h1:    'Three cabins in the Island Park pines, under an hour from Yellowstone.',
     lede:  'Book directly with Robyn, the owner. Spend the day in Yellowstone or on the Henry\'s Fork, then come back to a quiet cabin in the lodgepole forest.',
-    facts: [],                            // filled below from the cabins + drive data
+    facts: [                              // TODO(client) add total sleeps once cabin details are in
+      '<b>3</b> cabins on one wooded property',
+      '<b>5 min</b> to Island Park Reservoir',
+      '<b>45 min</b> to Yellowstone\'s West Entrance',
+    ],
     descentOrigin: '38% 46%',             // where the drone sinks to: the aqua roofs
     cabinsHead:  'Two aqua roofs and a mauve one',
     cabinsLede:  'Three cabins on one wooded property, each with its own space. Pick one for your family or book more than one for a group.',
-    whereHead:   'Close to everything, quiet at night',
-    whereLede:   'The cabins sit in the forest on the Idaho side of Yellowstone. Here is how far the big things are.',
+    whereHead:   'Minutes from the water, under an hour from the park',
+    whereLede:   'The cabins sit in the pines on the northeast side of Island Park Reservoir, off US-20 between Ponds Lodge and Mack\'s Inn. Here is how far the big things are.',
     wherePhoto:  'peninsula-wide',
-    drives:      [],                      // place ids from js/places.js, nearest first
+    drives:      ['island-park-reservoir', 'macks-inn', 'big-springs', 'harriman', 'west-yellowstone', 'mesa-falls', 'old-faithful', 'canyon'],
     seasonHead:  'Four different places, one address',
     seasonLede:  'Island Park changes completely with the seasons. Pick yours.',
     defaultSeason: 'summer',
@@ -65,10 +69,10 @@ const CONFIG = {
 
   guide: {
     lede:            'Everything within a day\'s drive of the cabins, sorted by season, with the drive time from our door on every stop.',
-    yellowstoneLede: 'The West Entrance at West Yellowstone is the closest way into the park from the cabins. These are the day plans and sights worth the drive.',
+    yellowstoneLede: 'The West Entrance at West Yellowstone is about 45 minutes from the cabins and the closest way into the park. No reservation is needed in 2026, just a pass.',
     islandParkLede:  'You do not have to enter Yellowstone to have a full week. Springs, waterfalls, famous fly fishing and hundreds of miles of trails start close to the cabins.',
     wildlifeLede:    'You will almost certainly see bison and elk. With patience and an early start, maybe wolves and bears. Here is where to look, and how close is too close.',
-    showsLede:       'For evenings, rainy afternoons and kids who need a break from the car.',
+    showsLede:       'For evenings, rainy afternoons and kids who need a break from the car. (The IMAX theatre in West Yellowstone closed for good in January 2026.)',
     foodLede:        'Places we could confirm are operating. Many close or cut hours in the off season, so call ahead from October to May.',
     suppliesLede:    'Stock up before you arrive if you can. Island Park has the basics; the big stores are an hour or more away.',
     eventsLede:      'Dates change year to year. Check the organizer\'s site before you plan around one.',

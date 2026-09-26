@@ -35,7 +35,7 @@ const PLACES = [
 
   /* ── the cabins (map anchor) ─────────────────────────────── */
   { id: 'cabins', name: 'Wilderness Escape cabins', short: 'The cabins', chapter: null, cat: 'cabins',
-    seasons: ['summer', 'fall', 'winter', 'spring'], drive: null, label: true,
+    seasons: ['summer', 'fall', 'winter', 'spring'], drive: null, label: 1,
     blurb: 'Three cabins in the lodgepole pines on the northeast side of Island Park Reservoir. Everything on this map is measured from here.',
     lat: 44.4446, lng: -111.3945 },   // approximate (public parcel point), see research §1
 
@@ -45,14 +45,14 @@ const PLACES = [
     blurb: 'The big reservoir on the Henry\'s Fork is minutes from the cabins, with boat ramps at McCrea Bridge and Buttermilk. Boat, paddle and fish for trout and kokanee in summer, or ice fish near the dam in winter.',
     tip: 'The water drops through late summer. By August the McCrea Bridge ramp no longer reaches it, so use Buttermilk.',
     time: 'Any length', fee: 'Free', kids: true, pick: true, photo: 'reservoir-island',
-    url: 'https://www.fs.usda.gov/r04/caribou-targhee/recreation/island-park-reservoir', lat: null, lng: null },
+    url: 'https://www.fs.usda.gov/r04/caribou-targhee/recreation/island-park-reservoir', lat: 44.4238, lng: -111.4054 },
 
   { id: 'big-springs', name: 'Big Springs and Johnny Sack Cabin', short: 'Big Springs', chapter: 'island-park', cat: 'island-park',
     kind: 'Springs and history', area: 'Mack\'s Inn area', seasons: ['summer', 'fall'], drive: 25,
     blurb: 'One of the largest springs in the country pours out a steady 52°F river: the start of the Henry\'s Fork. Watch huge protected trout from the footbridge, walk the flat riverside trail, and look inside a hand-built 1930s log cabin.',
     tip: 'Johnny Sack Cabin is open mid-June to Labor Day. No fishing at the spring.',
-    time: '30 to 90 min', fee: 'Free', kids: true, pick: true, label: true,
-    url: 'https://visitidaho.org/things-to-do/natural-attractions/big-springs/', lat: null, lng: null },
+    time: '30 to 90 min', fee: 'Free', kids: true, pick: true, label: 2,
+    url: 'https://visitidaho.org/things-to-do/natural-attractions/big-springs/', lat: 44.5003, lng: -111.2553 },
 
   { id: 'big-springs-float', name: 'Big Springs Water Trail float', chapter: 'island-park', cat: 'island-park', map: false,
     kind: 'Float trip', area: 'Big Springs to Mack\'s Inn', seasons: ['summer'], drive: 15,
@@ -62,11 +62,11 @@ const PLACES = [
     url: 'https://www.macksinn.com/River-Adventures' },
 
   { id: 'harriman', name: 'Harriman State Park', short: 'Harriman State Park', chapter: 'island-park', cat: 'island-park',
-    kind: 'State park and wildlife', seasons: ['summer', 'fall', 'spring'], drive: 30, label: true,
+    kind: 'State park and wildlife', seasons: ['summer', 'fall', 'spring'], drive: 30, label: 2,
     blurb: 'A historic ranch turned 11,000-acre park inside a wildlife refuge, with moose, elk, eagles and trumpeter swans along 8 miles of the Henry\'s Fork. Summer brings ranch tours on weekends and 22 miles of trails.',
     tip: 'Dogs are allowed only in the parking lots.',
     time: '2 hr to a full day', fee: '$7 per vehicle', kids: true,
-    url: 'https://parksandrecreation.idaho.gov/state-park/harriman-state-park/', lat: null, lng: null },
+    url: 'https://parksandrecreation.idaho.gov/state-park/harriman-state-park/', lat: 44.3226, lng: -111.4604 },
 
   { id: 'harriman-winter', name: 'Harriman in winter: swans and ski trails', chapter: 'island-park', cat: 'island-park', map: false,
     kind: 'Skiing and swans', area: 'Harriman State Park', seasons: ['winter'], drive: 30,
@@ -75,11 +75,11 @@ const PLACES = [
     url: 'https://parksandrecreation.idaho.gov/state-park/harriman-state-park/' },
 
   { id: 'mesa-falls', name: 'Upper and Lower Mesa Falls', short: 'Mesa Falls', chapter: 'island-park', cat: 'island-park',
-    kind: 'Waterfalls', area: 'Mesa Falls Scenic Byway', seasons: ['summer', 'fall'], drive: 50, label: true, labelSide: 'left',
+    kind: 'Waterfalls', area: 'Mesa Falls Scenic Byway', seasons: ['summer', 'fall'], drive: 50, label: 2,
     blurb: 'The Henry\'s Fork drops about 110 feet at Upper Mesa Falls, one of the few big Western waterfalls never dammed. Boardwalks run to the brink, and Lower Mesa Falls is a mile downstream from the Grandview overlook.',
     tip: 'Make it a loop: US-20 south, the Mesa Falls Scenic Byway, Ashton, then back north. Closed to cars in winter.',
     time: '45 to 90 min', fee: '$5 per vehicle at Upper Falls', kids: true, pick: true,
-    url: 'https://www.fs.usda.gov/r04/caribou-targhee/recreation/mesa-falls-scenic-highway', lat: null, lng: null },
+    url: 'https://www.fs.usda.gov/r04/caribou-targhee/recreation/mesa-falls-scenic-highway', lat: 44.188, lng: -111.33 },
 
   { id: 'box-canyon', name: 'Henry\'s Fork: Box Canyon', chapter: 'island-park', cat: 'island-park', map: false,
     kind: 'Fly fishing', area: 'Below Island Park Dam', seasons: ['summer', 'fall'], drive: 20,
@@ -109,11 +109,11 @@ const PLACES = [
     url: 'https://www.fs.usda.gov/wildflowers/regions/intermountain/SawtellPeak/index.shtml' },
 
   { id: 'henrys-lake', name: 'Henrys Lake State Park', short: 'Henrys Lake', chapter: 'island-park', cat: 'island-park',
-    kind: 'Lake and fishing', seasons: ['summer', 'fall'], drive: 30, label: true, labelSide: 'left',
+    kind: 'Lake and fishing', seasons: ['summer', 'fall'], drive: 30, label: 2, labelSide: 'left',
     blurb: 'A big mountain lake ringed on three sides by the Continental Divide, famous for trophy cutthroat, brook and hybrid trout. The park has a boat ramp, loaner fishing rods and easy nature trails.',
     tip: 'Trout are catch-and-release from Feb 15 until Memorial Day weekend. Check the current rules.',
     time: '1 hr to a full day', fee: '$7 per vehicle', kids: true,
-    url: 'https://parksandrecreation.idaho.gov/state-park/henrys-lake-state-park/', lat: null, lng: null },
+    url: 'https://parksandrecreation.idaho.gov/state-park/henrys-lake-state-park/', lat: 44.6164, lng: -111.3677 },
 
   { id: 'warm-river', name: 'Warm River', chapter: 'island-park', cat: 'island-park', map: false,
     kind: 'Tubing and biking', area: 'Near Ashton', seasons: ['summer'], drive: 60,
@@ -129,11 +129,11 @@ const PLACES = [
     url: 'https://www.nps.gov/places/000/cave-falls-picnic-area.htm' },
 
   { id: 'quake-lake', name: 'Earthquake Lake Visitor Center', short: 'Quake Lake', chapter: 'island-park', cat: 'island-park',
-    kind: 'Visitor center', area: 'Montana, below Hebgen Lake', seasons: ['summer'], drive: 55, label: true, labelSide: 'left',
-    blurb: 'In 1959 a magnitude 7.5 earthquake brought down a mountainside, dammed the Madison River and made a new lake. The visitor center tells the story beside the slide.',
+    kind: 'Visitor center', area: 'Montana, below Hebgen Lake', seasons: ['summer'], drive: 55, label: 2, labelSide: 'left',
+    blurb: 'Just before midnight on August 17, 1959, a magnitude 7.3 earthquake brought down a mountainside, dammed the Madison River and made a new lake. The visitor center tells the story beside the slide.',
     tip: 'Open Memorial Day to September 15, 10 am to 5 pm.',
     time: '1 hr', fee: 'Free', kids: true,
-    url: 'https://www.fs.usda.gov/r01/custergallatin/recreation/earthquake-lake-visitor-center', lat: null, lng: null },
+    url: 'https://www.fs.usda.gov/r01/custergallatin/recreation/earthquake-lake-visitor-center', lat: 44.8308, lng: -111.4256 },
 
   { id: 'snowmobiling', name: 'Snowmobiling', chapter: 'island-park', cat: 'island-park', map: false,
     kind: 'Winter', seasons: ['winter'], drive: null,
@@ -167,6 +167,146 @@ const PLACES = [
     kids: true,
     url: 'https://islandparkidaho.com/attractions/coffee-pot-rapids' },
 
+  /* ── YELLOWSTONE ─────────────────────────────────────────
+     Coordinates and facts: ../Docs/research/yellowstone-map-points.json
+     and yellowstone-guide.md (nps.gov). Drive times: OSRM, rounded. */
+  { id: 'west-yellowstone', name: 'West Yellowstone and the West Entrance', short: 'West Yellowstone', chapter: null, cat: 'town',
+    seasons: ['summer', 'fall', 'winter', 'spring'], drive: 40, label: 1,
+    blurb: 'The gateway town at the West Entrance, the closest way into the park from the cabins: food, gas, the Grizzly and Wolf Discovery Center and the Museum of the Yellowstone.',
+    lat: 44.6622, lng: -111.1041 },
+  { id: 'macks-inn', name: 'Mack\'s Inn', short: 'Mack\'s Inn', chapter: null, cat: 'town',
+    seasons: ['summer', 'fall', 'winter', 'spring'], drive: 15, label: 2, labelSide: 'left',
+    blurb: 'The riverside stretch of US-20 on the Henry\'s Fork: float rentals, food, fuel, and since 2026 the Playmill Theatre.',
+    lat: 44.5006, lng: -111.3364 },
+  { id: 'entrance-north', name: 'North Entrance (Gardiner)', chapter: null, cat: 'town', seasons: ['summer', 'fall', 'winter', 'spring'], drive: 145,
+    blurb: 'The Gardiner, Montana gate by the Roosevelt Arch. The road from here through Mammoth to Cooke City stays open to cars all year.',
+    lat: 45.0258, lng: -110.7018 },
+  { id: 'entrance-northeast', name: 'Northeast Entrance (Cooke City)', chapter: null, cat: 'town', seasons: ['summer', 'fall', 'winter', 'spring'], drive: 200,
+    blurb: 'The remote gate past Lamar Valley, near Silver Gate and Cooke City, Montana.',
+    lat: 45.0045, lng: -110.0104 },
+  { id: 'entrance-east', name: 'East Entrance (toward Cody)', chapter: null, cat: 'town', seasons: ['summer', 'fall'], drive: 190,
+    blurb: 'The gate on the road from Cody, Wyoming, over Sylvan Pass to the lake.',
+    lat: 44.4886, lng: -110.0039 },
+  { id: 'entrance-south', name: 'South Entrance (toward Grand Teton)', chapter: null, cat: 'town', seasons: ['summer', 'fall'], drive: 165,
+    blurb: 'The gate on the road from Grand Teton and Jackson. Grand Teton charges its own entrance fee.',
+    lat: 44.1357, lng: -110.6668 },
+
+  { id: 'old-faithful', name: 'Old Faithful and the Upper Geyser Basin', short: 'Old Faithful', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Geysers', seasons: ['summer', 'fall', 'spring'], drive: 100, label: 1,
+    blurb: 'The park\'s most famous geyser shoots about 130 feet, roughly every 100 minutes. Around it, boardwalks wind past at least 150 more geysers in about a square mile, out to Morning Glory Pool.',
+    tip: 'Check eruption predictions at the visitor center or in the NPS app. Go before 10 am or after 4 pm.',
+    time: 'Half day', kids: true, pick: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/exploreoldfaithful.htm', lat: 44.4605, lng: -110.8283 },
+
+  { id: 'grand-prismatic', name: 'Grand Prismatic Spring', short: 'Grand Prismatic', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Hot spring', area: 'Midway Geyser Basin', seasons: ['summer', 'fall', 'spring'], drive: 85, label: 2,
+    blurb: 'Yellowstone\'s largest hot spring, 200 to 330 feet across and ringed in orange. For the famous view from above, climb the short, steep trail to the Grand Prismatic Overlook (1.2 miles round trip).',
+    tip: 'Parking is tight from 10 am to 6 pm. Go early or late.',
+    time: '1 to 2 hr', kids: true, pick: true,
+    url: 'https://www.nps.gov/places/000/grand-prismatic-spring.htm', lat: 44.5252, lng: -110.8383 },
+
+  { id: 'fairy-falls', name: 'Fairy Falls', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Waterfall hike', seasons: ['summer', 'fall'], drive: 85,
+    blurb: 'A 200-foot waterfall at the end of a 5.4-mile round trip from the Fairy Falls trailhead, which also passes the Grand Prismatic Overlook.',
+    tip: 'The trailhead lot is small and fills early. Bear country: carry bear spray.',
+    time: '3 hr', url: 'https://www.nps.gov/thingstodo/yell-trail-fairy-falls.htm', lat: 44.5244, lng: -110.8711 },
+
+  { id: 'fountain-paint-pot', name: 'Fountain Paint Pot', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Boardwalk', seasons: ['summer', 'fall', 'spring'], drive: 80,
+    blurb: 'A short boardwalk with all four kinds of thermal feature in one stop: geysers, hot springs, steam vents and bubbling mudpots.',
+    time: '30 to 45 min', kids: true,
+    url: 'https://www.nps.gov/thingstodo/yell-fountain-paint-pot-trail.htm', lat: 44.5505, lng: -110.8061 },
+
+  { id: 'firehole-canyon', name: 'Firehole Canyon Drive', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Scenic drive', seasons: ['summer', 'fall', 'spring'], drive: 70,
+    blurb: 'A one-way side road through a canyon cut into lava flows 800 feet thick, past 40-foot Firehole Falls.',
+    tip: 'The swim area was closed in 2026. Check its status before you pack swimsuits.',
+    time: '20 to 40 min', kids: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/madisonplan.htm', lat: 44.6281, lng: -110.8608 },
+
+  { id: 'madison-river', name: 'Madison River', chapter: 'yellowstone', cat: 'wildlife',
+    kind: 'Wildlife and fishing', seasons: ['summer', 'fall', 'spring'], drive: 70,
+    blurb: 'The road in from West Yellowstone follows the Madison, a classic fly-fishing river. Watch for bison along the banks and, in fall, bugling bull elk.',
+    tip: 'Fishing in the park needs a Yellowstone permit, not a state license.',
+    url: 'https://www.nps.gov/yell/planyourvisit/madisonplan.htm', lat: 44.6422, lng: -110.8656 },
+
+  { id: 'norris', name: 'Norris Geyser Basin', short: 'Norris', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Geysers', seasons: ['summer', 'fall', 'spring'], drive: 90, label: 2,
+    blurb: 'The hottest and most changeable thermal area in the park, and home of Steamboat, the world\'s tallest active geyser.',
+    time: '1 to 2 hr', kids: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/norrisplan.htm', lat: 44.7285, lng: -110.7044 },
+
+  { id: 'canyon', name: 'Grand Canyon of the Yellowstone', short: 'Grand Canyon', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Canyon and waterfalls', seasons: ['summer', 'fall', 'spring'], drive: 115, label: 1,
+    blurb: 'A yellow-walled canyon with the 308-foot Lower Falls. See it from Artist Point on the South Rim, or take the switchbacks 600 feet down to the Brink of the Lower Falls.',
+    tip: 'Sunny days put rainbows in the spray. The climb back up from the brink is steep.',
+    time: 'Half day', kids: true, pick: true,
+    url: 'https://www.nps.gov/thingstodo/yell-grand-canyon-of-the-yellowstone.htm', lat: 44.7180, lng: -110.4964 },
+
+  { id: 'hayden-valley', name: 'Hayden Valley', chapter: 'yellowstone', cat: 'wildlife',
+    kind: 'Wildlife valley', seasons: ['summer', 'fall', 'spring'], drive: 120, label: 2,
+    blurb: 'Open valley along the Yellowstone River between Canyon and the lake: bison herds, elk and birds, and sometimes bears and wolves.',
+    tip: 'Best at dawn and dusk. This road is open to cars May 1 to October 31.',
+    kids: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/canyonplan.htm', lat: 44.6791, lng: -110.4821 },
+
+  { id: 'lamar-valley', name: 'Lamar Valley', chapter: 'yellowstone', cat: 'wildlife',
+    kind: 'Wildlife valley', seasons: ['summer', 'fall', 'spring'], drive: 165, label: 1,
+    blurb: 'The wide valley on the northeast road is known for huge bison and elk herds and some of the best wolf watching in the world.',
+    tip: 'A long day from Island Park: leave before dawn and bring binoculars or a spotting scope.',
+    kids: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/towerrplan.htm', lat: 44.9129, lng: -110.2809 },
+
+  { id: 'mammoth', name: 'Mammoth Hot Springs Terraces', short: 'Mammoth', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Hot springs', seasons: ['summer', 'fall', 'spring'], drive: 130, label: 1,
+    blurb: 'Stepped travertine terraces that change from year to year, on boardwalks and the one-way Upper Terrace Drive, beside historic Fort Yellowstone.',
+    tip: 'Elk often graze the lawns here, especially during the fall rut.',
+    time: '1 to 2 hr', kids: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/explore-mammoth.htm', lat: 44.9679, lng: -110.7088 },
+
+  { id: 'west-thumb', name: 'West Thumb Geyser Basin', short: 'West Thumb', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Lakeshore geysers', seasons: ['summer', 'fall'], drive: 125, label: 2,
+    blurb: 'Hot springs right on the shore of Yellowstone Lake, some of them underwater, on an easy 0.6-mile boardwalk loop.',
+    time: '45 min', kids: true,
+    url: 'https://www.nps.gov/thingstodo/yell-trail-west-thumb-geyser-basin.htm', lat: 44.4186, lng: -110.5730 },
+
+  { id: 'mount-washburn', name: 'Mount Washburn', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Summit hike', seasons: ['summer', 'fall'], drive: 125,
+    blurb: 'A fire lookout on the summit with some of the biggest views in the park, about 6 miles round trip from Dunraven Pass.',
+    tip: 'The Dunraven Pass road is open late May to mid-October.',
+    time: '4 to 5 hr',
+    url: 'https://www.nps.gov/places/000/mount-washburn.htm', lat: 44.7976, lng: -110.4339 },
+
+  { id: 'tower-fall', name: 'Tower Fall', chapter: 'yellowstone', cat: 'yellowstone',
+    kind: 'Waterfall', seasons: ['summer', 'fall'], drive: 150, label: 2, labelSide: 'left',
+    blurb: 'A 132-foot waterfall a short walk from the Tower general store.',
+    tip: 'The trail to the base is closed.',
+    time: '30 min', kids: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/towerrplan.htm', lat: 44.8937, lng: -110.3872 },
+
+  { id: 'yellowstone-winter', name: 'Yellowstone in winter', chapter: 'yellowstone', cat: 'yellowstone', map: false,
+    kind: 'Snowcoach and snowmobile tours', area: 'From West Yellowstone', seasons: ['winter'], drive: 40,
+    blurb: 'From mid-December to mid-March the West Entrance is open only to snowcoaches and guided snowmobiles. Tours leave from West Yellowstone for Old Faithful and the geyser basins in the snow.',
+    tip: 'Winter 2026-27 over-snow season: Dec 15 to Mar 15.',
+    pick: true,
+    url: 'https://www.nps.gov/yell/planyourvisit/parkroads.htm' },
+
+  { id: 'grand-teton', name: 'Grand Teton and Jackson', chapter: 'yellowstone', cat: 'yellowstone', map: false,
+    kind: 'Big day trip', area: 'Wyoming', seasons: ['summer', 'fall'], drive: 160,
+    blurb: 'The Tetons rise to 13,775 feet just south of Yellowstone. The quickest way from the cabins is through Idaho and over Teton Pass. The best day is a loop: through Yellowstone one way and over the pass the other, or stay a night.',
+    tip: 'Grand Teton charges its own $35 fee. Check wyoroad.info before crossing Teton Pass.',
+    url: 'https://www.nps.gov/grte/planyourvisit/fees.htm' },
+
+  { id: 'yellowstone-lake', name: 'Yellowstone Lake', short: 'Yellowstone Lake', chapter: null, cat: 'yellowstone', label: 1,
+    seasons: ['summer', 'fall'], drive: null,
+    blurb: 'North America\'s largest lake above 7,000 feet: 132 square miles, 141 miles of shoreline, and cold all year.',
+    lat: 44.4667, lng: -110.3667 },
+
+  { id: 'hebgen-lake', name: 'Hebgen Lake', short: 'Hebgen Lake', chapter: null, cat: 'island-park', label: 2,
+    seasons: ['summer', 'fall', 'winter'], drive: null,
+    blurb: 'A big reservoir on the Madison River north of West Yellowstone, with boating, fishing and Forest Service campgrounds.',
+    lat: 44.7822, lng: -111.2336 },
+
   /* ── SHOWS, MUSEUMS, RAINY DAYS ─────────────────────────── */
   { id: 'playmill', name: 'The Playmill Theatre', chapter: 'shows', cat: 'shows', map: false,
     kind: 'Family musicals', area: 'Island Park, Mack\'s Inn area', seasons: ['summer', 'fall', 'winter'], drive: null,
@@ -186,11 +326,11 @@ const PLACES = [
     blurb: 'A nonprofit, accredited wildlife center with grizzlies, wolves, otters and birds of prey that could not survive in the wild. The bears do not hibernate here, so it is just as good in winter.',
     tip: 'Open every day of the year. Your ticket is good for two days in a row.',
     time: '1.5 to 2 hr', fee: 'Adults $17.50, ages 5 to 12 $12.50', kids: true, pick: true,
-    url: 'https://www.grizzlydiscoveryctr.org/hours-rates', lat: null, lng: null },
+    url: 'https://www.grizzlydiscoveryctr.org/hours-rates', map: false },
 
   { id: 'museum-yellowstone', name: 'Museum of the Yellowstone', chapter: 'shows', cat: 'shows', map: false,
     kind: 'History museum', area: 'West Yellowstone', seasons: ['summer', 'fall'], drive: 40,
-    blurb: 'Park history in the 1908 Union Pacific depot: early travel, bears, the 1959 earthquake and the 1988 fires.',
+    blurb: 'Park history in the old Union Pacific depot: early travel, bears, the 1959 earthquake and the 1988 fires.',
     tip: 'Open mid-May to mid-October.',
     time: '1 to 2 hr', fee: 'Adults $10, under 18 free (2026)', kids: true,
     url: 'https://museumoftheyellowstone.org/tickets-hours' },
@@ -203,12 +343,67 @@ const PLACES = [
     url: 'https://westyellowstonerodeo.com/' },
 ];
 
-/* Yellowstone day plans: filled from the Yellowstone research */
-const DAYS = [];
-const SIGHTS_NOTE = '';
-const PARK_FACTS = [];
-const PARK_RULES = [];
-const WILDLIFE = [];
+/* Yellowstone day plans from the cabins (research: yellowstone-guide.md §2) */
+const DAYS = [
+  { title: 'Geyser day', driveNote: 'About 1 hr 35 min each way to Old Faithful', seasons: ['summer', 'fall', 'spring'],
+    summary: 'The classic first day. In through the West Entrance, then south along the Firehole River to Old Faithful, and home the same way.',
+    stops: ['Firehole Canyon Drive and Firehole Falls', 'Fountain Paint Pot', 'Grand Prismatic Spring, plus the overlook or Fairy Falls if your legs are fresh', 'Old Faithful and the Upper Geyser Basin boardwalks'],
+    note: 'Be at the entrance before 7 am, or come in after noon, and skip the big stops between 10 and 4. Biscuit Basin and Firehole Lake Drive are closed in 2026.' },
+  { title: 'Canyon and Hayden Valley', driveNote: 'About 1 hr 50 min each way to Canyon', seasons: ['summer', 'fall', 'spring'],
+    summary: 'Waterfalls and wildlife. For a very long day, keep going around the Lower Loop past the lake and home through Old Faithful.',
+    stops: ['Norris Geyser Basin (walk Porcelain Basin)', 'Grand Canyon of the Yellowstone: Artist Point, Lookout Point and the Brink of the Lower Falls', 'Hayden Valley late in the day for bison, and maybe bears'],
+    note: 'Canyon\'s overlooks change with the light. Try more than one.' },
+  { title: 'Lamar Valley wildlife day', driveNote: 'About 2 hr 45 min each way', seasons: ['summer', 'fall', 'spring'],
+    summary: 'The wolf watcher\'s day. Wolves are most active at dawn and dusk, which means leaving the cabins well before sunrise.',
+    stops: ['Norris, Canyon, then over Dunraven Pass to Tower-Roosevelt (after October 12, go through Mammoth instead)', 'Lamar Valley pullouts with binoculars or a spotting scope', 'Mammoth Hot Springs on the way home'],
+    note: 'Bridge work east of Tower Junction can add 30 minutes through November 2026.' },
+  { title: 'Mammoth day', driveNote: 'About 2 hr 10 min each way', seasons: ['summer', 'fall', 'spring'],
+    summary: 'The north side of the park: travertine terraces, history, and in September and October, bugling elk on the lawns.',
+    stops: ['Norris Geyser Basin', 'Roaring Mountain and Obsidian Cliff on the drive north', 'Mammoth terraces, Upper Terrace Drive and Fort Yellowstone'] },
+  { title: 'Easy half day', driveNote: 'About 1 hr 10 min to the first stop', seasons: ['summer', 'fall', 'spring'],
+    summary: 'For arrival day or tired kids: the closest park sights, back at the cabins by afternoon.',
+    stops: ['The Madison River, watching for elk and bison', 'Firehole Canyon Drive and Firehole Falls', 'Fountain Paint Pot'],
+    note: 'Or skip the park: Big Springs and the Mesa Falls loop are closer to home.' },
+];
+
+const SIGHTS_NOTE = 'Drive times assume no stops and no traffic. Summer days in the park run slower, so add at least a third.';
+
+const PARK_FACTS = [
+  { label: 'Entrance fee', value: '$35 per vehicle for 7 days. Yellowstone annual pass $70; America the Beautiful pass $80 for US residents.', url: 'https://www.nps.gov/yell/planyourvisit/fees.htm' },
+  { label: 'From outside the US', value: 'New in 2026: $100 per person aged 16 and over on top of the entrance fee, waived with an annual pass. The nonresident annual pass is $250.', url: 'https://www.nps.gov/yell/planyourvisit/fees.htm' },
+  { label: 'Reservations', value: 'None needed to get in. There is no timed entry or vehicle reservation in 2026; just buy a pass.', url: 'https://www.nps.gov/yell/planyourvisit/parkroads.htm' },
+  { label: 'West Entrance', value: 'Open to cars April 17 to October 31, 2026. From December 15 to March 15 it is open only to snowcoaches and guided snowmobiles.', url: 'https://www.nps.gov/yell/planyourvisit/parkroads.htm' },
+  { label: 'Road work', value: 'Delays in 2026 at the Firehole River Bridge south of Old Faithful (October), near Mammoth, and up to 30 minutes east of Tower Junction through November. Road status: go.nps.gov/yellroads or 307-344-2117.', url: 'https://www.nps.gov/yell/planyourvisit/parkroads.htm' },
+  { label: 'Closed in 2026', value: 'Biscuit Basin, Firehole Lake Drive (to cars) and the Firehole swim area, as of September 2026.', url: 'https://www.nps.gov/yell/planyourvisit/conditions.htm' },
+  { label: 'Gas and food', value: 'There is no gas at Madison or Norris, so fill up in West Yellowstone. Most park food service closes by late October; pack a lunch.', url: 'https://www.nps.gov/yell/planyourvisit/hours.htm' },
+  { label: 'Cell service', value: 'Very limited. Download the NPS app and its offline content before you leave the cabins.', url: 'https://www.nps.gov/yell/planyourvisit/goods.htm' },
+  { label: 'Fishing', value: 'A Yellowstone permit is required, and state licenses do not count: $40 for 3 days, $55 for 7 days.', url: 'https://www.nps.gov/yell/planyourvisit/fishing.htm' },
+];
+
+const PARK_RULES = [
+  'Stay at least 100 yards from bears and wolves, and 25 yards from every other animal, including bison and elk. If an animal moves because of you, you are too close.',
+  'Bison have injured more people in Yellowstone than any other animal, and they run three times faster than you.',
+  'Carry bear spray where you can reach it fast, hike in groups of three or more, and make noise. Never leave the can in a hot car.',
+  'Stay on boardwalks and marked trails in thermal areas and keep children close. The water can kill, and soaking in hot springs is illegal.',
+  'Never feed wildlife, including birds and squirrels.',
+  'Drones are banned in the park.',
+  'Pull fully off the road to watch animals. Never stop in a travel lane.',
+  'Pets stay in developed areas, never on boardwalks or trails.',
+];
+
+/* Wildlife (research: yellowstone-guide.md §4, nps.gov). Dawn and dusk are best for almost everything. */
+const WILDLIFE = [
+  { name: 'Bison', where: 'Hayden and Lamar valleys all year; along the Madison River and thermal areas in winter; some live around Old Faithful', when: 'All year. Rut late July to August', fact: 'About 5,300 in 2025. Bulls weigh up to 2,000 pounds and can run 35 mph.' },
+  { name: 'Elk', where: 'Summer: Madison Canyon and Lamar. Fall: Mammoth and the Madison River', when: 'Rut early September to mid-October, with bugling bulls', fact: '10,000 to 20,000 use the park in summer; fewer than 2,000 stay for winter.' },
+  { name: 'Grizzly bear', where: 'Hayden and Lamar valleys, the north slopes of Mount Washburn, and from Fishing Bridge to the East Entrance', when: 'Mostly dawn, dusk and night; very active in fall', fact: 'About 150 to 200 have home ranges in the park. In fall a bear can gain over 3 pounds a day.' },
+  { name: 'Black bear', where: 'Around Tower and Mammoth, and toward the Northeast Entrance', when: 'Dawn and dusk, sometimes midday', fact: 'Only about half are actually black; others are brown, blond or cinnamon.' },
+  { name: 'Gray wolf', where: 'The northern range, especially Lamar Valley; also Hayden Valley', when: 'Dawn and dusk', fact: '41 wolves were brought back in 1995 to 1997. At least 84 in 8 packs as of January 2026.' },
+  { name: 'Moose', where: 'The park\'s southwest corner and river bottoms. Near the cabins: Harriman State Park and the Big Springs float', when: 'Rut late September to early October', fact: 'Fewer than 200 in the park. Cows with calves are unpredictable, so give them room.' },
+  { name: 'Pronghorn', where: 'Lamar Valley and near Gardiner', when: 'Breeding mid-September to early October', fact: 'They can hold sprints of 45 to 50 mph.' },
+  { name: 'Bighorn sheep', where: 'Mount Washburn along Dunraven Pass in summer; the canyon near Gardiner all year', when: 'Rut begins in November', fact: 'A ram\'s horns can weigh 40 pounds.' },
+  { name: 'Bald eagle', where: 'Big rivers and lakes; about half of known nests are around Yellowstone Lake', when: 'Some stay all year', fact: 'Eggs are in the nest from February to mid-April.' },
+  { name: 'Trumpeter swan', where: 'Slow rivers and quiet lakes. The best spot near the cabins is Harriman State Park', when: 'Biggest numbers at Harriman in winter', fact: 'North America\'s largest wild waterfowl, with a wingspan up to about 8 feet.' },
+];
 
 /* Only places with dated 2025-2026 evidence they are operating
    (research §3). Nearest first. Hours conflict between listings,

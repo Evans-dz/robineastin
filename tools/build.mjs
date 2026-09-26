@@ -222,7 +222,8 @@ function mapPoints() {
   return G.PLACES.filter(p => p.lat != null && p.lng != null && p.map !== false);
 }
 
-function mapBlock({ headingLevel = 'h2', big = false } = {}) {
+function mapBlock({ parent = 'h2', big = false } = {}) {
+  const hc = parent === 'h1' ? 'h2' : 'h3';          /* card heading sits one below its section */
   const pts = mapPoints();
   const cats = Object.entries(G.CATEGORIES).filter(([k]) => pts.some(p => p.cat === k) && k !== 'cabins');
   const shapes = MAP.shapes || {};
@@ -234,7 +235,8 @@ function mapBlock({ headingLevel = 'h2', big = false } = {}) {
   const parkLabel = MAP.parkLabel ? `<text class="map__label--park" x="${px(MAP.parkLabel[1])}" y="${py(MAP.parkLabel[0])}" text-anchor="middle">YELLOWSTONE</text>` : '';
   const pins = pts.map(p => {
     const x = px(p.lng), y = py(p.lat);
-    const lab = p.label ? `<text class="map__label" x="${p.labelSide === 'left' ? -12 : 12}" y="4"${p.labelSide === 'left' ? ' text-anchor="end"' : ''}>${esc(p.short || p.name)}</text>` : '';
+    const side = p.labelSide === 'left' ? 'l' : 'r';
+    const lab = p.label ? `<text class="map__label map__label--${p.label} map__label--${side}" y="4"${side === 'l' ? ' text-anchor="end"' : ''}>${esc(p.short || p.name)}</text>` : '';
     return `<g class="pin pin--${p.cat}" data-id="${p.id}" data-cat="${p.cat}" data-xy="${x},${y}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${esc(p.name)}${p.drive != null ? `, ${drive(p.drive)} from the cabins` : ''}"><circle r="7"/>${lab}</g>`;
   }).join('\n');
   const json = JSON.stringify(pts.map(p => ({
@@ -259,10 +261,11 @@ function mapBlock({ headingLevel = 'h2', big = false } = {}) {
         `<button class="chip" type="button" data-cat="${k}" aria-pressed="true" style="--c:${c.color}"><i aria-hidden="true"></i>${esc(c.label)}</button>`).join('')}</div>
       <div class="map__card" id="map-card" aria-live="polite">
         <span class="kind">You are here</span>
-        <${headingLevel === 'h2' ? 'h3' : 'h3'}>${esc(cabins ? cabins.name : 'The cabins')}</${headingLevel === 'h2' ? 'h3' : 'h3'}>
+        <${hc}>${esc(cabins ? cabins.name : 'The cabins')}</${hc}>
         <p>Tap any pin for what it is and how far it is from the cabins.</p>
       </div>
       <p class="map__legend">Drive times are estimates from the cabins in summer conditions. Winter closes most Yellowstone roads to cars; see the guide.</p>
+      <p class="map__legend">Map data &copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors. Routes by OSRM.</p>
     </div>
     <script type="application/json" id="map-points">${json}</script>
   </div>`;
@@ -345,7 +348,7 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
     ${list(G.SEASONS, s => `<p class="season-note" data-season-note="${s.id}"${s.id === H.defaultSeason ? '' : ' hidden'}>${esc(s.note)}</p>`, '')}
     <ul class="cards cards--3">${list(picks, p => guideCard(p, { photo: true }))}</ul>
     <p class="empty-season" hidden>Nothing picked for this season yet.</p>
-    <p style="margin-top:2rem"><a class="btn btn--quiet" href="/guide/">The full guide: food, groceries, wildlife, shows ${icon.arrow}</a></p>
+    <p style="margin-top:2rem"><a class="btn btn--quiet btn--wrap" href="/guide/">The full guide: food, groceries, wildlife, shows ${icon.arrow}</a></p>
   </div>
 </section>
 
@@ -479,7 +482,7 @@ for (const c of C.cabins) {
     ${mapBlock()}
     ${G.PARK_FACTS && G.PARK_FACTS.length ? `<h3 style="margin:3rem 0 1rem">Before you go in</h3><dl class="policy">${list(G.PARK_FACTS, f => `<div><dt>${esc(f.label)}</dt><dd>${esc(f.value)}${f.url ? ` <a href="${esc(f.url)}" rel="noopener">Source</a>` : ''}</dd></div>`, '')}</dl>` : ''}
     ${G.DAYS && G.DAYS.length ? `<h3 style="margin:3rem 0 1rem">Day plans from the cabins</h3>
-    <ul class="days">${list(G.DAYS, d => `<li class="day reveal" data-seasons="${(d.seasons || ['summer', 'fall', 'spring']).join(' ')}"><h3>${esc(d.title)}</h3><p class="drive">${esc(d.driveNote)}</p><p style="margin-top:.5rem">${esc(d.summary)}</p><ol>${list(d.stops, s => `<li>${esc(s)}</li>`, '')}</ol></li>`)}</ul>` : ''}
+    <ul class="days">${list(G.DAYS, d => `<li class="day reveal" data-seasons="${(d.seasons || ['summer', 'fall', 'spring']).join(' ')}"><h3>${esc(d.title)}</h3><p class="drive">${esc(d.driveNote)}</p><p style="margin-top:.5rem">${esc(d.summary)}</p><ol>${list(d.stops, s => `<li>${esc(s)}</li>`, '')}</ol>${d.note ? `<p class="tip">${esc(d.note)}</p>` : ''}</li>`)}</ul>` : ''}
     <h3 style="margin:3rem 0 1rem">The big sights</h3>
     ${G.SIGHTS_NOTE ? `<p class="note" style="margin-bottom:1rem">${esc(G.SIGHTS_NOTE)}</p>` : ''}
     ${chapterCards('yellowstone')}
@@ -586,7 +589,7 @@ for (const c of C.cabins) {
 </div>
 <section style="padding-top:0">
   <div class="wrap">
-    ${mapBlock({ big: true })}
+    ${mapBlock({ parent: 'h1', big: true })}
     <h2 style="margin:3rem 0 1rem" class="reveal">Everything on the map</h2>
     ${grouped.map(([c, a]) => `<h3 style="margin:1.5rem 0 .5rem">${esc(c.label)}</h3><ul class="map__list">${list(a, p => `<li><button type="button" data-show-pin="${p.id}">${esc(p.name)}</button>${p.drive != null ? ` <span class="drive">${drive(p.drive)}</span>` : ''}</li>`, '')}</ul>`).join('')}
   </div>

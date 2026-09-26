@@ -110,7 +110,7 @@ section{ padding-block: clamp(3.5rem, 8vw, 7rem) }
 
 /* ---- the sample-data flag. Removed when SAMPLE goes false. --------------- */
 .sample-flag{
-  position: sticky; top: 0; z-index: 200;
+  position: relative; z-index: 200;
   background: var(--warn); color: var(--warn-fg);
   font-size: var(--step--1); text-align: center; padding: .4em 1em;
 }
@@ -431,17 +431,18 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 .map__water{ fill: #2C4E5C; stroke: none }
 .map__road{ fill: none; stroke: #6F7F76; stroke-width: 1.6; stroke-linejoin: round; vector-effect: non-scaling-stroke }
 .map__road--loop{ stroke: #B7C2BA }
-.map__label{ font: 600 11px/1 var(--font-body); fill: var(--dusk-fg-2); paint-order: stroke; stroke: var(--dusk); stroke-width: 3px }
-.map__label--park{ font: 600 13px/1 var(--font-display); letter-spacing: .12em; fill: #6F8A7D; stroke: none }
+.map__label{ font-family: var(--font-body); font-weight: 600; fill: var(--dusk-fg); paint-order: stroke; stroke: var(--dusk); stroke-linejoin: round }
+.map__label--park{ font-family: var(--font-display); font-weight: 600; letter-spacing: .12em; fill: #7E998C; stroke: none }
 .pin{ cursor: pointer }
 .pin circle{ fill: var(--roof); stroke: var(--dusk); stroke-width: 2; vector-effect: non-scaling-stroke }
 .pin--cabins circle{ fill: var(--marker-dusk) }
 .pin--town circle{ fill: var(--dusk-fg) }
 .pin--island-park circle{ fill: #C9D98C }
 .pin:hover circle, .pin:focus-visible circle, .pin[aria-pressed="true"] circle{ stroke: var(--dusk-fg); stroke-width: 3 }
-.pin:focus{ outline: none }
+.pin:focus-visible{ outline: 2px solid var(--roof); outline-offset: 3px }
 .pin[hidden]{ display: none }
-.map__controls{ display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; position: absolute; inset: auto auto 0 0 }
+.map__controls{ display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; position: absolute; inset: auto 0 0 auto }
+@media (max-width: 40rem){ .map__controls .btn{ min-block-size: 40px; padding: .45em .8em; font-size: var(--step--1) } }
 .map__panel{ display: grid; gap: 1rem; align-content: start }
 .map__filters{ display: flex; flex-wrap: wrap; gap: .4rem }
 .chip{
@@ -497,7 +498,8 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 .site-foot li a:hover{ text-decoration: underline }
 .site-foot address{ font-style: normal; color: var(--dusk-fg-2) }
 .site-foot .fine{ margin-block-start: 2.5rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--dusk-line); display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: var(--step--1); color: var(--dusk-fg-2) }
-.site-foot .fine a{ color: var(--dusk-fg-2) }
+.site-foot .fine a{ color: var(--dusk-fg-2); display: inline-flex; align-items: center; min-block-size: 44px; padding-inline: .25rem }
+.site-foot .fine{ align-items: center }
 
 /* ============================================================================
    Print: the guide doubles as the pamphlet draft
@@ -512,9 +514,34 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
   a{ text-decoration: none }
 }
 
-/* Pins and labels keep their screen size when the map zooms (--z set by main.js) */
-.pin circle{ r: calc(7px / var(--z, 1)) }
-.pin--cabins circle{ r: calc(10px / var(--z, 1)) }
-.map__label{ font-size: calc(11px / var(--z, 1)); stroke-width: calc(3px / var(--z, 1)) }
-.map__label--park{ font-size: calc(13px / var(--z, 1)) }
+/* Pins and labels keep a constant SCREEN size whatever the frame width (--k,
+   viewBox units per screen px) and zoom (--z). Both are set by main.js; with
+   no JS, --k and --z are 1 and the map still reads on desktop. */
+.map__svg{ --u: calc(var(--k, 1) / var(--z, 1)) }
+.pin circle{ r: calc(7px * var(--u)) }
+.pin--cabins circle{ r: calc(10px * var(--u)) }
+.map__label{ font-size: calc(12px * var(--u)); stroke-width: calc(3px * var(--u)) }
+.map__label--r{ translate: calc(11px * var(--u)) 0 }
+.map__label--l{ translate: calc(-11px * var(--u)) 0 }
+.pin--cabins .map__label{ font-weight: 700; fill: var(--marker-dusk) }
+.map__label--park{ font-size: calc(13px * var(--u)) }
+.map__svg.is-small:not(.is-zoomed) .map__label--2{ display: none }
 .guide-card .tip{ font-size: var(--step--1); color: var(--fg-2); padding-inline-start: .75rem; border-inline-start: 2px solid var(--marker) }
+.day .tip{ margin-top: .9rem; font-size: var(--step--1); color: var(--fg-2); padding-inline-start: .75rem; border-inline-start: 2px solid var(--marker) }
+
+/* ---- tap targets and anchors (audit) ------------------------------------ */
+.guide-card .meta a, .policy dd a, .simple a, .crumbs a, .map__legend a, .note a{
+  display: inline-flex; align-items: center; min-block-size: 44px;
+  padding-block: 10px; margin-block: -10px;          /* big target, same rhythm */
+}
+.simple a{ min-block-size: 32px; padding-block: 6px; margin-block: -6px }
+.brand{ min-block-size: 44px; align-content: center }
+.btn--wrap{ white-space: normal; text-align: start }
+.seasons{ max-inline-size: 100% }
+@media (max-width: 40rem){
+  .seasons{ display: grid; inline-size: 100% }
+  .seasons button{ padding-inline: .3em; font-size: var(--step--1) }
+}
+h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1rem) }
+.chapter h2[id]{ scroll-margin-top: calc(var(--head-h) + 7.5rem) }
+.chapter, .guide-card h3[id]{ scroll-margin-top: calc(var(--head-h) + 7.5rem) }

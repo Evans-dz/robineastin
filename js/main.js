@@ -106,9 +106,10 @@
       const p = byId.get(id);
       if (!p || !card) return;
       pins.forEach(g => g.setAttribute('aria-pressed', String(g.dataset.id === id)));
+      const h = (card.querySelector('h2, h3') || { tagName: 'H3' }).tagName.toLowerCase();
       card.innerHTML =
         `<span class="kind">${esc(p.kindLabel)}</span>` +
-        `<h3>${esc(p.name)}</h3>` +
+        `<${h}>${esc(p.name)}</${h}>` +
         (p.drive ? `<p class="drive">${esc(p.drive)} from the cabins</p>` : '') +
         (p.blurb ? `<p>${esc(p.blurb)}</p>` : '') +
         (p.season ? `<p class="note">Best: ${esc(p.season)}</p>` : '') +
@@ -137,6 +138,17 @@
       pins.forEach(g => { if (g.dataset.cat !== 'cabins') g.hidden = !active.has(g.dataset.cat); });
     }));
 
+    /* keep pins and labels a constant screen size (see main.css --u) */
+    const vbw = svg.viewBox.baseVal.width;
+    const fit = () => {
+      const w = svg.getBoundingClientRect().width || vbw;
+      svg.style.setProperty('--k', (vbw / w).toFixed(3));
+      svg.classList.toggle('is-small', w < 640);
+    };
+    fit();
+    if ('ResizeObserver' in window) new ResizeObserver(fit).observe(svg);
+    else window.addEventListener('resize', fit);
+
     /* the descent, button-driven: zoom the world onto the cabins */
     const zoomBtn = document.getElementById('zoom-cabins');
     const home = svg.querySelector('.pin--cabins');
@@ -153,6 +165,7 @@
         const ty = zoomed ? vb.height / 2 - cy * s : 0;
         world.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
         svg.style.setProperty('--z', s);
+        svg.classList.toggle('is-zoomed', zoomed);
         if (zoomed) show('cabins');
       });
     }
