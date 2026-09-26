@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- At launch: swap [your domain] for the real one, list every page, and add
+     "Sitemap: https://<domain>/sitemap.xml" to robots.txt. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://[your domain]/</loc></url>
+  <url><loc>https://[your domain]/privacy/</loc></url>
+  <url><loc>https://[your domain]/terms/</loc></url>
+</urlset>

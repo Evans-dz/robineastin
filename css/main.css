@@ -1,0 +1,79 @@
+/* ============================================================================
+   Wilderness Escape Rentals — the one stylesheet
+   Token schema borrowed in SHAPE from daisyUI (see design-inputs.md row 9):
+   a semantic base ramp, intents each paired with a -content foreground so
+   contrast is structural rather than remembered, plus non-colour axes.
+   The VALUES are this client's and nobody else's — that is the whole point.
+
+   Fill DESIGN.md before touching anything below.
+   ========================================================================== */
+/* motion.css is linked separately in index.html, NOT @import-ed: an @import
+   serializes the request chain (fetch main.css → parse → fetch motion.css),
+   which costs real LCP on a hand-built site. Two <link>s download in parallel.
+   Want a strict single file? Paste motion.css in here and drop the link. */
+
+:root{
+  /* ---- base ramp ------------------------------------------------------- */
+  --bg:            #fff;        /* page ground                              */
+  --bg-2:          #f5f5f4;     /* cards, wells                             */
+  --bg-3:          #e7e5e4;     /* pressed, hover ground                    */
+  --fg:            #1c1917;     /* body copy — 4.5:1 on --bg minimum        */
+  --fg-2:          #57534e;     /* secondary — still 4.5:1, never decorative*/
+  --line:          #d6d3d1;     /* hairlines, dividers                      */
+
+  /* ---- intents. Each one carries its own foreground. -------------------- */
+  --accent:        #000;        /* TODO — ONE job only. Name it in DESIGN.md */
+  --accent-fg:     #fff;
+  --ok:            #15803d;  --ok-fg:   #fff;
+  --warn:          #b45309;  --warn-fg: #fff;
+  --bad:           #b91c1c;  --bad-fg:  #fff;
+
+  /* ---- non-colour axes -------------------------------------------------- */
+  --radius-field:  4px;         /* inputs, buttons                          */
+  --radius-box:    8px;         /* cards, panels                            */
+  --border:        1px;
+  --gutter:        clamp(1rem, 4vw, 2.5rem);
+  --measure:       68ch;        /* body copy line length                    */
+  --container:     72rem;
+
+  /* ---- type. Self-hosted woff2 only — no CDN. --------------------------- */
+  --font-display:  system-ui, sans-serif;   /* TODO — the client's display face */
+  --font-body:     system-ui, sans-serif;   /* TODO */
+  --step--1:       clamp(.83rem, .8rem + .15vw, .9rem);
+  --step-0:        clamp(1rem, .96rem + .2vw, 1.1rem);
+  --step-1:        clamp(1.25rem, 1.15rem + .5vw, 1.5rem);
+  --step-2:        clamp(1.6rem, 1.4rem + 1vw, 2.2rem);
+  --step-3:        clamp(2.1rem, 1.7rem + 2vw, 3.4rem);
+
+  /* motion.css reads these four — they ARE the motion language. See §1. */
+  --reveal-rise:    1.5rem;
+  --reveal-dur:     .6s;
+  --reveal-ease:    cubic-bezier(.22, 1, .36, 1);
+  --reveal-stagger: 70ms;
+
+  color-scheme: light;
+}
+
+/* ---- reset, the useful parts only ---------------------------------------- */
+*,*::before,*::after{ box-sizing: border-box }
+html{ -webkit-text-size-adjust: 100% }
+body{
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: var(--step-0)/1.6 var(--font-body);
+  overflow-x: clip;                 /* clip, never hidden — see motion.css §4 */
+}
+img,svg,video{ max-inline-size: 100%; height: auto; display: block }
+h1,h2,h3{ font-family: var(--font-display); line-height: 1.1; text-wrap: balance }
+h1{ font-size: var(--step-3) } h2{ font-size: var(--step-2) } h3{ font-size: var(--step-1) }
+p{ max-inline-size: var(--measure); text-wrap: pretty }
+a{ color: inherit }
+
+.wrap{ max-inline-size: var(--container); margin-inline: auto; padding-inline: var(--gutter) }
+section{ padding-block: clamp(3rem, 8vw, 7rem) }
+
+/* ---- the sample-data flag. Removed when CONFIG.SAMPLE goes false. -------- */
+.sample-flag{
+  position: sticky; top: 0; z-index: 200;
+  background: var(--warn); color: var(--warn-fg);
+  font-size: var(--step--1); text-align: center; padding: .4em 1em;
+}

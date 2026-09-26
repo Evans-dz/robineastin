@@ -1,0 +1,324 @@
+/* ============================================================================
+   motion.css — the EZHD scroll & motion primitives
+   ----------------------------------------------------------------------------
+   Copy into a client build as css/motion.css, or paste the blocks you use into
+   the one stylesheet. Zero dependencies. Zero bytes of JavaScript except the
+   14-line IntersectionObserver at the bottom, which is a platform API.
+
+   This file is DELIBERATELY not a look. Every effect reads its distance,
+   duration and easing from custom properties. The per-client motion language
+   is those four tokens plus which effects you choose to use — never a new
+   effect invented per client, and never all of these at once.
+
+   THREE RULES THAT BREAK EVERYTHING IF YOU GET THEM WRONG
+   1. `animation-timeline` must come AFTER the `animation` shorthand. The
+      shorthand resets animation-timeline to `auto`.
+   2. Omit the duration on a scroll timeline. A seconds value is meaningless;
+      leaving it off keeps duration at `auto`, which maps the keyframes across
+      the whole scroll range.
+   3. The global prefers-reduced-motion guard does NOT stop a scroll-driven
+      animation — duration is already `auto`, so shortening it changes nothing.
+      Every scroll-driven block below is ALSO wrapped in
+      @media (prefers-reduced-motion: no-preference). Do not remove that.
+
+   SUPPORT, verified 2026-09-03 against MDN browser-compat-data
+   - animation-timeline / scroll() / view() : Chrome+Edge 115, Safari 26, iOS 26
+   - animation-range / timeline-scope       : the same, EXCEPT Firefox
+   - position: sticky                       : Baseline widely available, 2015
+   - IntersectionObserver                   : ~95.8% global
+   - prefers-reduced-motion                 : Baseline since Jan 2020
+
+   THE FIREFOX TRAP — the reason there are two different @supports tests here.
+   Firefox is shipping `animation-timeline` and `scroll()` WITHOUT
+   `animation-range` (bug 1676779). So `@supports (animation-timeline: view())`
+   will PASS in Firefox while the range is silently ignored, and the animation
+   runs over the default `cover 0% cover 100%` instead of the range you asked
+   for — copy fading in and out at visibly wrong scroll positions.
+   Therefore: any effect that depends on animation-range is guarded on
+   `@supports (animation-range: cover)`. Only the progress bar, which needs no
+   range, is guarded on animation-timeline — and it works in Firefox.
+   ========================================================================== */
+
+
+/* ---------------------------------------------------------------------------
+   0. Tokens — this is the per-client motion language. Override these.
+   ------------------------------------------------------------------------ */
+:root{
+  --reveal-rise: 1.5rem;                             /* travel distance */
+  --reveal-dur:  .6s;                                /* one-shot duration */
+  --reveal-ease: cubic-bezier(.22, 1, .36, 1);       /* the client's curve */
+  --reveal-stagger: 70ms;                            /* per-sibling delay */
+  --parallax-depth: 12%;                             /* background drift */
+}
+/* A garage-door client:  --reveal-rise:0; --reveal-ease:cubic-bezier(.16,1,.3,1);
+   A bakery client:       --reveal-rise:.75rem; --reveal-ease:cubic-bezier(.34,1.56,.64,1);
+   A screen-print client: --reveal-ease:steps(3,end);  (stamps, does not glide)  */
+
+
+/* ---------------------------------------------------------------------------
+   1. Global reduced-motion guard. Put this near the top of the one CSS file.
+      Note the caveat above: it handles time-based animation only.
+   ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ---------------------------------------------------------------------------
+   2. Scroll progress bar — pure CSS, no range needed, works in Firefox too.
+      Not gated on reduced-motion on purpose: a progress bar is a 1:1 readout
+      of the user's own gesture, not autonomous motion. Hiding it removes
+      information rather than removing motion.
+   ------------------------------------------------------------------------ */
+.progress{
+  position: fixed; inset: 0 0 auto; block-size: 3px; z-index: 100;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: 0 50%;   /* correct with no support */
+}
+@supports (animation-timeline: scroll()){
+  .progress{
+    animation: ezhd-progress linear both;          /* no duration token */
+    animation-timeline: scroll(root block);        /* AFTER the shorthand */
+  }
+}
+@keyframes ezhd-progress{ to{ transform: scaleX(1) } }
+
+
+/* ---------------------------------------------------------------------------
+   3. Scrubbed reveal — imagery and decorative panels ONLY.
+      Do not use for body copy: scrub runs in reverse, so text fades back out
+      as the reader scrolls up. That is a usability defect, not a style choice.
+      For text use the one-shot in section 7.
+      Base state is the FINISHED state, so no-support shows a complete page.
+   ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference){
+ @supports (animation-range: cover){
+  .reveal-scrub{
+    animation: ezhd-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 15% entry 85%;
+  }
+ }
+}
+@keyframes ezhd-reveal{
+  from{ opacity: 0; translate: 0 var(--reveal-rise) }
+  to  { opacity: 1; translate: 0 0 }
+}
+
+
+/* ---------------------------------------------------------------------------
+   4. Parallax. Two declarations and a keyframe — this is the effect most often
+      used to justify loading a 60KB library.
+      Bleed the layer with inset:-15%; do NOT scale it. transform functions
+      compose in a fixed order and a scaled layer silently multiplies your
+      percentage translate.
+   ------------------------------------------------------------------------ */
+.hero{ position: relative; overflow: clip; isolation: isolate }
+.hero__bg{
+  position: absolute; inset: -15% 0;    /* bleed so the translate shows no edge */
+  background: center / cover no-repeat;
+  z-index: -1;
+}
+@media (prefers-reduced-motion: no-preference){
+ @supports (animation-range: cover){
+  .hero__bg{
+    will-change: transform;             /* ONE long-lived layer — do not sprinkle */
+    animation: ezhd-parallax linear both;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+ }
+}
+@keyframes ezhd-parallax{
+  from{ transform: translateY(calc(var(--parallax-depth) * -1)) }
+  to  { transform: translateY(var(--parallax-depth)) }
+}
+/* Use `overflow: clip`, never `overflow: hidden`, on wrappers. `hidden` creates
+   a scroll container, which captures scroll(nearest) AND traps sticky
+   descendants. `clip` does neither. This is the usual cause of "my sticky
+   stopped working" — a defensive overflow-x:hidden three levels up. */
+
+
+/* ---------------------------------------------------------------------------
+   5. Pin. The pin itself is position:sticky and works EVERYWHERE — only the
+      scrub is conditional. Keep the height and the sticky OUTSIDE the
+      @supports block; that is the difference between a graceful fallback and
+      a 300vh empty void in Firefox.
+   ------------------------------------------------------------------------ */
+.pin{
+  min-block-size: 300vh;               /* scroll distance = how long it pins */
+  view-timeline: --pin block;
+}
+.pin__stage{
+  position: sticky; top: 0;            /* a non-auto inset is REQUIRED */
+  block-size: 100svh;                  /* svh not vh — mobile URL bar */
+  display: grid; place-items: center;
+}
+@media (prefers-reduced-motion: no-preference){
+ @supports (animation-range: contain){
+  .pin__art{
+    animation: ezhd-pin linear both;
+    animation-timeline: --pin;              /* named, from the ancestor */
+    animation-range: contain 0% contain 100%;
+  }
+ }
+}
+@keyframes ezhd-pin{
+  from{ transform: scale(.85); opacity: .35 }
+  to  { transform: scale(1);   opacity: 1 }
+}
+
+
+/* ---------------------------------------------------------------------------
+   6. Horizontal scroll. Build order is INVERTED here on purpose: the base is a
+      real swipeable snap strip that works everywhere and is better than the
+      fancy version on touch. If you put the whole thing inside @supports,
+      Firefox and reduced-motion users get a 400vh section containing a strip
+      they cannot reach.
+      Markup:
+        <section class="hs">
+          <div class="hs__viewport">
+            <div class="hs__track"> …cards… </div>
+          </div>
+        </section>
+   ------------------------------------------------------------------------ */
+.hs__track{
+  display: flex; gap: 2rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;      /* do not chain to the page */
+}
+.hs__track > *{ flex: 0 0 min(80vw, 42rem); scroll-snap-align: center }
+
+@media (prefers-reduced-motion: no-preference){
+ @supports (animation-range: contain){
+  .hs{ min-block-size: 400vh; view-timeline: --hs block }
+  .hs__viewport{
+    position: sticky; top: 0; block-size: 100svh;
+    overflow: clip; display: flex; align-items: center;
+  }
+  .hs__track{
+    overflow: visible;                 /* hand scrolling back to the timeline */
+    inline-size: max-content;
+    scroll-snap-type: none;
+    will-change: transform;
+    animation: ezhd-hscroll linear both;
+    animation-timeline: --hs;
+    animation-range: contain 0% contain 100%;
+  }
+ }
+}
+@keyframes ezhd-hscroll{ to{ transform: translateX(calc(-100% + 100vw)) } }
+/* Keep the section short (300–500vh) and never make it the only path to
+   important content — vertical-drives-horizontal hijacks the scroll gesture. */
+
+
+/* ---------------------------------------------------------------------------
+   7. One-shot reveal — the default for TEXT and anything that must not replay.
+      The unanimated state IS the finished state, so no-JS, JS-error, legacy
+      browser and reduced-motion all show the real page. Pair with the script
+      at the bottom of this file.
+   ------------------------------------------------------------------------ */
+.reveal{ opacity: 1; translate: 0 0 }            /* correct without JS */
+@media (prefers-reduced-motion: no-preference){
+  .reveal{
+    opacity: 0; translate: 0 var(--reveal-rise);
+    transition: opacity var(--reveal-dur) var(--reveal-ease),
+                translate var(--reveal-dur) var(--reveal-ease);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, translate;
+  }
+  .reveal.is-in{ opacity: 1; translate: 0 0; will-change: auto }
+}
+
+
+/* ---------------------------------------------------------------------------
+   8. Cross-document view transitions. Two lines, native, no router, no JS.
+      Gives a hand-written MULTI-PAGE static site real page transitions.
+      Same-origin navigations only. Degrades to a normal page load.
+   ------------------------------------------------------------------------ */
+@view-transition{ navigation: auto }
+@media (prefers-reduced-motion: reduce){
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*){ animation: none !important }
+}
+
+
+/* ---------------------------------------------------------------------------
+   9. Focus + tap targets. Not motion, but the two things a component library
+      is usually bought for, and verify/audit.mjs fails the build without them.
+   ------------------------------------------------------------------------ */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+:where(button, a[role="button"], input, select, textarea){
+  min-block-size: 44px;                /* audit fails under 24, warns under 44 */
+}
+
+
+/* ============================================================================
+   THE ONLY JAVASCRIPT. No dependency. Put it in the one site script.
+
+   TWO VARIANTS. Use the modern one on a new build; use the ES5 one on any build
+   whose DESIGN.md §7 pins the page script to ES5 (EZHD's own site does — `var`
+   and `function` only, no arrows, no const/let, no spread, no template
+   literals). Pasting the modern one into an ES5 build silently breaks the
+   convention that keeps those files consistent.
+   ----------------------------------------------------------------------------
+
+   --- MODERN ---------------------------------------------------------------
+(() => {
+  const els = document.querySelectorAll('.reveal');
+  if (!els.length || !('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver((entries, obs) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('is-in');
+      obs.unobserve(entry.target);            // one-shot: never replay
+    }
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+
+  els.forEach(el => {
+    const i = [...el.parentElement.children].indexOf(el);
+    el.style.setProperty('--reveal-delay',
+      `calc(${Math.min(i, 6)} * var(--reveal-stagger))`);   // stagger siblings
+    io.observe(el);
+  });
+})();
+
+   --- ES5 (var / function only; null-guarded; same behaviour) ---------------
+
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  if (!els.length || !('IntersectionObserver' in window)) return;
+
+  var io = new IntersectionObserver(function (entries, obs) {
+    for (var i = 0; i < entries.length; i++) {
+      if (!entries[i].isIntersecting) continue;
+      entries[i].target.classList.add('is-in');
+      obs.unobserve(entries[i].target);          // one-shot: never replay
+    }
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+
+  for (var j = 0; j < els.length; j++) {
+    var el = els[j];
+    var parent = el.parentElement;
+    var n = 0;
+    if (parent) {
+      var kids = parent.children;
+      for (var k = 0; k < kids.length; k++) { if (kids[k] === el) { n = k; break; } }
+    }
+    el.style.setProperty('--reveal-delay',
+      'calc(' + Math.min(n, 6) + ' * var(--reveal-stagger))');
+    io.observe(el);
+  }
+})();
+   ========================================================================= */

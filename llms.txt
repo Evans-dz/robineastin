@@ -1,0 +1,12 @@
+# Wilderness Escape Rentals
+
+> [your one-paragraph summary: what the business does, for whom, where. Plain words, no em dashes.]
+
+Contact: [your phone] · [your email]
+Service area: [your towns]
+
+## Pages
+
+- [Home](https://[your domain]/)
+- [Privacy policy](https://[your domain]/privacy/)
+- [Terms of use](https://[your domain]/terms/)
