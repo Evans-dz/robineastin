@@ -195,7 +195,7 @@ const PLACES = [
     kind: 'Geysers', seasons: ['summer', 'fall', 'spring'], drive: 100, label: 1,
     blurb: 'The park\'s most famous geyser shoots about 130 feet, roughly every 100 minutes. Around it, boardwalks wind past at least 150 more geysers in about a square mile, out to Morning Glory Pool.',
     tip: 'Check eruption predictions at the visitor center or in the NPS app. Go before 10 am or after 4 pm.',
-    time: 'Half day', kids: true, pick: true,
+    time: 'Half day', kids: true, pick: true, photo: 'morning-glory-pool',
     url: 'https://www.nps.gov/yell/planyourvisit/exploreoldfaithful.htm', lat: 44.4605, lng: -110.8283 },
 
   { id: 'grand-prismatic', name: 'Grand Prismatic Spring', short: 'Grand Prismatic', chapter: 'yellowstone', cat: 'yellowstone',
