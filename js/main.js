@@ -91,13 +91,18 @@
       if (empty) empty.hidden = !cards.length || [...cards].some(c => !c.hidden);
     });
     store.set('we-season', season);
+    if (switches.length) {                    /* URL reflects the filter, shareable */
+      const u = new URL(location.href);
+      season === 'all' ? u.searchParams.delete('season') : u.searchParams.set('season', season);
+      history.replaceState(null, '', u);
+    }
   };
   if (switches.length) {
     switches.forEach(sw => sw.addEventListener('click', e => {
       const b = e.target.closest('button[data-season]');
       if (b) applySeason(b.dataset.season);
     }));
-    const saved = store.get('we-season');
+    const saved = new URL(location.href).searchParams.get('season') || store.get('we-season');
     const first = switches[0].querySelector('button[aria-pressed="true"]');
     applySeason(saved && switches[0].querySelector(`[data-season="${saved}"]`) ? saved
       : first ? first.dataset.season : 'all');

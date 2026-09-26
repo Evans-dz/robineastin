@@ -129,6 +129,10 @@ grounds to `--dusk`). A photo is the only thing that ever sits "above" the page.
 ## 7. Do / Don't
 
 **Do**
+- Headings and buttons in sentence case, and first-person plural where the
+  host is speaking ("our cabins", "we love reading about your stay"). This is
+  Robyn's own site, not a platform listing; it overrides the guidelines'
+  Title Case and second-person-only rules on purpose.
 - Put a drive time on everything in the guide.
 - Use our own drone and ground photos; credit nothing we did not shoot.
 - Write like a host who lives there: short, specific, useful.

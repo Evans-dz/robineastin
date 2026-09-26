@@ -144,7 +144,7 @@ const PLACES = [
 
   { id: 'two-top', name: 'Two Top', chapter: 'island-park', cat: 'island-park', map: false,
     kind: 'Snowmobile ride', area: 'Idaho and Montana line', seasons: ['winter'], drive: null,
-    blurb: 'A high ride on the Idaho and Montana line known for "snow ghosts", trees frosted solid with rime, and big views over Henrys Lake. Best for experienced riders or with a guide.',
+    blurb: 'A high ride on the Idaho and Montana line known for “snow ghosts”, trees frosted solid with rime, and big views over Henrys Lake. Best for experienced riders or with a guide.',
     url: 'https://www.fremontcountyid.gov/193/Snowmobiling' },
 
   { id: 'atv', name: 'ATV and UTV trails', chapter: 'island-park', cat: 'island-park', map: false,

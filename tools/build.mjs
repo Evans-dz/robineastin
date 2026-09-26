@@ -29,15 +29,19 @@ const G = load('js/places.js', ['SEASONS', 'CATEGORIES', 'PLACES', 'DAYS', 'SIGH
 const { MAP } = load('js/map-data.js', ['MAP']);
 
 /* ---- helpers ------------------------------------------------------------ */
-const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const esc = s => String(s ?? '')
+  .replace(/(\w)'(\w)/g, '$1\u2019$2')                 /* Henry's -> Henry’s */
+  .replace(/(^|[\s(])"(\S)/g, '$1\u201C$2').replace(/(\S)"(?=[\s.,;:)!?]|$)/g, '$1\u201D')
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const SITE = `https://${C.business.domain}`;
 const abs = p => SITE + p;
 const telHref = p => 'tel:' + String(p).replace(/[^\d+]/g, '');
+const NB = '\u00A0';                                     /* non-breaking space */
 const drive = min => {
   if (min == null) return '';
-  if (min < 60) return `${min} min`;
+  if (min < 60) return `${min}${NB}min`;
   const h = Math.floor(min / 60), m = min % 60;
-  return `${h} hr${m ? ` ${m} min` : ''}`;
+  return `${h}${NB}hr${m ? `${NB}${m}${NB}min` : ''}`;
 };
 const list = (arr, fn, sep = '\n') => (arr || []).map(fn).join(sep);
 const B = C.business;
@@ -76,7 +80,7 @@ function header(current) {
 ${SAMPLE ? '<div class="sample-flag" role="note">Draft for review · sample content, not final</div>' : ''}
 <header class="site-head on-dusk">
   <div class="wrap">
-    <a class="brand" href="/"><b>${esc(B.short)}</b><span>Cabins in ${esc(B.city)}, ${esc(B.state)}</span></a>
+    <a class="brand" href="/" translate="no"><b>${esc(B.short)}</b><span>Cabins in ${esc(B.city)}, ${esc(B.state)}</span></a>
     <nav class="nav" aria-label="Main">${links}</nav>
     ${phone ? `<a class="btn btn--quiet head-call" href="${telHref(phone)}">${icon.phone}<span class="short">Call</span><span class="long">${esc(phone)}</span></a>` : ''}
     <a class="btn btn--book head-book" href="/#book">Check dates</a>
@@ -149,6 +153,7 @@ ${robots}
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/besley-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/public-sans-var.woff2" as="font" type="font/woff2" crossorigin>
+${body.includes('uc.orez.io') ? '<link rel="preconnect" href="https://uc.orez.io">' : ''}
 ${list(preload, p => p, '\n')}
 <link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/motion.css">
@@ -251,9 +256,10 @@ function mapBlock({ parent = 'h2', big = false } = {}) {
     const lab = p.label ? `<text class="map__label map__label--${p.label} map__label--${side}" y="4"${side === 'l' ? ' text-anchor="end"' : ''}>${esc(p.short || p.name)}</text>` : '';
     return `<g class="pin pin--${p.cat}" data-id="${p.id}" data-cat="${p.cat}" data-xy="${x},${y}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${esc(p.name)}${p.drive != null ? `, ${drive(p.drive)} from the cabins` : ''}"><circle r="7"/>${lab}</g>`;
   }).join('\n');
+  const typo = t => String(t ?? '').replace(/(\w)'(\w)/g, '$1\u2019$2');
   const json = JSON.stringify(pts.map(p => ({
-    id: p.id, name: p.name, kindLabel: (G.CATEGORIES[p.cat] || {}).label || p.cat,
-    drive: p.drive != null ? drive(p.drive) : '', blurb: p.blurb,
+    id: p.id, name: typo(p.name), kindLabel: (G.CATEGORIES[p.cat] || {}).label || p.cat,
+    drive: p.drive != null ? drive(p.drive) : '', blurb: typo(p.blurb),
     season: p.seasons ? p.seasons.map(seasonLabel).join(', ') : '',
     href: p.chapter ? `/guide/#g-${p.id}` : '',
   }))).replace(/</g, '\\u003c');
@@ -302,7 +308,7 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   const picks = [...pickSeasons.keys()].map(id => ({ ...placeById(id), seasons: pickSeasons.get(id), bestSeasons: placeById(id).seasons }));
   const cabinsHtml = list(C.cabins, c => `<li class="cabin-card reveal">
         <figure>${pic(c.photos[0], { sizes: '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw' })}</figure>
-        <h3><a href="/cabins/${c.slug}/">${esc(c.name)}</a></h3>
+        <h3 translate="no"><a href="/cabins/${c.slug}/">${esc(c.name)}</a></h3>
         <ul class="facts">${[c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean).map(f => `<li>${f}</li>`).join('')}</ul>
         <p class="blurb">${esc(c.summary)}</p>
         <div class="row"><a class="btn btn--quiet" href="/cabins/${c.slug}/">See the cabin</a><a class="btn btn--book" href="/cabins/${c.slug}/#book">Check dates</a></div>
@@ -443,7 +449,7 @@ for (const c of C.cabins) {
 <div class="wrap page-head">
   ${crumbsNav(trail)}
   <span class="sign">${esc(c.address)}, ${esc(B.city)}</span>
-  <h1 style="margin-top:.9rem">${esc(c.name)}</h1>
+  <h1 style="margin-top:.9rem" translate="no">${esc(c.name)}</h1>
   <ul class="facts" style="margin-top:1rem">${facts.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
 </div>
 <div class="wrap">

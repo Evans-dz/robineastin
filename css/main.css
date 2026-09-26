@@ -72,7 +72,8 @@
 
 /* ---- reset, the useful parts only ---------------------------------------- */
 *,*::before,*::after{ box-sizing: border-box }
-html{ -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--head-h) + 1rem) }
+html{ -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--head-h) + 1rem); -webkit-tap-highlight-color: rgba(11,107,103,.18) }
+a, button, [role="button"], summary{ touch-action: manipulation }
 body{
   margin: 0; background: var(--bg); color: var(--fg);
   font: 400 var(--step-0)/1.6 var(--font-body);
@@ -450,6 +451,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
   border: 1px solid var(--line-ui); border-radius: var(--radius-field); background: var(--bg);
   font: 600 var(--step--1)/1 var(--font-body); color: var(--fg); cursor: pointer;
 }
+.chip:hover{ border-color: var(--fg) }
 .chip[aria-pressed="true"]{ background: var(--fg); color: var(--bg); border-color: var(--fg) }
 .chip i{ inline-size: .7em; block-size: .7em; border-radius: 50%; background: var(--c, var(--roof)); outline: 1px solid rgba(0,0,0,.25) }
 .map__card{ padding: 1.1rem 1.2rem; background: var(--bg-2); border-radius: var(--radius-box); min-block-size: 9rem }
@@ -533,6 +535,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 .guide-card .meta a, .policy dd a, .simple a, .crumbs a, .map__legend a, .note a{
   display: inline-flex; align-items: center; min-block-size: 44px;
   padding-block: 10px; margin-block: -10px;          /* big target, same rhythm */
+  position: relative; z-index: 1;                    /* paint above the next row so the whole target hits */
 }
 .simple a{ min-block-size: 32px; padding-block: 6px; margin-block: -6px }
 .brand{ min-block-size: 44px; align-content: center }
@@ -569,3 +572,7 @@ h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1re
 .or-widget--preview{ min-block-size: 0; display: grid; place-items: center; padding: 1.25rem; border: 1px dashed var(--line-ui); border-radius: var(--radius-box); background: var(--bg); text-align: center }
 .or-widget--preview p{ color: var(--fg-2); font-size: var(--step--1); max-inline-size: 36ch }
 .site-foot .stack p > a:not(.btn){ display: inline-flex; align-items: center; min-block-size: 44px }
+@media (max-width: 40rem){
+  .guide-bar{ position: static }                 /* phones: header stays, the filter bar scrolls away */
+  .chapter h2[id], .guide-card h3[id]{ scroll-margin-top: calc(var(--head-h) + 1rem) }
+}
