@@ -62,7 +62,7 @@ function pic(key, { sizes = '100vw', eager = false, cls = '', alt } = {}) {
   if (!p) throw new Error(`photo "${key}" is not registered in CONFIG.photos`);
   const h = Math.round(1200 * p.h / p.w);
   const base = `/assets/photos/${key}`;
-  return `<img src="${base}-1200.jpg" srcset="${base}-640.webp 640w, ${base}-1200.webp 1200w, ${base}-2400.webp 2400w" sizes="${sizes}" width="1200" height="${h}" alt="${esc(alt ?? p.alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}${cls ? ` class="${cls}"` : ''}>`;
+  return `<img src="${base}-1200.jpg" srcset="${base}-640.webp 640w, ${base}-1200.webp 1200w, ${base}-2400.webp 2400w" sizes="${sizes}" width="1200" height="${h}" alt="${esc(alt ?? p.alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}${cls ? ` class="${cls}"` : ''}${p.focus ? ` style="object-position:${p.focus}"` : ''}>`;
 }
 
 /* ---- shell ---------------------------------------------------------------- */
@@ -502,7 +502,7 @@ for (const c of C.cabins) {
   const byChapter = ch => G.PLACES.filter(p => p.chapter === ch);
   const chapterCards = ch => {
     const items = byChapter(ch);
-    return items.length ? `<ul class="cards cards--3">${list(items, p => guideCard(p))}</ul><p class="empty-season" hidden>Nothing in this chapter for that season. Try another.</p>` : '';
+    return items.length ? `<ul class="cards cards--3">${list(items, p => guideCard(p, { photo: true }))}</ul><p class="empty-season" hidden>Nothing in this chapter for that season. Try another.</p>` : '';
   };
   const table = (rows, cols) => rows && rows.length ? `<div class="table-wrap"><table class="simple"><thead><tr>${cols.map(([, h]) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${list(rows, r => `<tr>${cols.map(([k]) => {
     if (k === 'drive') return `<td class="num drive">${r.drive != null ? drive(r.drive) : ''}</td>`;

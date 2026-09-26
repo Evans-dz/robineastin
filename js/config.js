@@ -261,5 +261,6 @@ const CONFIG = {
     'mountains-clouds':       { w: 4, h: 3, alt: 'Evening clouds over the mountains beyond the reservoir' },
     'reservoir-sunset':       { w: 4, h: 3, alt: 'Sunset colors over the water and the far tree line' },
     'dock-dusk':              { w: 4, h: 3, alt: 'A dock on Island Park Reservoir at dusk, with dark pines on the shore' },
+    'upper-mesa-falls':       { w: 3, h: 4, focus: '30% 62%', alt: 'Upper Mesa Falls pouring into the Henry\'s Fork, seen from the boardwalk railing, with pine forest on the far rim' },
   },
 };

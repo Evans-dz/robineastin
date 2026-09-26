@@ -78,7 +78,7 @@ const PLACES = [
     kind: 'Waterfalls', area: 'Mesa Falls Scenic Byway', seasons: ['summer', 'fall'], drive: 50, label: 2,
     blurb: 'The Henry\'s Fork drops about 110 feet at Upper Mesa Falls, one of the few big Western waterfalls never dammed. Boardwalks run to the brink, and Lower Mesa Falls is a mile downstream from the Grandview overlook.',
     tip: 'Make it a loop: US-20 south, the Mesa Falls Scenic Byway, Ashton, then back north. Closed to cars in winter.',
-    time: '45 to 90 min', fee: '$5 per vehicle at Upper Falls', kids: true, pick: true,
+    time: '45 to 90 min', fee: '$5 per vehicle at Upper Falls', kids: true, pick: true, photo: 'upper-mesa-falls',
     url: 'https://www.fs.usda.gov/r04/caribou-targhee/recreation/mesa-falls-scenic-highway', lat: 44.188, lng: -111.33 },
 
   { id: 'box-canyon', name: 'Henry\'s Fork: Box Canyon', chapter: 'island-park', cat: 'island-park', map: false,
