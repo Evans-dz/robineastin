@@ -202,7 +202,7 @@ const PLACES = [
     kind: 'Hot spring', area: 'Midway Geyser Basin', seasons: ['summer', 'fall', 'spring'], drive: 85, label: 2,
     blurb: 'Yellowstone\'s largest hot spring, 200 to 330 feet across and ringed in orange. For the famous view from above, climb the short, steep trail to the Grand Prismatic Overlook (1.2 miles round trip).',
     tip: 'Parking is tight from 10 am to 6 pm. Go early or late.',
-    time: '1 to 2 hr', kids: true, pick: true,
+    time: '1 to 2 hr', kids: true, pick: true, photo: 'grand-prismatic',
     url: 'https://www.nps.gov/places/000/grand-prismatic-spring.htm', lat: 44.5252, lng: -110.8383 },
 
   { id: 'fairy-falls', name: 'Fairy Falls', chapter: 'yellowstone', cat: 'yellowstone',
