@@ -43,12 +43,16 @@
 /* ---------------------------------------------------------------------------
    0. Tokens — this is the per-client motion language. Override these.
    ------------------------------------------------------------------------ */
+/* Wilderness Escape Rentals · CANOPY DESCENT (DESIGN.md §1).
+   Negative rise: everything arrives from ABOVE and settles down, the way the
+   drone comes in over the roofs. Gimbal-settle curve: eases off, travels,
+   long soft touchdown, zero overshoot. Nothing on this site rises. */
 :root{
-  --reveal-rise: 1.5rem;                             /* travel distance */
-  --reveal-dur:  .6s;                                /* one-shot duration */
-  --reveal-ease: cubic-bezier(.22, 1, .36, 1);       /* the client's curve */
-  --reveal-stagger: 70ms;                            /* per-sibling delay */
-  --parallax-depth: 12%;                             /* background drift */
+  --reveal-rise: -0.9rem;                            /* from above, never below */
+  --reveal-dur:  .95s;                               /* heavier than a UI fade */
+  --reveal-ease: cubic-bezier(.45, 0, .1, 1);        /* gimbal settle */
+  --reveal-stagger: 110ms;                           /* per-sibling delay */
+  --descent-scale: 1.22;                             /* hero: how far the drone sinks */
 }
 /* A garage-door client:  --reveal-rise:0; --reveal-ease:cubic-bezier(.16,1,.3,1);
    A bakery client:       --reveal-rise:.75rem; --reveal-ease:cubic-bezier(.34,1.56,.64,1);
@@ -112,31 +116,33 @@
 
 
 /* ---------------------------------------------------------------------------
-   4. Parallax. Two declarations and a keyframe — this is the effect most often
-      used to justify loading a 60KB library.
-      Bleed the layer with inset:-15%; do NOT scale it. transform functions
-      compose in a fixed order and a scaled layer silently multiplies your
-      percentage translate.
+   4. The descent (this client's variation of the parallax layer, DESIGN.md §1).
+      The hero photo is the top-down canopy shot. Scrolling the first screen
+      scales it about the aqua roofs: the drone sinking toward the cabins.
+      Scale ONLY, no translate, so nothing multiplies; the layer needs no
+      bleed because scaling up never exposes an edge. Image only, never copy.
+      Base state is scale(1): no support, reduced motion and no JS all get the
+      finished, full-frame photo.
    ------------------------------------------------------------------------ */
 .hero{ position: relative; overflow: clip; isolation: isolate }
 .hero__bg{
-  position: absolute; inset: -15% 0;    /* bleed so the translate shows no edge */
-  background: center / cover no-repeat;
+  position: absolute; inset: 0;
   z-index: -1;
+  transform-origin: var(--descent-origin, 38% 46%);   /* the aqua roofs */
 }
 @media (prefers-reduced-motion: no-preference){
  @supports (animation-range: cover){
   .hero__bg{
-    will-change: transform;             /* ONE long-lived layer — do not sprinkle */
-    animation: ezhd-parallax linear both;
-    animation-timeline: view();
-    animation-range: cover 0% cover 100%;
+    will-change: transform;             /* ONE long-lived layer, do not sprinkle */
+    animation: we-descent linear both;
+    animation-timeline: view();         /* AFTER the shorthand */
+    animation-range: exit 0% exit 100%; /* as the first screen scrolls away */
   }
  }
 }
-@keyframes ezhd-parallax{
-  from{ transform: translateY(calc(var(--parallax-depth) * -1)) }
-  to  { transform: translateY(var(--parallax-depth)) }
+@keyframes we-descent{
+  from{ transform: scale(1) }
+  to  { transform: scale(var(--descent-scale)) }
 }
 /* Use `overflow: clip`, never `overflow: hidden`, on wrappers. `hidden` creates
    a scroll container, which captures scroll(nearest) AND traps sticky
@@ -234,6 +240,22 @@
     will-change: opacity, translate;
   }
   .reveal.is-in{ opacity: 1; translate: 0 0; will-change: auto }
+}
+
+
+/* ---------------------------------------------------------------------------
+   7b. Map pins land (DESIGN.md §1, place 3). Same tokens as the text reveal,
+       staggered per pin by main.js (--i). Hidden state requires .js on <html>
+       AND no-preference, so no-JS and reduced motion show every pin.
+   ------------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference){
+  .js .map__svg .pin{
+    opacity: 0; translate: 0 var(--reveal-rise);
+    transition: opacity var(--reveal-dur) var(--reveal-ease),
+                translate var(--reveal-dur) var(--reveal-ease);
+    transition-delay: calc(var(--i, 0) * 45ms);
+  }
+  .js .map__svg.is-landed .pin{ opacity: 1; translate: 0 0 }
 }
 
 

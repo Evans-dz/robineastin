@@ -1,79 +1,520 @@
 /* ============================================================================
-   Wilderness Escape Rentals — the one stylesheet
-   Token schema borrowed in SHAPE from daisyUI (see design-inputs.md row 9):
-   a semantic base ramp, intents each paired with a -content foreground so
-   contrast is structural rather than remembered, plus non-colour axes.
-   The VALUES are this client's and nobody else's — that is the whole point.
-
-   Fill DESIGN.md before touching anything below.
+   Wilderness Escape Rentals · the one stylesheet
+   Contract: DESIGN.md. Palette from the drone photos (bark, canopy, the aqua
+   roofs, last light). Type: Besley (the routed Clarendon of the Forest
+   Service signs) over Public Sans (public-lands plain). No shadows.
+   motion.css is linked separately (two <link>s download in parallel) and
+   owns the four motion tokens; do not redefine them here.
    ========================================================================== */
-/* motion.css is linked separately in index.html, NOT @import-ed: an @import
-   serializes the request chain (fetch main.css → parse → fetch motion.css),
-   which costs real LCP on a hand-built site. Two <link>s download in parallel.
-   Want a strict single file? Paste motion.css in here and drop the link. */
+
+@font-face{
+  font-family: "Besley"; font-style: normal; font-weight: 400 900; font-display: swap;
+  src: url("/assets/fonts/besley-var.woff2") format("woff2");
+}
+@font-face{
+  font-family: "Besley"; font-style: italic; font-weight: 400 900; font-display: swap;
+  src: url("/assets/fonts/besley-italic-var.woff2") format("woff2");
+}
+@font-face{
+  font-family: "Public Sans"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url("/assets/fonts/public-sans-var.woff2") format("woff2");
+}
 
 :root{
-  /* ---- base ramp ------------------------------------------------------- */
-  --bg:            #fff;        /* page ground                              */
-  --bg-2:          #f5f5f4;     /* cards, wells                             */
-  --bg-3:          #e7e5e4;     /* pressed, hover ground                    */
-  --fg:            #1c1917;     /* body copy — 4.5:1 on --bg minimum        */
-  --fg-2:          #57534e;     /* secondary — still 4.5:1, never decorative*/
-  --line:          #d6d3d1;     /* hairlines, dividers                      */
+  /* ---- base ramp (DESIGN.md §2) ------------------------------------------ */
+  --bg:          #F2EFE6;   /* bleached lodgepole bark: page ground            */
+  --bg-2:        #E7E2D4;   /* raised: cards, wells, filters                   */
+  --bg-3:        #DAD3C1;   /* pressed / hover ground                          */
+  --fg:          #17231D;   /* canopy ink: 14.1:1 on --bg                      */
+  --fg-2:        #4A564F;   /* muted: 6.7:1 on --bg, 5.9:1 on --bg-2           */
+  --line:        #C9C1AD;   /* decorative hairlines only                       */
+  --line-ui:     #8C8470;   /* control edges: 3.2:1 on --bg                    */
 
-  /* ---- intents. Each one carries its own foreground. -------------------- */
-  --accent:        #000;        /* TODO — ONE job only. Name it in DESIGN.md */
-  --accent-fg:     #fff;
-  --ok:            #15803d;  --ok-fg:   #fff;
-  --warn:          #b45309;  --warn-fg: #fff;
-  --bad:           #b91c1c;  --bad-fg:  #fff;
+  /* ---- intents: ONE job each ------------------------------------------- */
+  --accent:      #0B6B67;   /* deep roof aqua. Job: the booking path           */
+  --accent-fg:   #FFFFFF;   /* 6.3:1                                           */
+  --accent-2:    #095955;   /* accent pressed                                  */
+  --marker:      #9A5412;   /* last light. Job: the cabins as a place, and
+                                every "from the cabins" drive time. 5.0:1    */
+
+  /* ---- dusk grounds (hero, footer, map) --------------------------------- */
+  --dusk:        #0E1A15;
+  --dusk-2:      #16261F;
+  --dusk-line:   #2E4038;
+  --dusk-fg:     #EDEAE0;   /* 14.8:1 on --dusk                                */
+  --dusk-fg-2:   #A9B3AA;   /* 8.3:1                                           */
+  --roof:        #7FD3D1;   /* the accent's job on dark grounds                */
+  --marker-dusk: #E08A2E;   /* the marker's job on dark grounds: 6.7:1         */
+
+  --warn:        #8A4B00;  --warn-fg: #FFFFFF;
 
   /* ---- non-colour axes -------------------------------------------------- */
-  --radius-field:  4px;         /* inputs, buttons                          */
-  --radius-box:    8px;         /* cards, panels                            */
-  --border:        1px;
-  --gutter:        clamp(1rem, 4vw, 2.5rem);
-  --measure:       68ch;        /* body copy line length                    */
-  --container:     72rem;
+  --radius-field: 3px;      /* never pills                                     */
+  --radius-box:   4px;
+  --gutter:       clamp(1rem, 4vw, 2.5rem);
+  --measure:      66ch;
+  --container:    76rem;
 
-  /* ---- type. Self-hosted woff2 only — no CDN. --------------------------- */
-  --font-display:  system-ui, sans-serif;   /* TODO — the client's display face */
-  --font-body:     system-ui, sans-serif;   /* TODO */
-  --step--1:       clamp(.83rem, .8rem + .15vw, .9rem);
-  --step-0:        clamp(1rem, .96rem + .2vw, 1.1rem);
-  --step-1:        clamp(1.25rem, 1.15rem + .5vw, 1.5rem);
-  --step-2:        clamp(1.6rem, 1.4rem + 1vw, 2.2rem);
-  --step-3:        clamp(2.1rem, 1.7rem + 2vw, 3.4rem);
+  /* ---- type (DESIGN.md §3): 1.25 ratio, fluid 390 → 1440 ---------------- */
+  --font-display: "Besley", "Rockwell", Georgia, serif;
+  --font-body:    "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --step--1: clamp(.82rem, .8rem + .1vw, .88rem);
+  --step-0:  clamp(1rem, .97rem + .15vw, 1.0625rem);
+  --step-1:  clamp(1.2rem, 1.13rem + .3vw, 1.33rem);
+  --step-2:  clamp(1.44rem, 1.3rem + .6vw, 1.66rem);
+  --step-3:  clamp(1.73rem, 1.5rem + 1vw, 2.07rem);
+  --step-4:  clamp(2.07rem, 1.7rem + 1.6vw, 2.6rem);
+  --step-5:  clamp(2.2rem, 1.6rem + 2.6vw, 3.9rem);
 
-  /* motion.css reads these four — they ARE the motion language. See §1. */
-  --reveal-rise:    1.5rem;
-  --reveal-dur:     .6s;
-  --reveal-ease:    cubic-bezier(.22, 1, .36, 1);
-  --reveal-stagger: 70ms;
-
+  --head-h: 4.25rem;
   color-scheme: light;
 }
 
 /* ---- reset, the useful parts only ---------------------------------------- */
 *,*::before,*::after{ box-sizing: border-box }
-html{ -webkit-text-size-adjust: 100% }
+html{ -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--head-h) + 1rem) }
 body{
   margin: 0; background: var(--bg); color: var(--fg);
-  font: var(--step-0)/1.6 var(--font-body);
-  overflow-x: clip;                 /* clip, never hidden — see motion.css §4 */
+  font: 400 var(--step-0)/1.6 var(--font-body);
+  overflow-x: clip;                 /* clip, never hidden: see motion.css §4 */
+  -webkit-font-smoothing: antialiased;
 }
 img,svg,video{ max-inline-size: 100%; height: auto; display: block }
-h1,h2,h3{ font-family: var(--font-display); line-height: 1.1; text-wrap: balance }
-h1{ font-size: var(--step-3) } h2{ font-size: var(--step-2) } h3{ font-size: var(--step-1) }
-p{ max-inline-size: var(--measure); text-wrap: pretty }
-a{ color: inherit }
+h1,h2,h3,h4{
+  font-family: var(--font-display); font-weight: 700;
+  line-height: 1.08; letter-spacing: -.01em; text-wrap: balance; margin: 0;
+}
+h1{ font-size: var(--step-5) }
+h2{ font-size: var(--step-4) }
+h3{ font-size: var(--step-1); font-weight: 600; line-height: 1.2 }
+p{ max-inline-size: var(--measure); text-wrap: pretty; margin: 0 }
+a{ color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px }
+a:hover{ text-decoration-thickness: 2px }
+ul{ margin: 0; padding: 0 }
+small{ font-size: var(--step--1) }
+.num{ font-variant-numeric: tabular-nums }
+.visually-hidden{
+  position: absolute !important; inline-size: 1px; block-size: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
 
 .wrap{ max-inline-size: var(--container); margin-inline: auto; padding-inline: var(--gutter) }
-section{ padding-block: clamp(3rem, 8vw, 7rem) }
+section{ padding-block: clamp(3.5rem, 8vw, 7rem) }
+.stack > * + *{ margin-block-start: var(--stack, 1rem) }
 
-/* ---- the sample-data flag. Removed when CONFIG.SAMPLE goes false. -------- */
+.skip{
+  position: absolute; left: 1rem; top: -4rem; z-index: 300;
+  background: var(--fg); color: var(--bg); padding: .6rem 1rem; border-radius: var(--radius-field);
+}
+.skip:focus{ top: 1rem }
+
+/* ---- the sample-data flag. Removed when SAMPLE goes false. --------------- */
 .sample-flag{
   position: sticky; top: 0; z-index: 200;
   background: var(--warn); color: var(--warn-fg);
   font-size: var(--step--1); text-align: center; padding: .4em 1em;
 }
+
+/* ============================================================================
+   Buttons. 3px corners. Primary = the booking path, so it is --accent.
+   ========================================================================== */
+.btn{
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  min-block-size: 44px; padding: .65em 1.15em;
+  font: 600 var(--step-0)/1.1 var(--font-body); text-decoration: none; white-space: nowrap;
+  border: 1px solid transparent; border-radius: var(--radius-field);
+  cursor: pointer;
+}
+.btn svg{ inline-size: 1.1em; block-size: 1.1em; flex: none }
+.btn--book{ background: var(--accent); color: var(--accent-fg) }
+.btn--book:hover{ background: var(--accent-2) }
+.btn--quiet{ background: transparent; color: var(--fg); border-color: var(--line-ui) }
+.btn--quiet:hover{ background: var(--bg-2) }
+/* on dusk grounds */
+.on-dusk .btn--book{ background: var(--roof); color: var(--dusk) }
+.on-dusk .btn--book:hover{ background: #A6E3E1 }
+.on-dusk .btn--quiet{ color: var(--dusk-fg); border-color: #6F7F76 }
+.on-dusk .btn--quiet:hover{ background: rgba(237,234,224,.08) }
+
+/* Forest-sign label: routed Clarendon on board. Chapter eyebrows only. */
+.sign{
+  display: inline-block; justify-self: start; inline-size: fit-content;
+  font: 600 var(--step--1)/1 var(--font-display);
+  letter-spacing: .09em; text-transform: uppercase;
+  background: var(--fg); color: var(--bg);
+  padding: .45em .7em .4em; border-radius: 2px;
+}
+.on-dusk .sign{ background: var(--dusk-fg); color: var(--dusk) }
+
+.drive{            /* "38 min from the cabins" */
+  font: 600 var(--step--1)/1.3 var(--font-body);
+  font-variant-numeric: tabular-nums;
+  color: var(--marker);
+}
+.on-dusk .drive{ color: var(--marker-dusk) }
+
+/* ============================================================================
+   Header. Dusk bar everywhere; transparent over the home hero.
+   ========================================================================== */
+.site-head{
+  position: sticky; top: 0; z-index: 150;
+  background: var(--dusk); color: var(--dusk-fg);
+  border-block-end: 1px solid var(--dusk-line);
+}
+.site-head--over{
+  position: absolute; inset: 0 0 auto; background: transparent; border: 0;
+}
+.sample-flag ~ .site-head--over{ top: auto }
+.site-head .wrap{
+  display: flex; align-items: center; gap: 1rem;
+  min-block-size: var(--head-h);
+}
+.brand{
+  display: grid; text-decoration: none; margin-inline-end: auto; line-height: 1.1;
+}
+.brand b{ font: 700 var(--step-1)/1.05 var(--font-display); letter-spacing: -.01em }
+.brand span{ font-size: var(--step--1); color: var(--dusk-fg-2) }
+.nav{ display: none }
+.nav a{
+  display: inline-flex; align-items: center; min-block-size: 44px; padding-inline: .7rem;
+  text-decoration: none; font-weight: 500; color: var(--dusk-fg);
+}
+.nav a:hover, .nav a[aria-current="page"]{ text-decoration: underline; text-decoration-color: var(--roof) }
+.head-call .long{ display: none }
+.head-book{ display: none }
+@media (min-width: 40rem){ .head-book{ display: inline-flex } }
+@media (max-width: 26rem){ .brand span{ display: none } }
+@media (min-width: 64rem){
+  .nav{ display: flex }
+  .head-call .long{ display: inline }
+  .head-call .short{ display: none }
+}
+.menu-btn{ display: inline-flex }
+@media (min-width: 64rem){ .menu-btn{ display: none } }
+.menu{
+  display: none; background: var(--dusk); border-block-start: 1px solid var(--dusk-line);
+  padding-block: .5rem 1rem;
+}
+.menu.is-open{ display: block }
+.menu a{
+  display: flex; align-items: center; min-block-size: 48px; text-decoration: none;
+  font: 600 var(--step-1)/1.2 var(--font-display); color: var(--dusk-fg);
+  border-block-end: 1px solid var(--dusk-line);
+}
+@media (min-width: 64rem){ .menu{ display: none !important } }
+
+/* ============================================================================
+   Home hero: the top-down canopy. The descent lives in motion.css §4.
+   ========================================================================== */
+.hero{
+  min-block-size: calc(100svh - var(--head-h));
+  display: grid; align-items: end;
+  background: var(--dusk); color: var(--dusk-fg);
+  padding-block: 2rem clamp(1.5rem, 5vw, 4rem);
+}
+.hero__bg picture, .hero__bg img{ display: block; inline-size: 100%; block-size: 100% }
+.hero__bg img{ object-fit: cover; object-position: var(--descent-origin, 38% 46%) }
+@media (max-width: 40rem){
+  .hero__bg{ --descent-origin: 50% 24% }    /* portrait shot: roofs near the top */
+  .hero__bg img{ object-position: 50% 0 }
+}
+.hero::after{              /* legibility: dusk rising from the ground */
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(14,26,21,.94) 0%, rgba(14,26,21,.78) 30%, rgba(14,26,21,.2) 62%, rgba(14,26,21,.4) 100%);
+}
+@media (min-width: 64rem){
+  .hero::after{
+    background:
+      linear-gradient(to right, rgba(14,26,21,.78) 0%, rgba(14,26,21,.45) 38%, rgba(14,26,21,0) 62%),
+      linear-gradient(to top, rgba(14,26,21,.7) 0%, rgba(14,26,21,0) 45%);
+  }
+}
+body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15rem) }
+.hero > .wrap{ inline-size: 100% }
+.hero__copy{ display: grid; gap: 1.1rem; max-inline-size: 50rem }
+.hero h1{ font-size: var(--step-5); color: var(--dusk-fg) }
+.hero__lede{ font-size: var(--step-1); color: var(--dusk-fg); line-height: 1.45 }
+.hero__actions{ display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: .4rem }
+.hero__facts{
+  display: flex; flex-wrap: wrap; gap: .35rem 1.4rem; margin-block-start: 1.2rem;
+  padding-block-start: 1rem; border-block-start: 1px solid rgba(237,234,224,.28);
+  list-style: none; font-size: var(--step--1); color: var(--dusk-fg-2);
+}
+.hero__facts b{ color: var(--dusk-fg); font-weight: 600 }
+
+/* ============================================================================
+   Section heads
+   ========================================================================== */
+.sec-head{ display: grid; gap: .9rem; margin-block-end: clamp(1.75rem, 4vw, 2.75rem); max-inline-size: 48rem }
+.sec-head p{ font-size: var(--step-1); color: var(--fg-2); line-height: 1.45 }
+.on-dusk .sec-head p{ color: var(--dusk-fg-2) }
+.dusk{ background: var(--dusk); color: var(--dusk-fg) }
+.raised{ background: var(--bg-2) }
+
+/* ============================================================================
+   The cabins
+   ========================================================================== */
+.cabins{ display: grid; gap: clamp(1.25rem, 3vw, 2rem); list-style: none }
+@media (min-width: 40rem){ .cabins{ grid-template-columns: repeat(2, 1fr) } }
+@media (min-width: 64rem){ .cabins{ grid-template-columns: repeat(3, 1fr) } }
+.cabin-card{ display: grid; gap: .8rem; align-content: start }
+.cabin-card figure{ margin: 0; overflow: clip; border-radius: var(--radius-box); background: var(--bg-3) }
+.cabin-card img{ inline-size: 100%; aspect-ratio: 4 / 3; object-fit: cover }
+.cabin-card h3{ font-size: var(--step-2) }
+.cabin-card h3 a{ text-decoration: none }
+.cabin-card h3 a:hover{ text-decoration: underline }
+.facts{
+  display: flex; flex-wrap: wrap; gap: .2rem .9rem; list-style: none;
+  font-variant-numeric: tabular-nums; color: var(--fg-2); font-size: var(--step--1); font-weight: 600;
+}
+.facts li + li::before{ content: "·"; margin-inline-end: .9rem; color: var(--line-ui) }
+.cabin-card .blurb{ color: var(--fg-2) }
+.cabin-card .row{ display: flex; flex-wrap: wrap; gap: .6rem; margin-block-start: .2rem }
+
+/* ============================================================================
+   Where you are: drive times from the cabins
+   ========================================================================== */
+.where{ display: grid; gap: clamp(2rem, 5vw, 4rem) }
+@media (min-width: 64rem){ .where{ grid-template-columns: 1.1fr .9fr; align-items: start } }
+.drives{ list-style: none; border-block-start: 1px solid var(--dusk-line) }
+.drives li{
+  display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: baseline;
+  padding-block: .8rem; border-block-end: 1px solid var(--dusk-line);
+}
+.drives .name{ font-weight: 600 }
+.drives .sub{ display: block; font-size: var(--step--1); color: var(--dusk-fg-2); font-weight: 400 }
+.drives .t{ font: 600 var(--step-1)/1 var(--font-body); font-variant-numeric: tabular-nums; color: var(--marker-dusk); white-space: nowrap }
+.note{ font-size: var(--step--1); color: var(--fg-2) }
+.on-dusk .note{ color: var(--dusk-fg-2) }
+
+/* ============================================================================
+   Season switch (home teaser and the guide)
+   ========================================================================== */
+.seasons{
+  display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  border: 1px solid var(--line-ui); border-radius: var(--radius-field); overflow: clip;
+  background: var(--bg);
+}
+.seasons button{
+  min-block-size: 44px; padding: .5em 1.1em; border: 0; margin: 0;
+  font: 600 var(--step-0)/1 var(--font-body); color: var(--fg); background: transparent;
+  cursor: pointer;
+}
+.seasons button + button{ border-inline-start: 1px solid var(--line-ui) }
+.seasons button:hover{ background: var(--bg-2) }
+.seasons button[aria-pressed="true"]{ background: var(--fg); color: var(--bg) }
+.season-note{ color: var(--fg-2); margin-block: 1rem 1.5rem; max-inline-size: 60ch }
+
+/* ============================================================================
+   Guide cards
+   ========================================================================== */
+.cards{ display: grid; gap: 1rem; list-style: none }
+@media (min-width: 40rem){ .cards{ grid-template-columns: repeat(2, 1fr) } }
+@media (min-width: 64rem){ .cards--3{ grid-template-columns: repeat(3, 1fr) } }
+.guide-card{
+  display: grid; gap: .5rem; align-content: start;
+  padding: 1.1rem 1.2rem 1.25rem; background: var(--bg-2);
+  border-radius: var(--radius-box); border-block-start: 3px solid var(--fg);
+}
+.guide-card[hidden]{ display: none }
+.guide-card .kind{ font-size: var(--step--1); font-weight: 600; color: var(--fg-2); letter-spacing: .02em }
+.guide-card h3{ font-size: var(--step-1) }
+.guide-card p{ color: var(--fg); font-size: var(--step-0) }
+.guide-card .meta{ display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-size: var(--step--1); color: var(--fg-2) }
+.guide-card .meta a{ color: var(--fg-2) }
+.guide-card--photo{ padding: 0; overflow: clip; border: 0 }
+.guide-card--photo img{ inline-size: 100%; aspect-ratio: 16/10; object-fit: cover }
+.guide-card--photo .in{ display: grid; gap: .5rem; padding: 1rem 1.2rem 1.25rem }
+
+/* ============================================================================
+   Reviews: real only, attributed, dated
+   ========================================================================== */
+.reviews{ display: grid; gap: 1.25rem; list-style: none }
+@media (min-width: 64rem){ .reviews{ grid-template-columns: repeat(3, 1fr) } }
+.review{ margin: 0; padding-block-start: 1rem; border-block-start: 1px solid var(--line) }
+.review blockquote{ margin: 0; font: 400 var(--step-1)/1.45 var(--font-display) }
+.review figcaption{ margin-block-start: .8rem; font-size: var(--step--1); color: var(--fg-2) }
+
+/* ============================================================================
+   Plan your stay: facts + FAQ
+   ========================================================================== */
+.plan{ display: grid; gap: clamp(2rem, 5vw, 4rem) }
+@media (min-width: 64rem){ .plan{ grid-template-columns: .8fr 1.2fr } }
+.policy{ display: grid; gap: 0; margin: 0; border-block-start: 1px solid var(--line) }
+.policy div{ display: grid; grid-template-columns: 9rem 1fr; gap: 1rem; padding-block: .75rem; border-block-end: 1px solid var(--line) }
+.policy dt{ font-weight: 600 }
+.policy dd{ margin: 0; color: var(--fg-2) }
+.faq details{ border-block-end: 1px solid var(--line) }
+.faq details:first-child{ border-block-start: 1px solid var(--line) }
+.faq summary{
+  display: flex; justify-content: space-between; gap: 1rem; align-items: center;
+  min-block-size: 52px; cursor: pointer; list-style: none;
+  font: 600 var(--step-1)/1.25 var(--font-display);
+}
+.faq summary::-webkit-details-marker{ display: none }
+.faq summary::after{ content: "+"; font: 400 var(--step-2)/1 var(--font-body); color: var(--fg-2) }
+.faq details[open] summary::after{ content: "\2212" }
+.faq details > div{ padding-block-end: 1rem; color: var(--fg-2) }
+
+/* ============================================================================
+   Booking slot: honestly unwired until the OwnerRez widget code lands
+   ========================================================================== */
+.book-slot{
+  display: grid; gap: .8rem; padding: 1.4rem;
+  border: 1px dashed var(--line-ui); border-radius: var(--radius-box); background: var(--bg);
+}
+.book-slot p{ color: var(--fg-2) }
+.book-slot .row{ display: flex; flex-wrap: wrap; gap: .6rem }
+
+/* ============================================================================
+   Page head for sub-pages
+   ========================================================================== */
+.page-head{ padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 2.5rem) }
+.page-head .lede{ font-size: var(--step-1); color: var(--fg-2); margin-block-start: 1rem; max-inline-size: 56ch; line-height: 1.45 }
+.crumbs{ font-size: var(--step--1); color: var(--fg-2); margin-block-end: 1rem }
+.crumbs ol{ display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: 0 }
+.crumbs li + li::before{ content: "/"; margin-inline-end: .4rem; color: var(--line-ui) }
+
+/* ============================================================================
+   The guide page layout
+   ========================================================================== */
+.guide-bar{
+  position: sticky; top: var(--head-h); z-index: 100;
+  background: var(--bg); border-block: 1px solid var(--line);
+}
+.guide-bar .wrap{ display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; padding-block: .6rem }
+.guide-bar .seasons{ max-inline-size: 100% }
+.guide-bar .seasons button{ padding-inline: .8em }
+.chapters{ display: flex; gap: .25rem; overflow-x: auto; list-style: none; scrollbar-width: none; max-inline-size: 100% }
+.chapters a{
+  display: inline-flex; align-items: center; min-block-size: 44px; padding-inline: .6rem;
+  white-space: nowrap; font-weight: 600; font-size: var(--step--1); text-decoration: none; color: var(--fg-2);
+}
+.chapters a:hover{ color: var(--fg); text-decoration: underline }
+.chapter + .chapter{ border-block-start: 1px solid var(--line) }
+.chapter .sec-head{ margin-block-end: 1.5rem }
+.empty-season{ color: var(--fg-2); font-style: italic }
+.table-wrap{ overflow-x: auto }
+.simple{ inline-size: 100%; border-collapse: collapse; font-size: var(--step--1) }
+.simple th, .simple td{ text-align: start; padding: .6rem .75rem .6rem 0; border-block-end: 1px solid var(--line); vertical-align: top }
+.simple th{ font-weight: 600; color: var(--fg-2) }
+.simple td.num{ white-space: nowrap }
+
+/* Day plans */
+.days{ display: grid; gap: 1rem; list-style: none; counter-reset: day }
+@media (min-width: 64rem){ .days{ grid-template-columns: repeat(2, 1fr) } }
+.day{ padding: 1.25rem; background: var(--bg-2); border-radius: var(--radius-box) }
+.day h3{ font-size: var(--step-2) }
+.day ol{ margin: .8rem 0 0; padding-inline-start: 1.2rem; display: grid; gap: .35rem }
+
+/* Rules box */
+.rules{ display: grid; gap: .6rem; list-style: none; padding: 1.25rem; border: 2px solid var(--fg); border-radius: var(--radius-box) }
+.rules li{ padding-inline-start: 1.4rem; position: relative }
+.rules li::before{ content: ""; position: absolute; left: 0; top: .6em; inline-size: .55rem; block-size: .55rem; background: var(--fg) }
+
+/* ============================================================================
+   The map (inline SVG, projected from js/places.js)
+   ========================================================================== */
+.map{ display: grid; gap: 1rem }
+@media (min-width: 64rem){ .map{ grid-template-columns: 1fr 22rem; align-items: start } }
+.map__frame{
+  position: relative; margin: 0; overflow: clip;
+  background: var(--dusk); border-radius: var(--radius-box);
+}
+.map__svg{ inline-size: 100%; block-size: auto; touch-action: manipulation }
+.map__world{
+  transition: transform 1.3s var(--reveal-ease);
+}
+@media (prefers-reduced-motion: reduce){ .map__world{ transition: none } }
+.map__park{ fill: #1C3128; stroke: #4F6B5E; stroke-width: 1.2; vector-effect: non-scaling-stroke }
+.map__water{ fill: #2C4E5C; stroke: none }
+.map__road{ fill: none; stroke: #6F7F76; stroke-width: 1.6; stroke-linejoin: round; vector-effect: non-scaling-stroke }
+.map__road--loop{ stroke: #B7C2BA }
+.map__label{ font: 600 11px/1 var(--font-body); fill: var(--dusk-fg-2); paint-order: stroke; stroke: var(--dusk); stroke-width: 3px }
+.map__label--park{ font: 600 13px/1 var(--font-display); letter-spacing: .12em; fill: #6F8A7D; stroke: none }
+.pin{ cursor: pointer }
+.pin circle{ fill: var(--roof); stroke: var(--dusk); stroke-width: 2; vector-effect: non-scaling-stroke }
+.pin--cabins circle{ fill: var(--marker-dusk) }
+.pin--town circle{ fill: var(--dusk-fg) }
+.pin--island-park circle{ fill: #C9D98C }
+.pin:hover circle, .pin:focus-visible circle, .pin[aria-pressed="true"] circle{ stroke: var(--dusk-fg); stroke-width: 3 }
+.pin:focus{ outline: none }
+.pin[hidden]{ display: none }
+.map__controls{ display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; position: absolute; inset: auto auto 0 0 }
+.map__panel{ display: grid; gap: 1rem; align-content: start }
+.map__filters{ display: flex; flex-wrap: wrap; gap: .4rem }
+.chip{
+  display: inline-flex; align-items: center; gap: .45em; min-block-size: 40px; padding: .35em .8em;
+  border: 1px solid var(--line-ui); border-radius: var(--radius-field); background: var(--bg);
+  font: 600 var(--step--1)/1 var(--font-body); color: var(--fg); cursor: pointer;
+}
+.chip[aria-pressed="true"]{ background: var(--fg); color: var(--bg); border-color: var(--fg) }
+.chip i{ inline-size: .7em; block-size: .7em; border-radius: 50%; background: var(--c, var(--roof)); outline: 1px solid rgba(0,0,0,.25) }
+.map__card{ padding: 1.1rem 1.2rem; background: var(--bg-2); border-radius: var(--radius-box); min-block-size: 9rem }
+.map__card h3{ font-size: var(--step-2); margin-block: .3rem .5rem }
+.map__card p{ color: var(--fg) }
+.map__legend{ font-size: var(--step--1); color: var(--fg-2) }
+.map__list{ columns: 2 12rem; column-gap: 1.5rem; list-style: none; font-size: var(--step--1) }
+.map__list li{ break-inside: avoid; padding-block: .25rem }
+.map__list button{ all: unset; cursor: pointer; text-decoration: underline; text-underline-offset: .18em; min-block-size: 32px; display: inline-flex; align-items: center }
+.map__list button:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px }
+
+/* ============================================================================
+   Cabin page
+   ========================================================================== */
+.gallery{ display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr) }
+.gallery img{ inline-size: 100%; block-size: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-box) }
+.gallery img:first-child{ grid-column: 1 / -1; aspect-ratio: 16/9 }
+@media (min-width: 64rem){
+  .gallery{ grid-template-columns: 2fr 1fr 1fr; grid-template-rows: repeat(2, 1fr) }
+  .gallery img:first-child{ grid-column: 1; grid-row: 1 / 3; aspect-ratio: auto }
+}
+.cabin-body{ display: grid; gap: clamp(2rem, 5vw, 4rem) }
+@media (min-width: 64rem){ .cabin-body{ grid-template-columns: 1.3fr .7fr; align-items: start } .cabin-body aside{ position: sticky; top: calc(var(--head-h) + 1.5rem) } }
+.amenities{ columns: 2 12rem; column-gap: 2rem; list-style: none }
+.amenities li{ break-inside: avoid; padding-block: .35rem; border-block-end: 1px solid var(--line) }
+
+/* ============================================================================
+   Checkout page (the QR code in each cabin points here)
+   ========================================================================== */
+.checklist{ list-style: none; display: grid; gap: 0; border-block-start: 1px solid var(--line); counter-reset: step }
+.checklist li{ display: grid; grid-template-columns: 2.5rem 1fr; gap: .75rem; padding-block: 1rem; border-block-end: 1px solid var(--line); counter-increment: step }
+.checklist li::before{ content: counter(step); font: 700 var(--step-2)/1 var(--font-display); color: var(--marker) }
+.checklist b{ display: block; font-size: var(--step-1) }
+
+/* ============================================================================
+   Footer
+   ========================================================================== */
+.site-foot{ background: var(--dusk); color: var(--dusk-fg); padding-block: clamp(3rem, 6vw, 4.5rem) 2rem }
+.site-foot .cols{ display: grid; gap: 2rem }
+@media (min-width: 40rem){ .site-foot .cols{ grid-template-columns: repeat(2, 1fr) } }
+@media (min-width: 64rem){ .site-foot .cols{ grid-template-columns: 1.4fr 1fr 1fr } }
+.site-foot h2{ font-size: var(--step-2) }
+.site-foot h3{ font: 600 var(--step--1)/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--dusk-fg-2); margin-block-end: .8rem }
+.site-foot ul{ list-style: none; display: grid; gap: .1rem }
+.site-foot li a{ display: inline-flex; align-items: center; min-block-size: 40px; text-decoration: none }
+.site-foot li a:hover{ text-decoration: underline }
+.site-foot address{ font-style: normal; color: var(--dusk-fg-2) }
+.site-foot .fine{ margin-block-start: 2.5rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--dusk-line); display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: var(--step--1); color: var(--dusk-fg-2) }
+.site-foot .fine a{ color: var(--dusk-fg-2) }
+
+/* ============================================================================
+   Print: the guide doubles as the pamphlet draft
+   ========================================================================== */
+@media print{
+  .site-head, .guide-bar, .map__controls, .map__filters, .sample-flag, .skip, .btn, .menu{ display: none !important }
+  body{ background: #fff; color: #000; font-size: 10.5pt }
+  .dusk, .site-foot{ background: #fff; color: #000 }
+  .guide-card{ break-inside: avoid; border: 1px solid #999; background: #fff }
+  .guide-card[hidden]{ display: grid !important }
+  section{ padding-block: 1.2rem }
+  a{ text-decoration: none }
+}
+
+/* Pins and labels keep their screen size when the map zooms (--z set by main.js) */
+.pin circle{ r: calc(7px / var(--z, 1)) }
+.pin--cabins circle{ r: calc(10px / var(--z, 1)) }
+.map__label{ font-size: calc(11px / var(--z, 1)); stroke-width: calc(3px / var(--z, 1)) }
+.map__label--park{ font-size: calc(13px / var(--z, 1)) }
+.guide-card .tip{ font-size: var(--step--1); color: var(--fg-2); padding-inline-start: .75rem; border-inline-start: 2px solid var(--marker) }

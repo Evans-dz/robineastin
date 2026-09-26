@@ -1,12 +1,15 @@
 # Wilderness Escape Rentals
 
-> [your one-paragraph summary: what the business does, for whom, where. Plain words, no em dashes.]
+> Wilderness Escape Rentals is three privately owned vacation rental cabins in the lodgepole pines of Island Park, Idaho, near the West Entrance of Yellowstone National Park. Guests book directly with the owner. The site also has a free seasonal guide to Island Park and Yellowstone with drive times from the cabins.
 
-Contact: [your phone] · [your email]
-Service area: [your towns]
+Address: 3810 Mortensen Ln, Island Park, ID 83445
+Booking: direct through this website (OwnerRez booking engine)
 
 ## Pages
 
-- [Home](https://[your domain]/)
-- [Privacy policy](https://[your domain]/privacy/)
-- [Terms of use](https://[your domain]/terms/)
+- [Home](https://www.wildernessescaperentals.com/): the cabins, where they are, what to do by season, booking
+
+- [Things to do](https://www.wildernessescaperentals.com/guide/): Yellowstone and Island Park guide with drive times, food, groceries, wildlife, events
+- [Map](https://www.wildernessescaperentals.com/map/): interactive map of Yellowstone and Island Park with the cabins marked
+- [Privacy policy](https://www.wildernessescaperentals.com/privacy/)
+- [Terms of use](https://www.wildernessescaperentals.com/terms/)
