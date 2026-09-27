@@ -24,8 +24,10 @@ nearby. Every photo that sells it came off a drone (the shoot in
 from above and settle down onto the ground. Nothing on this site rises.
 
 **How it shows up (three places, nowhere else):**
-1. **Home hero.** The top-down canopy shot (`canopy-three-roofs`) is the hero
-   layer. As the visitor scrolls the first screen, the layer scales from 1 to
+1. **Home hero.** The top-down canopy shot (`canopy-three-roofs-low`, DJI_0099,
+   chosen for its colour) is the hero layer. Desktop anchors its bottom edge so
+   the roofs sit clear above the copy; phones stack headline, clear roofs,
+   then buttons in the first screen. As the visitor scrolls the first screen, the layer scales from 1 to
    1.22 about the aqua roofs: the drone sinking toward the cabins. Scrubbed on
    `view()`; image only, never the copy.
 2. **Landing reveals, text.** Section heads and the cabin/guide cards land

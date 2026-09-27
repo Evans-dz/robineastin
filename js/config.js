@@ -56,7 +56,15 @@ const CONFIG = {
       '<b>5 min</b> to Island Park Reservoir',
       '<b>45 min</b> to Yellowstone\'s West Entrance',
     ],
-    descentOrigin: '38% 46%',             // where the drone sinks to: Pine Shadows' aqua roof
+    /* Hero photo: DJI_0099 (brightest colours of the shoot). Its roofs sit
+       mid-frame, so each layout frames them clear of the copy:
+       desktop anchors the photo's bottom edge (roofs in the upper half);
+       phones put the headline on top and the buttons at the bottom. */
+    heroPhoto:           'canopy-three-roofs-low',
+    heroPos:             '30% 100%',      // object-position, desktop
+    descentOrigin:       '30% 40%',       // where the drone sinks to: Pine Shadows and the garage
+    heroPosMobile:       '16% 50%',
+    descentOriginMobile: '48% 56%',
     cabinsHead:  'Two cabins next door, with a game garage between',
     cabinsLede:  'Pine Shadows sleeps 12 and Wilderness Escape Retreat sleeps 10. Book one for your family, or both for a reunion.',
     whereHead:   'Minutes from the water, under an hour from the park',
@@ -244,8 +252,8 @@ const CONFIG = {
   /* Every photo on the site, with its alt text and shape (w:h).
      Files live in assets/photos/<key>-{640,1200,2400}.webp + -1200.jpg */
   photos: {
-    'canopy-three-roofs':     { w: 4, h: 3, alt: 'Looking straight down on the property: Pine Shadows and the game garage under aqua roofs, and Wilderness Escape Retreat under a mauve roof, in the lodgepole pines' },
-    'canopy-three-roofs-low': { w: 4, h: 3, alt: 'The two cabins and the game garage from lower down, with the gravel drives between the pines' },
+    'canopy-three-roofs':     { w: 4, h: 3, alt: 'The two cabins and the game garage from above, with the gravel drives between the pines' },
+    'canopy-three-roofs-low': { w: 4, h: 3, alt: 'Looking straight down on the property: Pine Shadows and the game garage under aqua roofs, and Wilderness Escape Retreat under a mauve roof, in the lodgepole pines' },
     'canopy-mauve-roof':      { w: 4, h: 3, alt: 'Wilderness Escape Retreat from above, with its own gravel drive through the pines' },
     'teal-cabins-drive':      { w: 3, h: 4, alt: 'Pine Shadows and the game garage from above, at the end of the circular drive' },
     'teal-cabin-golden':      { w: 3, h: 4, alt: 'Pine Shadows in evening light, with the trees beside it lit gold' },

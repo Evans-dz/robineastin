@@ -213,28 +213,24 @@ section{ padding-block: clamp(3.5rem, 8vw, 7rem) }
   background: var(--dusk); color: var(--dusk-fg);
   padding-block: 2rem clamp(1.5rem, 5vw, 4rem);
 }
-.hero__bg picture, .hero__bg img{ display: block; inline-size: 100%; block-size: 100% }
-.hero__bg img{ object-fit: cover; object-position: var(--descent-origin, 38% 46%) }
-@media (max-width: 40rem){
-  .hero__bg{ --descent-origin: 50% 24% }    /* portrait shot: roofs near the top */
-  .hero__bg img{ object-position: 50% 0 }
-}
-.hero::after{              /* legibility: dusk rising from the ground */
+.hero__bg img{ display: block; inline-size: 100%; block-size: 100%; object-fit: cover; object-position: var(--hero-pos, 50% 50%) }
+.hero::after{              /* legibility: dusk rising from the ground, roofs left clear */
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background:
-    linear-gradient(to top, rgba(14,26,21,.94) 0%, rgba(14,26,21,.78) 30%, rgba(14,26,21,.2) 62%, rgba(14,26,21,.4) 100%);
+    linear-gradient(to top, rgba(14,26,21,.92) 0%, rgba(14,26,21,.72) 30%, rgba(14,26,21,.15) 58%, rgba(14,26,21,0) 70%),
+    linear-gradient(to right, rgba(14,26,21,.5) 0%, rgba(14,26,21,0) 55%);
 }
-@media (min-width: 64rem){
-  .hero::after{
-    background:
-      linear-gradient(to right, rgba(14,26,21,.78) 0%, rgba(14,26,21,.45) 38%, rgba(14,26,21,0) 62%),
-      linear-gradient(to top, rgba(14,26,21,.7) 0%, rgba(14,26,21,0) 45%);
-  }
-}
+.hero h1, .hero__lede{ text-shadow: 0 1px 18px rgba(14,26,21,.45) }
+.hero__head{ display: grid; gap: 1.1rem }
+.hero-after{ background: var(--dusk); color: var(--dusk-fg) }
+.hero-after .wrap{ padding-block: .25rem 1.25rem }
+.hero-after .hero__lede{ display: none }
+.hero-after .hero__facts{ margin: 0 }
+
 body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15rem) }
 .hero > .wrap{ inline-size: 100% }
-.hero__copy{ display: grid; gap: 1.1rem; max-inline-size: 50rem }
-.hero h1{ font-size: var(--step-5); color: var(--dusk-fg) }
+.hero__copy{ display: grid; gap: 1.1rem; max-inline-size: 58rem }
+.hero h1{ font-size: min(var(--step-5), 3.4rem); color: var(--dusk-fg) }
 .hero__lede{ font-size: var(--step-1); color: var(--dusk-fg); line-height: 1.45 }
 .hero__actions{ display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: .4rem }
 .hero__facts{
@@ -580,4 +576,20 @@ h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1re
   .brand b{ font-size: 1.08rem; white-space: nowrap }
   .site-head .btn{ padding-inline: .75em }
   .site-head .wrap{ gap: .6rem }
+}
+
+/* ---- hero on phones (kept last so it wins over the base hero rules) ------
+   Headline up top, buttons at the bottom of the first screen, the aqua roofs
+   clear in between. The lede and facts follow below the photo. */
+@media (max-width: 40rem){
+  .hero{ --hero-pos: var(--hero-pos-m); --descent-origin: var(--descent-origin-m); align-items: stretch; padding-block: 1.25rem 1.5rem }
+  .hero > .wrap{ display: flex }
+  .hero .hero__copy{ flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem }
+  .hero .hero__lede{ display: none }
+  .hero::after{
+    background: linear-gradient(to bottom, rgba(14,26,21,.92) 0%, rgba(14,26,21,.72) 24%, rgba(14,26,21,0) 42%, rgba(14,26,21,0) 72%, rgba(14,26,21,.8) 88%, rgba(14,26,21,.94) 100%);
+  }
+  .hero-after .wrap{ padding-block: .5rem 2.5rem }
+  .hero-after .hero__lede{ display: block; font-size: var(--step-1); line-height: 1.45; color: var(--dusk-fg) }
+  .hero-after .hero__facts{ margin-block-start: 1.25rem }
 }

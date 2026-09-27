@@ -318,22 +318,26 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   const policies = (C.policies || []).filter(p => p.value);
 
   const body = `
-<section class="hero on-dusk" aria-labelledby="hero-h" style="--descent-origin:${esc(H.descentOrigin || '38% 46%')}">
-  <div class="hero__bg"><picture>
-    <source media="(max-width: 40rem)" srcset="/assets/photos/teal-cabins-drive-640.webp 640w, /assets/photos/teal-cabins-drive-1200.webp 1200w" sizes="100vw">
-    ${pic('canopy-three-roofs', { eager: true })}
-  </picture></div>
+<section class="hero on-dusk" aria-labelledby="hero-h" style="--hero-pos:${esc(H.heroPos)};--descent-origin:${esc(H.descentOrigin)};--hero-pos-m:${esc(H.heroPosMobile)};--descent-origin-m:${esc(H.descentOriginMobile)}">
+  <div class="hero__bg">${pic(H.heroPhoto, { eager: true })}</div>
   <div class="wrap"><div class="hero__copy">
-    <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
-    <h1 id="hero-h">${esc(H.h1)}</h1>
+    <div class="hero__head">
+      <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
+      <h1 id="hero-h">${esc(H.h1)}</h1>
+    </div>
     <p class="hero__lede">${esc(H.lede)}</p>
     <div class="hero__actions">
       <a class="btn btn--book" href="#book">${icon.cal}Check dates</a>
       ${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call ${esc(phone)}</a>` : ''}
     </div>
-    ${H.facts && H.facts.length ? `<ul class="hero__facts">${list(H.facts, f => `<li>${f}</li>`, '')}</ul>` : ''}
   </div></div>
 </section>
+<div class="hero-after on-dusk">
+  <div class="wrap">
+    <p class="hero__lede">${esc(H.lede)}</p>
+    ${H.facts && H.facts.length ? `<ul class="hero__facts">${list(H.facts, f => `<li>${f}</li>`, '')}</ul>` : ''}
+  </div>
+</div>
 
 <section id="cabins" aria-labelledby="cabins-h">
   <div class="wrap">
@@ -430,10 +434,7 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   }];
   emit('index.html', page({
     route: '/', current: '/', title: C.seo.homeTitle, desc: C.seo.homeDesc, ld, body,
-    preload: [
-      '<link rel="preload" as="image" media="(max-width: 40rem)" imagesrcset="/assets/photos/teal-cabins-drive-640.webp 640w, /assets/photos/teal-cabins-drive-1200.webp 1200w" imagesizes="100vw" fetchpriority="high">',
-      '<link rel="preload" as="image" media="(min-width: 40.01rem)" imagesrcset="/assets/photos/canopy-three-roofs-1200.webp 1200w, /assets/photos/canopy-three-roofs-2400.webp 2400w" imagesizes="100vw" fetchpriority="high">',
-    ],
+    preload: [`<link rel="preload" as="image" imagesrcset="/assets/photos/${H.heroPhoto}-640.webp 640w, /assets/photos/${H.heroPhoto}-1200.webp 1200w, /assets/photos/${H.heroPhoto}-2400.webp 2400w" imagesizes="100vw" fetchpriority="high">`],
   }), { route: '/' });
 }
 

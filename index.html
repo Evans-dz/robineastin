@@ -19,8 +19,7 @@
 <link rel="preload" href="/assets/fonts/besley-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/public-sans-var.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="preload" as="image" media="(max-width: 40rem)" imagesrcset="/assets/photos/teal-cabins-drive-640.webp 640w, /assets/photos/teal-cabins-drive-1200.webp 1200w" imagesizes="100vw" fetchpriority="high">
-<link rel="preload" as="image" media="(min-width: 40.01rem)" imagesrcset="/assets/photos/canopy-three-roofs-1200.webp 1200w, /assets/photos/canopy-three-roofs-2400.webp 2400w" imagesizes="100vw" fetchpriority="high">
+<link rel="preload" as="image" imagesrcset="/assets/photos/canopy-three-roofs-low-640.webp 640w, /assets/photos/canopy-three-roofs-low-1200.webp 1200w, /assets/photos/canopy-three-roofs-low-2400.webp 2400w" imagesizes="100vw" fetchpriority="high">
 <link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/motion.css">
 <script>document.documentElement.classList.add('js')</script>
@@ -43,22 +42,26 @@
 </header>
 <main id="main">
 
-<section class="hero on-dusk" aria-labelledby="hero-h" style="--descent-origin:38% 46%">
-  <div class="hero__bg"><picture>
-    <source media="(max-width: 40rem)" srcset="/assets/photos/teal-cabins-drive-640.webp 640w, /assets/photos/teal-cabins-drive-1200.webp 1200w" sizes="100vw">
-    <img src="/assets/photos/canopy-three-roofs-1200.jpg" srcset="/assets/photos/canopy-three-roofs-640.webp 640w, /assets/photos/canopy-three-roofs-1200.webp 1200w, /assets/photos/canopy-three-roofs-2400.webp 2400w" sizes="100vw" width="1200" height="900" alt="Looking straight down on the property: Pine Shadows and the game garage under aqua roofs, and Wilderness Escape Retreat under a mauve roof, in the lodgepole pines" fetchpriority="high">
-  </picture></div>
+<section class="hero on-dusk" aria-labelledby="hero-h" style="--hero-pos:30% 100%;--descent-origin:30% 40%;--hero-pos-m:16% 50%;--descent-origin-m:48% 56%">
+  <div class="hero__bg"><img src="/assets/photos/canopy-three-roofs-low-1200.jpg" srcset="/assets/photos/canopy-three-roofs-low-640.webp 640w, /assets/photos/canopy-three-roofs-low-1200.webp 1200w, /assets/photos/canopy-three-roofs-low-2400.webp 2400w" sizes="100vw" width="1200" height="900" alt="Looking straight down on the property: Pine Shadows and the game garage under aqua roofs, and Wilderness Escape Retreat under a mauve roof, in the lodgepole pines" fetchpriority="high"></div>
   <div class="wrap"><div class="hero__copy">
-    <span class="sign">Island Park, Idaho</span>
-    <h1 id="hero-h">Two family cabins in the Island Park pines, under an hour from Yellowstone.</h1>
+    <div class="hero__head">
+      <span class="sign">Island Park, Idaho</span>
+      <h1 id="hero-h">Two family cabins in the Island Park pines, under an hour from Yellowstone.</h1>
+    </div>
     <p class="hero__lede">Book directly with Robyn, the owner. Spend the day in Yellowstone or on the Henry’s Fork, then come back to a quiet cabin in the lodgepole forest.</p>
     <div class="hero__actions">
       <a class="btn btn--book" href="#book"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Check dates</a>
       <a class="btn btn--quiet" href="tel:2083511033"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2.5 1.5a11 11 0 0 0 7 7L16 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>Call (208) 351-1033</a>
     </div>
-    <ul class="hero__facts"><li><b>2</b> cabins next door to each other</li><li><b>Sleep up to 22</b> together</li><li><b>5 min</b> to Island Park Reservoir</li><li><b>45 min</b> to Yellowstone's West Entrance</li></ul>
   </div></div>
 </section>
+<div class="hero-after on-dusk">
+  <div class="wrap">
+    <p class="hero__lede">Book directly with Robyn, the owner. Spend the day in Yellowstone or on the Henry’s Fork, then come back to a quiet cabin in the lodgepole forest.</p>
+    <ul class="hero__facts"><li><b>2</b> cabins next door to each other</li><li><b>Sleep up to 22</b> together</li><li><b>5 min</b> to Island Park Reservoir</li><li><b>45 min</b> to Yellowstone's West Entrance</li></ul>
+  </div>
+</div>
 
 <section id="cabins" aria-labelledby="cabins-h">
   <div class="wrap">
