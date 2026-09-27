@@ -102,10 +102,10 @@ const CONFIG = {
      widget.js injects an iframe; without JS the page links out.   */
   booking: {
     script:   'https://app.ownerrez.com/widget.js',
-    /* OwnerRez only serves these widgets to approved sites (a localhost
-       request gets 403). Anywhere else the page shows a note instead.
-       TODO(client) add any preview domain in OwnerRez widget settings. */
-    hosts:    ['www.wildernessescaperentals.com', 'wildernessescaperentals.com'],
+    /* OwnerRez serves these widgets to any real domain (tested 26 Sept
+       2026: the live domain and a *.vercel.app preview both get 200) but
+       refuses localhost with 403, so local dev shows a note instead. */
+    blockedHosts: ['localhost', '127.0.0.1', '[::1]', ''],
     all: {
       calendar: '5165c6bf71b742fc9d8b532d619c4fe4',   // Ribbon Calendar, every listing
       booking:  '49db33f0e0d14eb3a5efda0c3dfe7d37',   // Booking/Inquiry with a listing dropdown

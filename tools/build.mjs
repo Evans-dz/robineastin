@@ -158,7 +158,7 @@ ${list(preload, p => p, '\n')}
 <link rel="stylesheet" href="/css/main.css">
 <link rel="stylesheet" href="/css/motion.css">
 <script>document.documentElement.classList.add('js')</script>
-${usesWidgets && OR.script ? `<meta name="ownerrez" content="${esc(OR.script)}" data-hosts="${esc((OR.hosts || []).join(' '))}">` : ''}
+${usesWidgets && OR.script ? `<meta name="ownerrez" content="${esc(OR.script)}" data-blocked="${esc((OR.blockedHosts || []).join(' '))}">` : ''}
 ${list(ld, o => `<script type="application/ld+json">${JSON.stringify(o)}</script>`)}
 </head>
 <body>

@@ -34,14 +34,14 @@
     });
   }
 
-  /* ---- OwnerRez widgets: only on the approved domain -----------------
-     OwnerRez refuses (403) widget requests from any other host, so a
-     preview would show empty boxes. Load widget.js where it works;
-     everywhere else, say plainly what appears here at launch. */
+  /* ---- OwnerRez widgets --------------------------------------------
+     OwnerRez serves its widgets to any real domain but refuses localhost
+     (403), which would leave empty boxes in local dev. Load widget.js
+     everywhere except there; locally, say plainly what loads here. */
   const orMeta = document.querySelector('meta[name="ownerrez"]');
   if (orMeta) {
-    const hosts = (orMeta.dataset.hosts || '').split(' ');
-    if (hosts.includes(location.hostname)) {
+    const blocked = (orMeta.dataset.blocked || '').split(' ');
+    if (location.protocol.startsWith('http') && !blocked.includes(location.hostname)) {
       const s = document.createElement('script');
       s.src = orMeta.content;
       document.body.append(s);
@@ -50,7 +50,7 @@
         const type = (w.querySelector('.ownerrez-widget') || {}).dataset?.widgetType || '';
         const name = { 'Booking/Inquiry': 'booking form', 'Reviews': 'guest reviews' }[type] || 'availability calendar';
         w.classList.add('or-widget--preview');
-        w.innerHTML = `<p>The live ${name} from OwnerRez loads here on ${hosts[0] || 'the live site'}.</p>`;
+        w.innerHTML = `<p>The live ${name} from OwnerRez loads here on the published site (OwnerRez blocks it on localhost).</p>`;
       });
     }
   }
