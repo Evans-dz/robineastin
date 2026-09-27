@@ -19,6 +19,11 @@ const CONFIG = {
 
   launched: null,       // 'October 2026' at launch: removes noindex, fills legal dates
 
+  /* Until launch, the real domain still serves the old OwnerRez site, so
+     link previews (og:image, og:url) point at the Vercel share link
+     instead. Canonical tags always use business.domain.               */
+  previewOrigin: null,  // e.g. 'https://robineastin.vercel.app'
+
   business: {
     name:   'Wilderness Escape Rentals',
     short:  'Wilderness Escape',

@@ -1,2 +1,6 @@
 .DS_Store
 node_modules/
+.vercel
+# secrets: the OwnerRez token lives here and nowhere else
+.env
+.env.*

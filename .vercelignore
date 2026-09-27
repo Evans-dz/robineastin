@@ -1,0 +1,8 @@
+# Dev-only files: in the repo, never on the public site.
+.claude
+tools
+server.js
+DESIGN.md
+README.md
+.env
+.env.*

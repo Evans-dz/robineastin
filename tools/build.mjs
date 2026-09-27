@@ -35,6 +35,9 @@ const esc = s => String(s ?? '')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const SITE = `https://${C.business.domain}`;
 const abs = p => SITE + p;
+/* link previews: the Vercel share link until launch, the real domain after */
+const SHARE = (!C.launched && C.previewOrigin) ? C.previewOrigin.replace(/\/$/, '') : SITE;
+const shareUrl = p => SHARE + p;
 const telHref = p => 'tel:' + String(p).replace(/[^\d+]/g, '');
 const NB = '\u00A0';                                     /* non-breaking space */
 const drive = min => {
@@ -147,8 +150,11 @@ ${robots}
 <meta property="og:site_name" content="${esc(B.name)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:url" content="${abs(route)}">
-<meta property="og:image" content="${abs('/assets/og.jpg')}">
+<meta property="og:url" content="${shareUrl(route)}">
+<meta property="og:image" content="${shareUrl('/assets/og.jpg')}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(C.photos[C.home.heroPhoto].alt)}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/besley-var.woff2" as="font" type="font/woff2" crossorigin>
