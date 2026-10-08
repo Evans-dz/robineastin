@@ -108,6 +108,90 @@
       : first ? first.dataset.season : 'all');
   }
 
+  /* ---- reviews: filter by cabin (no JS: every review shows) ---------- */
+  const revFilter = document.querySelector('[data-review-filter]');
+  if (revFilter) {
+    const showCabin = cabin => {
+      const b = revFilter.querySelector(`button[data-cabin="${cabin}"]`) || revFilter.querySelector('button[data-cabin="all"]');
+      revFilter.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      document.querySelectorAll('.review-card[data-cabin]').forEach(card => {
+        card.hidden = b.dataset.cabin !== 'all' && card.dataset.cabin !== b.dataset.cabin;
+      });
+      const u = new URL(location.href);                /* shareable, like the season filter */
+      b.dataset.cabin === 'all' ? u.searchParams.delete('cabin') : u.searchParams.set('cabin', b.dataset.cabin);
+      history.replaceState(null, '', u);
+    };
+    revFilter.hidden = false;
+    revFilter.addEventListener('click', e => {
+      const b = e.target.closest('button[data-cabin]');
+      if (b) showCabin(b.dataset.cabin);
+    });
+    const wanted = new URL(location.href).searchParams.get('cabin');
+    if (wanted) showCabin(wanted);
+  }
+
+  /* ---- photo viewer: every gallery photo opens large, with previous and
+     next. No JS (or no <dialog>): the link opens the large photo itself.
+     No motion here on purpose; the descent stays the only language. */
+  const groups = new Map();
+  document.querySelectorAll('a[data-lightbox]').forEach(a => {
+    const g = a.dataset.lightbox;
+    groups.set(g, [...(groups.get(g) || []), a]);
+  });
+  if (groups.size && typeof HTMLDialogElement === 'function') {
+    const svgIcon = d => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+    const dlg = document.createElement('dialog');
+    dlg.className = 'lightbox';
+    dlg.setAttribute('aria-label', 'Photo viewer');
+    dlg.innerHTML =
+      '<figure><img alt=""><figcaption aria-hidden="true"></figcaption></figure>' +
+      '<p class="lb-count" aria-live="polite"></p>' +
+      `<button class="lb-btn lb-prev" type="button" aria-label="Previous photo">${svgIcon('M15 5l-7 7 7 7')}</button>` +
+      `<button class="lb-btn lb-next" type="button" aria-label="Next photo">${svgIcon('M9 5l7 7-7 7')}</button>` +
+      `<button class="lb-btn lb-close" type="button" aria-label="Close">${svgIcon('M6 6l12 12M18 6L6 18')}</button>`;
+    document.body.append(dlg);
+    const img = dlg.querySelector('img');
+    const cap = dlg.querySelector('figcaption');
+    const count = dlg.querySelector('.lb-count');
+    let set = [], at = 0, opener = null;
+
+    const show = n => {
+      at = (n + set.length) % set.length;
+      const a = set[at];
+      img.src = a.href;
+      img.alt = a.dataset.caption || '';
+      cap.textContent = a.dataset.caption || '';
+      count.textContent = `${at + 1} of ${set.length}`;
+      /* warm the next photo so stepping through feels instant */
+      const next = set[(at + 1) % set.length];
+      if (next) new Image().src = next.href;
+    };
+    groups.forEach(links => links.forEach((a, n) => a.addEventListener('click', e => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      set = links; opener = a;
+      show(n);
+      dlg.showModal();
+    })));
+    dlg.querySelector('.lb-prev').addEventListener('click', () => show(at - 1));
+    dlg.querySelector('.lb-next').addEventListener('click', () => show(at + 1));
+    dlg.querySelector('.lb-close').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', e => { if (e.target === dlg || e.target.tagName === 'FIGURE') dlg.close(); });
+    dlg.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(at - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(at + 1); }
+    });
+    let touchX = null;
+    dlg.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+    dlg.addEventListener('touchend', e => {
+      if (touchX == null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 50) show(at + (dx < 0 ? 1 : -1));
+      touchX = null;
+    });
+    dlg.addEventListener('close', () => { img.removeAttribute('src'); if (opener) opener.focus(); });
+  }
+
   /* ---- print the guide (the pamphlet draft) -------------------------- */
   document.querySelectorAll('[data-print]').forEach(b => {
     b.hidden = false;

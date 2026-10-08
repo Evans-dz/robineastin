@@ -24,17 +24,7 @@
     },
     {
       "source": "/availability",
-      "destination": "/#book",
-      "permanent": true
-    },
-    {
-      "source": "/book",
-      "destination": "/#book",
-      "permanent": true
-    },
-    {
-      "source": "/reviews",
-      "destination": "/#reviews",
+      "destination": "/book/",
       "permanent": true
     }
   ],

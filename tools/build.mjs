@@ -33,6 +33,8 @@ const esc = s => String(s ?? '')
   .replace(/(\w)'(\w)/g, '$1\u2019$2')                 /* Henry's -> Henry’s */
   .replace(/(^|[\s(])"(\S)/g, '$1\u201C$2').replace(/(\S)"(?=[\s.,;:)!?]|$)/g, '$1\u201D')
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+/* keep "Wi-Fi" on one line in headings (it was breaking at the hyphen on phones) */
+const nobr = html => html.replace(/Wi-Fi/g, '<span class="nobr">Wi-Fi</span>');
 const SITE = `https://${C.business.domain}`;
 const abs = p => SITE + p;
 /* link previews: the Vercel share link until launch, the real domain after */
@@ -57,6 +59,9 @@ const icon = {
   phone: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2.5 1.5a11 11 0 0 0 7 7L16 14l5 2v3a2 2 0 0 1-2 2A17 17 0 0 1 3 5a2 2 0 0 1 2-2"/></svg>',
   cal: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/></svg>',
+  wifi: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.6a10 10 0 0 1 14 0M8.5 16.4a5 5 0 0 1 7 0"/><circle cx="12" cy="19.8" r="1" fill="currentColor"/></svg>',
+  star: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>',
 };
 
 /* photos: every <img> goes through here so alt text and sizes come from config */
@@ -68,28 +73,56 @@ function pic(key, { sizes = '100vw', eager = false, cls = '', alt } = {}) {
   return `<img src="${base}-1200.jpg" srcset="${base}-640.webp 640w, ${base}-1200.webp 1200w, ${base}-2400.webp 2400w" sizes="${sizes}" width="1200" height="${h}" alt="${esc(alt ?? p.alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}${cls ? ` class="${cls}"` : ''}${p.focus ? ` style="object-position:${p.focus}"` : ''}>`;
 }
 
+/* Robyn's own photos on her OwnerRez photo host: Medium is 600x400,
+   Large 1200x800, every one 3:2. */
+const orSrc = (id, size) => `https://uc.orez.io/i/${id}-${size}`;
+function orImg(g, { sizes = '100vw', eager = false, alt } = {}) {
+  return `<img src="${orSrc(g.id, 'Medium')}" srcset="${orSrc(g.id, 'Medium')} 600w, ${orSrc(g.id, 'Large')} 1200w" sizes="${sizes}" width="1200" height="800" alt="${esc(alt ?? g.alt)}"${eager ? ' fetchpriority="high"' : ' loading="lazy" decoding="async"'}>`;
+}
+const cabinBySlug = slug => C.cabins.find(c => c.slug === slug);
+const orById = id => { for (const c of C.cabins) { const g = (c.gallery || []).find(x => x.id === id); if (g) return g; } throw new Error(`OwnerRez photo ${id} is not in any cabin gallery`); };
+/* a cabin's lead photo: one of our shoot keys, or one of her OwnerRez ids */
+const cabinLead = (c, opts) => C.photos[c.lead] ? pic(c.lead, opts) : orImg(orById(c.lead), opts);
+const cabinLeadHref = c => C.photos[c.lead] ? `/assets/photos/${c.lead}-2400.webp` : orSrc(c.lead, 'Large');
+const cabinLeadAlt = c => C.photos[c.lead] ? C.photos[c.lead].alt : orById(c.lead).alt;
+const cabinFacts = c => [c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean);
+
+/* reviews: real, five stars each, attributed and dated (CONFIG.reviews) */
+const REV = (C.reviews && C.reviews.items) || [];
+const stars = `<span class="stars" role="img" aria-label="5 out of 5 stars">${icon.star.repeat(5)}</span>`;
+const reviewCard = (r, { cabin = true } = {}) => {
+  const c = cabinBySlug(r.cabin);
+  return `<li class="review-card" data-cabin="${esc(r.cabin)}"><figure>
+        ${stars}
+        <blockquote><p>${esc(r.text)}</p></blockquote>
+        <figcaption><b>${esc(r.name)}</b>${cabin && c ? ` · stayed at <a href="/cabins/${c.slug}/" translate="no">${esc(c.name)}</a>` : ''} · ${esc(r.when)}</figcaption>
+      </figure></li>`;
+};
+
 /* ---- shell ---------------------------------------------------------------- */
 const NAV = [
   ['/#cabins', 'The cabins'],
   ['/guide/', 'Things to do'],
   ['/map/', 'Map'],
-  ['/#plan', 'Plan your stay'],
+  ['/reviews/', 'Reviews'],
+  ['/faq/', 'FAQ'],
 ];
+const LOGO = C.logo;
 
 function header(current) {
   const links = list(NAV, ([href, label]) =>
     `<a href="${href}"${href === current ? ' aria-current="page"' : ''}>${label}</a>`, '');
   return `<a href="#main" class="skip">Skip to content</a>
 ${SAMPLE ? '<div class="sample-flag" role="note">Draft for review · sample content, not final</div>' : ''}
-<header class="site-head on-dusk">
+<div class="topbar"><div class="wrap"><span><b>Office</b> ${esc(B.street)}, ${esc(B.city)}, ${esc(B.state)} ${esc(B.zip)}</span>${email ? `<a href="mailto:${esc(email)}">${icon.mail}${esc(email)}</a>` : ''}</div></div>
+<header class="site-head">
   <div class="wrap">
-    <a class="brand" href="/" translate="no"><b>${esc(B.short)}</b><span>Cabins in ${esc(B.city)}, ${esc(B.state)}</span></a>
+    <a class="brand" href="/" translate="no"><img src="${LOGO.src}" srcset="${LOGO.srcset}" sizes="(max-width: 40rem) 62px, 77px" width="${LOGO.w}" height="${LOGO.h}" alt=""><span class="brand__text"><b>${esc(B.short)}</b><span>Cabins in ${esc(B.city)}, ${esc(B.state)}</span></span></a>
     <nav class="nav" aria-label="Main">${links}</nav>
-    ${phone ? `<a class="btn btn--quiet head-call" href="${telHref(phone)}">${icon.phone}<span class="short">Call</span><span class="long">${esc(phone)}</span></a>` : ''}
-    <a class="btn btn--book head-book" href="/#book">Check dates</a>
+    <a class="btn btn--book head-book" href="/book/"${current === '/book/' ? ' aria-current="page"' : ''}>${icon.cal}Book now</a>
     <button class="btn btn--quiet menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
   </div>
-  <nav id="menu" class="menu" aria-label="Menu"><div class="wrap">${links}<a href="/#book">Check dates</a></div></nav>
+  <nav id="menu" class="menu" aria-label="Menu"><div class="wrap">${links}${email ? `<a href="mailto:${esc(email)}">Email us</a>` : ''}</div></nav>
 </header>`;
 }
 
@@ -98,18 +131,17 @@ function footer() {
   <div class="wrap">
     <div class="cols">
       <div class="stack">
-        <h2>${esc(B.name)}</h2>
-        <address>${esc(B.street)}<br>${esc(B.city)}, ${esc(B.region)} ${esc(B.zip)}</address>
-        ${phone ? `<p><a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}${esc(phone)}</a></p>` : ''}
+        <a class="foot-logo" href="/"><img src="/assets/logo/logo-320.webp" width="${LOGO.w}" height="${LOGO.h}" alt="${esc(B.name)} home" loading="lazy" decoding="async"></a>
+        <address><b>Office</b><br>${esc(B.street)}<br>${esc(B.city)}, ${esc(B.state)} ${esc(B.zip)}</address>
         ${email ? `<p><a href="mailto:${esc(email)}">${esc(email)}</a></p>` : ''}
       </div>
       <div>
-        <h3>Stay</h3>
-        <ul>${list(C.cabins, c => `<li><a href="/cabins/${c.slug}/">${esc(c.name)}</a></li>`, '')}<li><a href="/#plan">Plan your stay</a></li><li><a href="/checkout/">Checkout guide</a></li></ul>
+        <h2 class="foot-h">Stay</h2>
+        <ul>${list(C.cabins, c => `<li><a href="/cabins/${c.slug}/">${esc(c.name)}</a></li>`, '')}<li><a href="/book/">Book now</a></li><li><a href="/reviews/">Reviews</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/checkout/">Checkout guide</a></li></ul>
       </div>
       <div>
-        <h3>Explore</h3>
-        <ul><li><a href="/guide/">Things to do</a></li><li><a href="/map/">Yellowstone map</a></li><li><a href="/guide/#food">Food and groceries</a></li><li><a href="/guide/#wildlife">Wildlife</a></li></ul>
+        <h2 class="foot-h">Explore</h2>
+        <ul><li><a href="/guide/">Things to do</a></li><li><a href="/map/">Yellowstone map</a></li><li><a href="/guide/#food">Restaurants</a></li><li><a href="/guide/#supplies">Groceries</a></li><li><a href="/guide/#shows">Theatre and shows</a></li></ul>
       </div>
     </div>
     <div class="fine">
@@ -132,6 +164,11 @@ function crumbsNav(trail) {
     i === trail.length - 1 ? `<li aria-current="page">${esc(name)}</li>` : `<li><a href="${p}">${esc(name)}</a></li>`, '')}</ol></nav>`;
 }
 
+/* the favicon is the mountain scene from Robyn's logo */
+const ICONS = `<link rel="icon" href="/assets/logo/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/assets/logo/favicon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon.png">`;
+
 function page({ route, title, desc, body, ld = [], index = true, current = '', progress = false, preload = [] }) {
   const usesWidgets = body.includes('ownerrez-widget');
   if (title.length > 65) warnings.push(`title over 65 chars (${title.length}) on ${route}: ${title}`);
@@ -145,7 +182,7 @@ ${robots}
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${abs(route)}">
-<meta name="theme-color" content="#0E1A15">
+<meta name="theme-color" content="#FFFFFF">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${esc(B.name)}">
 <meta property="og:title" content="${esc(title)}">
@@ -156,7 +193,7 @@ ${robots}
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(C.photos[C.home.heroPhoto].alt)}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+${ICONS}
 <link rel="preload" href="/assets/fonts/besley-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/public-sans-var.woff2" as="font" type="font/woff2" crossorigin>
 ${body.includes('uc.orez.io') ? '<link rel="preconnect" href="https://uc.orez.io">' : ''}
@@ -212,25 +249,29 @@ function guideCard(p, { photo = false } = {}) {
 
 /* OwnerRez widgets: widget.js swaps each placeholder for an iframe.
    Without JS the placeholder stays empty, so every slot carries a
-   noscript line and a call/email row that always works.           */
+   noscript line and an email link that always works. (No phone:
+   Robyn wants guests booking on the site, 7 Oct 2026.)           */
 const OR = C.booking || {};
 const orWidget = (type, widgetId, propertyKey) => widgetId ? `<div class="or-widget or-widget--${type.toLowerCase().replace(/[^a-z]+/g, '-')}"><div class="ownerrez-widget" data-widget-type="${type}" data-widgetId="${widgetId}"${propertyKey ? ` data-propertyId="${propertyKey}"` : ''}></div></div>` : '';
-const contactRow = subject => `<div class="row">
-        ${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call ${esc(phone)}</a>` : ''}
-        ${email ? `<a class="btn btn--quiet" href="mailto:${esc(email)}?subject=${encodeURIComponent(subject)}">Email Robyn</a>` : ''}
-      </div>`;
-function bookSlot(cabin) {
+const contactRow = subject => email ? `<div class="row">
+        <a class="btn btn--quiet" href="mailto:${esc(email)}?subject=${encodeURIComponent(subject)}">${icon.mail}Email us</a>
+      </div>` : '';
+function bookSlot(cabin, { heading = true } = {}) {
   const widget = cabin
     ? orWidget('Booking/Inquiry', (OR.perCabin || {}).booking, cabin.ownerrez && cabin.ownerrez.key)
     : orWidget('Booking/Inquiry', (OR.all || {}).booking);
   return `<div class="book-slot">
-      <h3>${cabin ? `Book ${esc(cabin.name)}` : 'Pick your dates'}</h3>
+      ${heading ? `<h3>${cabin ? `Book ${esc(cabin.name)}` : 'Pick your dates'}</h3>` : ''}
       ${widget || '<p>Online booking with live availability connects here at launch.</p>'}
-      <noscript><p>The booking calendar needs JavaScript. Call or email Robyn for dates.</p></noscript>
-      <p class="note">Prefer to talk it through, or booking both cabins?</p>
+      <noscript><p>The booking calendar needs JavaScript. Email us for dates.</p></noscript>
+      <p class="note">Booking both cabins, or have a question first?</p>
       ${contactRow(`Dates${cabin ? ` for ${cabin.name}` : ''}`)}
     </div>`;
 }
+
+/* the photo gallery on a cabin page: every photo opens in the viewer
+   (main.js); with no JS each link opens the large photo itself */
+const galleryLink = (href, alt, img, group) => `<a href="${href}" data-lightbox="${group}" data-caption="${esc(alt)}">${img}</a>`;
 
 /* ---- the map ----------------------------------------------------------------- */
 const BD = MAP.bounds;
@@ -260,7 +301,8 @@ function mapBlock({ parent = 'h2', big = false } = {}) {
     const x = px(p.lng), y = py(p.lat);
     const side = p.labelSide === 'left' ? 'l' : 'r';
     const lab = p.label ? `<text class="map__label map__label--${p.label} map__label--${side}" y="4"${side === 'l' ? ' text-anchor="end"' : ''}>${esc(p.short || p.name)}</text>` : '';
-    return `<g class="pin pin--${p.cat}" data-id="${p.id}" data-cat="${p.cat}" data-xy="${x},${y}" transform="translate(${x} ${y})" role="button" tabindex="0" aria-label="${esc(p.name)}${p.drive != null ? `, ${drive(p.drive)} from the cabins` : ''}"><circle r="7"/>${lab}</g>`;
+    const col = (G.CATEGORIES[p.cat] || {}).color;
+    return `<g class="pin pin--${p.cat}" data-id="${p.id}" data-cat="${p.cat}" data-xy="${x},${y}" transform="translate(${x} ${y})"${col ? ` style="--c:${col}"` : ''} role="button" tabindex="0" aria-label="${esc(p.name)}${p.drive != null ? `, ${drive(p.drive)} from the cabins` : ''}"><circle r="7"/>${lab}</g>`;
   }).join('\n');
   const typo = t => String(t ?? '').replace(/(\w)'(\w)/g, '$1\u2019$2');
   const json = JSON.stringify(pts.map(p => ({
@@ -313,35 +355,64 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   }
   const picks = [...pickSeasons.keys()].map(id => ({ ...placeById(id), seasons: pickSeasons.get(id), bestSeasons: placeById(id).seasons }));
   const cabinsHtml = list(C.cabins, c => `<li class="cabin-card reveal">
-        <figure>${pic(c.photos[0], { sizes: '(min-width: 64rem) 30vw, (min-width: 40rem) 45vw, 100vw' })}</figure>
+        <figure><a href="/cabins/${c.slug}/" tabindex="-1" aria-hidden="true">${cabinLead(c, { sizes: '(min-width: 40rem) 45vw, 100vw' })}</a></figure>
         <h3 translate="no"><a href="/cabins/${c.slug}/">${esc(c.name)}</a></h3>
-        <ul class="facts">${[c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean).map(f => `<li>${f}</li>`).join('')}</ul>
+        <ul class="facts">${cabinFacts(c).map(f => `<li>${f}</li>`).join('')}</ul>
         <p class="blurb">${esc(c.summary)}</p>
-        <div class="row"><a class="btn btn--quiet" href="/cabins/${c.slug}/">See the cabin</a><a class="btn btn--book" href="/cabins/${c.slug}/#book">Check dates</a></div>
+        <div class="row"><a class="btn btn--book" href="/book/#${c.slug}">${icon.cal}Book now</a><a class="btn btn--quiet" href="/cabins/${c.slug}/">See the cabin</a></div>
       </li>`);
 
-  const R = C.ratings || { items: [] };
   const policies = (C.policies || []).filter(p => p.value);
+  const factsList = cls => H.facts && H.facts.length ? `<ul class="hero__facts ${cls}">${list(H.facts, f => `<li>${f}</li>`, '')}</ul>` : '';
+  const BC = H.bookCard || {};
+
+  /* close to the cabins: names from FOOD/SUPPLIES, ids from PLACES */
+  const N = H.nearby || {};
+  const byName = (arr, name) => { const x = arr.find(r => r.name === name); if (!x) throw new Error(`nearby "${name}" not found`); return x; };
+  const nearRow = (name, where, min) => `<li><span class="name">${esc(name)}<span class="sub">${esc(where)}</span></span>${min != null ? `<span class="t">${drive(min)}</span>` : ''}</li>`;
+  const nearCol = (head, rows, href, more) => `<div class="near">
+        <h3>${head}</h3>
+        <ul class="near__list">${rows}</ul>
+        <p><a href="${href}">${more}</a></p>
+      </div>`;
+  const nearbyHtml = (N.groceries || N.food || N.shows) ? `<div class="nearby">
+      ${nearCol('Groceries', list(N.groceries, n => { const s = byName(G.SUPPLIES, n); return nearRow(s.name, s.town, s.drive); }, ''), '/guide/#supplies', 'Groceries, gas and supplies')}
+      ${nearCol('Restaurants', list(N.food, n => { const s = byName(G.FOOD, n); return nearRow(s.name, s.town, s.drive); }, ''), '/guide/#food', 'Every restaurant in the guide')}
+      ${nearCol('Theatre', list(N.shows, id => { const p = placeById(id); if (!p) throw new Error(`nearby show "${id}" not in PLACES`); return nearRow(p.name, p.area, p.drive); }, ''), '/guide/#shows', 'Shows and rainy days')}
+    </div>` : '';
+
+  const homeFaq = (C.faq || []).filter(f => f.home);
+  const homeReviews = REV.filter(r => r.home);
 
   const body = `
 <section class="hero on-dusk" aria-labelledby="hero-h" style="--hero-pos:${esc(H.heroPos)};--descent-origin:${esc(H.descentOrigin)};--hero-pos-m:${esc(H.heroPosMobile)};--descent-origin-m:${esc(H.descentOriginMobile)}">
   <div class="hero__bg">${pic(H.heroPhoto, { eager: true })}</div>
-  <div class="wrap"><div class="hero__copy">
-    <div class="hero__head">
-      <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
-      <h1 id="hero-h">${esc(H.h1)}</h1>
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <div class="hero__head">
+        <span class="sign">${esc(H.welcome)}</span>
+        <h1 id="hero-h">${esc(H.h1)}</h1>
+      </div>
+      <p class="hero__lede">${esc(H.lede)}</p>
+      <div class="hero__actions">
+        <a class="btn btn--book btn--big" href="/book/">${icon.cal}Book now</a>
+        <a class="btn btn--quiet" href="#cabins">See the cabins</a>
+      </div>
+      ${factsList('hero__facts--in')}
     </div>
-    <p class="hero__lede">${esc(H.lede)}</p>
-    <div class="hero__actions">
-      <a class="btn btn--book" href="#book">${icon.cal}Check dates</a>
-      ${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call ${esc(phone)}</a>` : ''}
-    </div>
-  </div></div>
+    <aside class="hero-book" aria-label="Book a cabin">
+      <span class="sign">Book online</span>
+      <p class="hero-book__head">${esc(BC.head || 'Book your stay')}</p>
+      <ul class="hero-book__cabins">${list(C.cabins, c => `<li><a href="/book/#${c.slug}">${cabinLead(c, { sizes: '96px', alt: '' })}<span><b translate="no">${esc(c.name)}</b><small>Sleeps ${c.sleeps} · ${c.bedrooms} bedrooms</small></span>${icon.arrow}</a></li>`, '')}</ul>
+      <a class="btn btn--book btn--big" href="/book/">${icon.cal}Book now</a>
+      ${BC.note ? `<p class="note">${esc(BC.note)}</p>` : ''}
+    </aside>
+  </div>
 </section>
 <div class="hero-after on-dusk">
   <div class="wrap">
     <p class="hero__lede">${esc(H.lede)}</p>
-    ${H.facts && H.facts.length ? `<ul class="hero__facts">${list(H.facts, f => `<li>${f}</li>`, '')}</ul>` : ''}
+    ${factsList('hero__facts--after')}
   </div>
 </div>
 
@@ -353,6 +424,8 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
       <p>${esc(H.cabinsLede)}</p>
     </div>
     <ul class="cabins">${cabinsHtml}</ul>
+    ${(H.inside || []).length ? `<h3 class="inside-head">${esc(H.insideHead || 'A look inside')}</h3>
+    <ul class="inside">${list(H.inside, ([slug, id]) => { const c = cabinBySlug(slug); const g = orById(id); return `<li><a href="/cabins/${slug}/">${orImg(g, { sizes: '(min-width: 64rem) 25vw, (min-width: 40rem) 33vw, 50vw' })}<span translate="no">${esc(c.name)}</span></a></li>`; }, '')}</ul>` : ''}
   </div>
 </section>
 
@@ -371,7 +444,18 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   </div>
 </section>
 
-<section id="season" aria-labelledby="season-h">
+${nearbyHtml ? `<section id="nearby" aria-labelledby="nearby-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sign">Close to the cabins</span>
+      <h2 id="nearby-h" class="reveal">${esc(H.nearbyHead)}</h2>
+      <p>${esc(H.nearbyLede)}</p>
+    </div>
+    ${nearbyHtml}
+  </div>
+</section>` : ''}
+
+<section class="raised" id="season" aria-labelledby="season-h">
   <div class="wrap" data-season-scope>
     <div class="sec-head">
       <span class="sign">Island Park by season</span>
@@ -386,56 +470,51 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   </div>
 </section>
 
-<section class="raised" id="reviews" aria-labelledby="reviews-h">
+${homeReviews.length ? `<section id="reviews" aria-labelledby="reviews-h">
   <div class="wrap">
     <div class="sec-head">
-      <span class="sign">Guests</span>
-      <h2 id="reviews-h" class="reveal">What guests have said</h2>
-      <p>Reviews from real stays, pulled straight from Robyn's booking system as they come in.</p>
+      <span class="sign">Guest reviews</span>
+      <h2 id="reviews-h" class="reveal">Five-star stays in the pines</h2>
+      <p>Real guests, in their own words. Every review on this site is five stars.</p>
     </div>
-    ${R.items.length ? `<ul class="ratings">${list(R.items, r => `<li><a href="${esc(r.url)}" rel="noopener"><b>${esc(r.score)}</b><span>${esc(r.where)} · ${esc(r.what)}</span><small>${r.count} reviews</small></a></li>`, '')}</ul>
-    <p class="note" style="margin:.75rem 0 2rem">Ratings as shown on each site, ${esc(R.asOf)}.</p>` : ''}
-    ${orWidget('Reviews', (OR.all || {}).reviews)}
-    <noscript><p>Guest reviews load from our booking system and need JavaScript.</p></noscript>
+    <ul class="review-grid">${list(homeReviews, r => reviewCard(r))}</ul>
+    <p style="margin-top:2rem"><a class="btn btn--quiet" href="/reviews/">Read all ${REV.length} reviews ${icon.arrow}</a></p>
   </div>
-</section>
+</section>` : ''}
 
-<section id="plan" aria-labelledby="plan-h">
+<section class="raised" id="plan" aria-labelledby="plan-h">
   <div class="wrap plan">
     <div>
       <div class="sec-head">
         <span class="sign">Plan your stay</span>
-        <h2 id="plan-h" class="reveal">Before you come</h2>
+        <h2 id="plan-h" class="reveal">Questions guests ask</h2>
       </div>
       ${policies.length ? `<dl class="policy">${list(policies, p => `<div><dt>${esc(p.label)}</dt><dd>${esc(p.value)}</dd></div>`, '')}</dl>` : ''}
     </div>
-    <div class="faq">${list(C.faq, f => `<details><summary>${esc(f.q)}</summary><div><p>${esc(f.a)}</p></div></details>`, '')}</div>
+    <div>
+      <div class="faq">${list(homeFaq, f => `<details${f.open ? ' open' : ''}><summary>${esc(f.q)}</summary><div><p>${esc(f.a)}</p></div></details>`, '')}</div>
+      <p style="margin-top:1.5rem"><a class="btn btn--quiet" href="/faq/">All questions ${icon.arrow}</a></p>
+    </div>
   </div>
 </section>
 
-<section class="raised" id="book" aria-labelledby="book-h">
-  <div class="wrap">
+<section class="dusk on-dusk cta" id="book" aria-labelledby="book-h">
+  <div class="wrap cta__grid">
     <div class="sec-head">
-      <span class="sign">Book direct</span>
-      <h2 id="book-h" class="reveal">Check dates with Robyn</h2>
+      <span class="sign">Book online</span>
+      <h2 id="book-h" class="reveal">${esc(H.bookHead || 'Book your stay')}</h2>
       <p>${esc(H.bookLede)}</p>
+      <div class="hero__actions"><a class="btn btn--book btn--big" href="/book/">${icon.cal}Book now</a><a class="btn btn--quiet" href="/book/#dates">See open dates</a></div>
     </div>
-    <div class="book-grid">
-      ${bookSlot(null)}
-      <div class="stack">
-        ${orWidget('Ribbon Calendar', (OR.all || {}).calendar)}
-        ${H.hosts ? `<div class="hosts"><h3>Your hosts</h3><p>${esc(H.hosts)}</p></div>` : ''}
-      </div>
-    </div>
+    ${H.hosts ? `<div class="hosts"><h3>Your hosts</h3><p>${esc(H.hosts)}</p></div>` : ''}
   </div>
 </section>`;
 
   const ld = [{
     '@context': 'https://schema.org', '@type': 'LodgingBusiness',
-    name: B.name, url: abs('/'), image: abs('/assets/og.jpg'),
+    name: B.name, url: abs('/'), image: abs('/assets/og.jpg'), logo: abs(LOGO.png),
     ...(phone ? { telephone: phone } : {}), ...(email ? { email } : {}),
     address: { '@type': 'PostalAddress', streetAddress: B.street, addressLocality: B.city, addressRegion: B.region, postalCode: B.zip, addressCountry: 'US' },
-    ...(B.lat != null ? { geo: { '@type': 'GeoCoordinates', latitude: B.lat, longitude: B.lng } } : {}),
     areaServed: `${B.city}, ${B.state} and Yellowstone National Park`,
   }];
   emit('index.html', page({
@@ -445,13 +524,16 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
 }
 
 /* ---- cabin pages --------------------------------------------------------------- */
-const orPhoto = (g, size, eager) => `<img src="https://uc.orez.io/i/${g.id}-${size}" alt="${esc(g.alt)}" width="1200" height="900"${eager ? '' : ' loading="lazy" decoding="async"'}>`;
 for (const c of C.cabins) {
   const route = `/cabins/${c.slug}/`;
   const trail = [['Home', '/'], [c.name, route]];
   const other = C.cabins.find(x => x.slug !== c.slug);
-  const facts = [c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedroom${c.bedrooms === 1 ? '' : 's'}`, c.baths != null && `${c.baths} bath${c.baths === 1 ? '' : 's'}`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean);
-  const gal = c.gallery || [];
+  const facts = cabinFacts(c);
+  const gal = (c.gallery || []).filter(g => g.id !== c.lead);
+  const top = gal.slice(0, 4), rest = gal.slice(4);
+  const SHOWN = 12;                                  /* the rest open behind "See all" */
+  const thumb = g => galleryLink(orSrc(g.id, 'Large'), g.alt, orImg(g, { sizes: '(min-width: 64rem) 16rem, (min-width: 40rem) 30vw, 45vw' }), c.slug);
+  const reviews = REV.filter(r => r.cabin === c.slug);
   const body = `
 <div class="wrap page-head">
   ${crumbsNav(trail)}
@@ -460,7 +542,8 @@ for (const c of C.cabins) {
   <ul class="facts" style="margin-top:1rem">${facts.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
 </div>
 <div class="wrap">
-  <div class="gallery">${pic(c.photos[0], { sizes: '(min-width: 64rem) 50vw, 100vw', eager: true })}${list(gal.slice(0, 4), (g, i) => orPhoto(g, 'Medium', false), '')}</div>
+  <div class="gallery">${galleryLink(cabinLeadHref(c), cabinLeadAlt(c), cabinLead(c, { sizes: '(min-width: 64rem) 50vw, 100vw', eager: true }), c.slug)}${list(top, g => galleryLink(orSrc(g.id, 'Large'), g.alt, orImg(g, { sizes: '(min-width: 64rem) 25vw, 50vw' }), c.slug), '')}</div>
+  <p class="gallery-count"><a href="#photos">See all ${gal.length + 1} photos ${icon.arrow}</a></p>
 </div>
 <section>
   <div class="wrap cabin-body">
@@ -468,32 +551,176 @@ for (const c of C.cabins) {
       <h2 class="reveal">${esc(c.headline || 'The cabin')}</h2>
       ${list(c.description, para => `<p>${esc(para)}</p>`)}
       <p class="note">Sleeps ${c.sleeps}: ${esc(c.beds)}.</p>
-      ${c.amenities && c.amenities.length ? `<h3 style="margin-top:2rem">What's here</h3><ul class="amenities">${list(c.amenities, a => `<li>${esc(a)}</li>`, '')}</ul>` : ''}
-      ${gal.length > 4 ? `<h3 style="margin-top:2rem">More photos</h3><div class="more-photos">${list(gal.slice(4), g => orPhoto(g, 'Medium', false), '')}</div>` : ''}
+      ${C.wifi ? `<div class="wifi-callout wifi-callout--small"><span class="wifi-callout__icon">${icon.wifi}</span><div><h3>${nobr(esc(C.wifi.head))}</h3><p>${nobr(esc(C.wifi.short))}</p></div></div>` : ''}
+      ${c.amenities && c.amenities.length ? `<h3 style="margin-top:2rem">What’s here</h3><ul class="amenities">${list(c.amenities, a => `<li>${esc(a)}</li>`, '')}</ul>` : ''}
       ${other ? `<div class="book-slot" style="margin-top:2rem"><h3>Bringing everyone?</h3><p>${esc(other.name)} is right next door and sleeps ${other.sleeps}. Book both and keep the whole group together.</p><p><a class="btn btn--quiet" href="/cabins/${other.slug}/">See ${esc(other.name)} ${icon.arrow}</a></p></div>` : ''}
     </div>
     <aside id="book">${bookSlot(c)}</aside>
   </div>
 </section>
-<section class="raised" aria-labelledby="avail-h">
+${rest.length ? `<section class="photos-sec" id="photos" aria-labelledby="photos-h">
+  <div class="wrap">
+    <div class="sec-head"><span class="sign">Photos</span><h2 id="photos-h" class="reveal">Every room, inside and out</h2><p>Tap any photo to see it large.</p></div>
+    <div class="more-photos">${list(rest.slice(0, SHOWN), thumb, '')}</div>
+    ${rest.length > SHOWN ? `<details class="all-photos"><summary class="btn btn--quiet">See ${rest.length - SHOWN} more photos</summary><div class="more-photos">${list(rest.slice(SHOWN), thumb, '')}</div></details>` : ''}
+  </div>
+</section>` : ''}
+<section class="raised" id="dates" aria-labelledby="avail-h">
   <div class="wrap">
     <div class="sec-head"><span class="sign">Availability</span><h2 id="avail-h" class="reveal">Open dates</h2></div>
     ${orWidget('Multiple Month Calendar', (OR.perCabin || {}).calendar, c.ownerrez && c.ownerrez.key)}
-    <noscript><p>The calendar needs JavaScript. Call or email Robyn for dates.</p></noscript>
+    <noscript><p>The calendar needs JavaScript. Email us for dates.</p></noscript>
+    <p style="margin-top:1.5rem"><a class="btn btn--book" href="/book/#${c.slug}">${icon.cal}Book ${esc(c.name)}</a></p>
   </div>
 </section>
-<section aria-labelledby="rev-h">
+${reviews.length ? `<section aria-labelledby="rev-h">
   <div class="wrap">
-    <div class="sec-head"><span class="sign">Guests</span><h2 id="rev-h" class="reveal">Reviews of ${esc(c.name)}</h2></div>
-    ${orWidget('Reviews', (OR.perCabin || {}).reviews, c.ownerrez && c.ownerrez.key)}
-    <noscript><p>Guest reviews load from our booking system and need JavaScript.</p></noscript>
+    <div class="sec-head"><span class="sign">Guest reviews</span><h2 id="rev-h" class="reveal">What guests say about ${esc(c.name)}</h2></div>
+    <ul class="review-grid">${list(reviews.slice(0, 6), r => reviewCard(r, { cabin: false }))}</ul>
+    <p style="margin-top:2rem"><a class="btn btn--quiet" href="/reviews/">Read all ${REV.length} reviews ${icon.arrow}</a></p>
   </div>
-</section>`;
+</section>` : ''}`;
   emit(`cabins/${c.slug}/index.html`, page({
     route, current: '/#cabins',
     title: `${c.name} · ${B.city} Cabin | ${B.short}`,
-    desc: c.metaDesc || `${c.name}: ${facts.join(', ')}. A family cabin in the ${B.city} pines, 45 minutes from Yellowstone. Book direct with the owner.`,
+    desc: c.metaDesc || `${c.name}: ${facts.join(', ')}. A family cabin in the ${B.city} pines, ${B.toYellowstone.replace('min', 'minutes')} from Yellowstone. Book online.`,
     ld: [crumbsLd(trail)], body,
+  }), { route });
+}
+
+/* ---- book now: the page every "Book now" button lands on --------------------- */
+{
+  const route = '/book/';
+  const trail = [['Home', '/'], ['Book now', route]];
+  const policies = (C.policies || []).filter(p => p.value);
+  const body = `
+<div class="wrap page-head">
+  ${crumbsNav(trail)}
+  <span class="sign">Book online</span>
+  <h1 style="margin-top:.9rem">Book your stay</h1>
+  <p class="lede">Pick your cabin and your dates. You will see your total, with taxes and fees, before you pay, and you book right here on our website.</p>
+  <ul class="perks">
+    <li><b>No service fees</b><span>No Airbnb or VRBO fees on top</span></li>
+    <li><b>See your total first</b><span>Nightly rate, taxes and fees up front</span></li>
+    <li><b>${esc(B.toYellowstone)} to Yellowstone</b><span>Self check-in from 4:00 pm</span></li>
+    <li><b>Fast Wi-Fi</b><span>Great for video calls and remote work</span></li>
+  </ul>
+</div>
+<section style="padding-top:0" aria-label="Choose a cabin">
+  <div class="wrap book-cabins">
+    ${list(C.cabins, c => `<article class="book-cabin" id="${c.slug}" aria-labelledby="bk-${c.slug}">
+      <figure>${cabinLead(c, { sizes: '(min-width: 64rem) 36rem, 100vw' })}</figure>
+      <div class="book-cabin__head">
+        <h2 id="bk-${c.slug}" translate="no">${esc(c.name)}</h2>
+        <ul class="facts">${cabinFacts(c).map(f => `<li>${esc(f)}</li>`).join('')}</ul>
+        <p class="note">${esc(c.summary)} <a href="/cabins/${c.slug}/">See the cabin and photos</a></p>
+      </div>
+      ${bookSlot(c, { heading: false })}
+    </article>`, '')}
+  </div>
+</section>
+<section class="raised" id="dates" aria-labelledby="dates-h">
+  <div class="wrap">
+    <div class="sec-head"><span class="sign">Availability</span><h2 id="dates-h" class="reveal">Open dates at both cabins</h2><p>Planning a reunion? Find the dates both cabins are open, then book each one.</p></div>
+    ${orWidget('Ribbon Calendar', (OR.all || {}).calendar)}
+    <noscript><p>The calendar needs JavaScript. Email us for dates.</p></noscript>
+  </div>
+</section>
+<section aria-labelledby="know-h">
+  <div class="wrap plan">
+    <div>
+      <div class="sec-head"><span class="sign">Good to know</span><h2 id="know-h" class="reveal">Before you book</h2></div>
+      ${policies.length ? `<dl class="policy">${list(policies, p => `<div><dt>${esc(p.label)}</dt><dd>${esc(p.value)}</dd></div>`, '')}</dl>` : ''}
+    </div>
+    <div class="stack">
+      <div class="faq">${list((C.faq || []).filter(f => f.group === 'booking'), f => `<details><summary>${esc(f.q)}</summary><div><p>${esc(f.a)}</p></div></details>`, '')}</div>
+      <p><a class="btn btn--quiet" href="/faq/">All questions ${icon.arrow}</a></p>
+    </div>
+  </div>
+</section>`;
+  emit('book/index.html', page({
+    route, current: '/book/',
+    title: `Book Your Stay in ${B.city} | ${B.short}`,
+    desc: `Book Pine Shadows or Wilderness Escape Retreat online: pick your dates, see your total and book online, with no Airbnb or VRBO service fees.`,
+    ld: [crumbsLd(trail)], body,
+  }), { route });
+}
+
+/* ---- reviews ------------------------------------------------------------------ */
+{
+  const route = '/reviews/';
+  const trail = [['Home', '/'], ['Reviews', route]];
+  const count = slug => REV.filter(r => r.cabin === slug).length;
+  const body = `
+<div class="wrap page-head">
+  ${crumbsNav(trail)}
+  <span class="sign">Guest reviews</span>
+  <h1 style="margin-top:.9rem">Five-star stays in the pines</h1>
+  <p class="lede">Reviews from guests who stayed in our cabins, in their own words. Every one of them is five stars.</p>
+  <div class="seasons review-filter" role="group" aria-label="Show reviews for" data-review-filter hidden>
+    <button type="button" data-cabin="all" aria-pressed="true">All ${REV.length}</button>
+    ${list(C.cabins, c => `<button type="button" data-cabin="${c.slug}" aria-pressed="false"><span translate="no">${esc(c.name)}</span> ${count(c.slug)}</button>`, '')}
+  </div>
+</div>
+<section style="padding-top:0" aria-label="Reviews">
+  <div class="wrap">
+    <ul class="review-grid review-grid--all">${list(REV, r => reviewCard(r))}</ul>
+    <p class="note" style="margin-top:2rem">${esc(C.reviews.source)} Updated ${esc(C.reviews.asOf)}.</p>
+  </div>
+</section>
+<section class="dusk on-dusk cta" aria-labelledby="rv-book-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sign">Book online</span>
+      <h2 id="rv-book-h" class="reveal">Your turn in the forest</h2>
+      <p>${esc(C.home.bookLede)}</p>
+      <div class="hero__actions"><a class="btn btn--book btn--big" href="/book/">${icon.cal}Book now</a></div>
+    </div>
+  </div>
+</section>`;
+  emit('reviews/index.html', page({
+    route, current: '/reviews/',
+    title: `Guest Reviews | ${B.short}`,
+    desc: `${REV.length} five-star reviews from guests at Pine Shadows and Wilderness Escape Retreat, our family cabins in ${B.city}, ${B.state}.`,
+    ld: [crumbsLd(trail)], body,
+  }), { route });
+}
+
+/* ---- FAQ -------------------------------------------------------------------------- */
+{
+  const route = '/faq/';
+  const trail = [['Home', '/'], ['FAQ', route]];
+  const policies = (C.policies || []).filter(p => p.value);
+  const groups = (C.faqGroups || []).map(g => [g, (C.faq || []).filter(f => f.group === g.id)]).filter(([, a]) => a.length);
+  const body = `
+<div class="wrap page-head">
+  ${crumbsNav(trail)}
+  <span class="sign">Questions</span>
+  <h1 style="margin-top:.9rem">Frequently asked questions</h1>
+  <p class="lede">What guests usually ask before they book.${email ? ` Still wondering about something? Email us at <a href="mailto:${esc(email)}">${esc(email)}</a>.` : ''}</p>
+</div>
+<section style="padding-top:0">
+  <div class="wrap plan plan--faq">
+    <div class="stack" style="--stack:2.5rem">
+      ${C.wifi ? `<div class="wifi-callout"><span class="wifi-callout__icon">${icon.wifi}</span><div><h2>${nobr(esc(C.wifi.head))}</h2><p>${nobr(esc(C.wifi.body))}</p></div></div>` : ''}
+      ${groups.map(([g, items]) => `<div><h2 class="faq-group" id="${g.id}">${esc(g.label)}</h2><div class="faq">${list(items, f => `<details open><summary>${esc(f.q)}</summary><div><p>${esc(f.a)}</p></div></details>`, '')}</div></div>`).join('')}
+    </div>
+    <aside class="faq-aside">
+      <h2 class="faq-group">House rules and times</h2>
+      ${policies.length ? `<dl class="policy">${list(policies, p => `<div><dt>${esc(p.label)}</dt><dd>${esc(p.value)}</dd></div>`, '')}</dl>` : ''}
+      <p style="margin-top:1.5rem"><a class="btn btn--book" href="/book/">${icon.cal}Book now</a></p>
+    </aside>
+  </div>
+</section>`;
+  const faqLd = {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: (C.faq || []).map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  };
+  emit('faq/index.html', page({
+    route, current: '/faq/',
+    title: `Questions About Our ${B.city} Cabins | ${B.short}`,
+    desc: `Fast Wi-Fi for remote work, toiletries, the kitchen, air conditioning, booking both cabins, groceries and how far Yellowstone is: answers about our ${B.city} cabins.`,
+    ld: [crumbsLd(trail), faqLd], body,
   }), { route });
 }
 
@@ -503,7 +730,7 @@ for (const c of C.cabins) {
   const trail = [['Home', '/'], ['Things to do', route]];
   const chapters = [
     ['yellowstone', 'Yellowstone'], ['island-park', 'Island Park'], ['wildlife', 'Wildlife'],
-    ['shows', 'Shows and rainy days'], ['food', 'Food'], ['supplies', 'Groceries and supplies'],
+    ['shows', 'Theatre and shows'], ['food', 'Food'], ['supplies', 'Groceries and supplies'],
     ['events', 'Events'], ['practical', 'Good to know'],
   ];
   const byChapter = ch => G.PLACES.filter(p => p.chapter === ch);
@@ -577,7 +804,7 @@ for (const c of C.cabins) {
   <div class="wrap" data-season-scope>
     <div class="sec-head">
       <span class="sign">Chapter 4</span>
-      <h2 id="sh-h" class="reveal">Shows, museums and rainy days</h2>
+      <h2 id="sh-h" class="reveal">Theatre, shows and rainy days</h2>
       <p>${esc(C.guide.showsLede)}</p>
     </div>
     ${chapterCards('shows')}
@@ -699,7 +926,7 @@ for (const c of C.cabins) {
     <div class="book-slot" style="margin-top:2.5rem">
       <h2 style="font-size:var(--step-2)">${esc(X.returnHead)}</h2>
       <p>${esc(X.returnLede)}</p>
-      <div class="row"><a class="btn btn--book" href="/cabins/${c.slug}/#book">Book your next stay</a>${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call Robyn</a>` : ''}</div>
+      <div class="row"><a class="btn btn--book" href="/book/#${c.slug}">${icon.cal}Book your next stay</a>${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call Robyn</a>` : ''}</div>
     </div>
   </div>
 </section>`,
@@ -716,7 +943,7 @@ emit('404.html', page({
   <span class="sign">Off trail</span>
   <h1 style="margin-top:.9rem">That page isn't here.</h1>
   <p class="lede">The link may be from our old site, or the address has a typo. These will get you back on track:</p>
-  <p style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.6rem"><a class="btn btn--book" href="/#cabins">See the cabins</a><a class="btn btn--quiet" href="/guide/">Things to do</a><a class="btn btn--quiet" href="/map/">Map</a>${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call Robyn</a>` : ''}</p>
+  <p style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.6rem"><a class="btn btn--book" href="/book/">${icon.cal}Book now</a><a class="btn btn--quiet" href="/#cabins">See the cabins</a><a class="btn btn--quiet" href="/guide/">Things to do</a><a class="btn btn--quiet" href="/map/">Map</a>${phone ? `<a class="btn btn--quiet" href="${telHref(phone)}">${icon.phone}Call Robyn</a>` : ''}</p>
 </div>`,
 }), { sitemap: false });
 
@@ -734,7 +961,7 @@ emit('404.html', page({
   <h2 style="font-size:var(--step-2)">Who we are</h2>
   <p>${esc(B.name)}, ${esc(B.city)}, ${esc(B.state)}. Questions: ${esc(contactLine)}.</p>
   <h2 style="font-size:var(--step-2)">What we collect</h2>
-  <p><b>What you send us.</b> When you call, text or email us, we receive what you include, such as your name, dates and group size.</p>
+  <p><b>What you send us.</b> When you email us, we receive what you include, such as your name, dates and group size.</p>
   <p><b>Bookings.</b> Reservations and payments are handled by our booking system, OwnerRez, which collects the details needed to book and pay. Its own privacy policy applies to that information.</p>
   <p><b>Usage data.</b> This site does not use analytics or advertising cookies. Our host keeps standard technical logs (such as IP address and time of request) to run and protect the site.</p>
   <h2 style="font-size:var(--step-2)">Who processes it for us</h2>
@@ -782,10 +1009,10 @@ emit('404.html', page({
   const blank = s => `<mark class="blank">[${esc(s)}]</mark>`;
   const sup = name => G.SUPPLIES.find(x => x.name === name);
   const near = [
-    ['Elk Creek Station', 'Groceries, gas, propane, ATM'],
+    ['Elk Creek Station', 'Gas, snacks, propane, ATM'],
     ['Island Park Liquor and Sports', 'Liquor store, Wed to Sat'],
     ['Island Park Post Office', 'Closed Sundays'],
-    ['Sam Patch Co. Grocer and Sundries', 'Biggest grocery, firewood, licenses'],
+    ['Sam Patch Co. Grocer and Sundries', 'Closest grocery store, firewood, licenses'],
   ].map(([n, what]) => ({ name: n, what, drive: (sup(n) || {}).drive }));
   const seasonsBlock = G.SEASONS.map(s => {
     const ids = (C.home.picks || {})[s.id] || [];
@@ -800,7 +1027,7 @@ emit('404.html', page({
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Guest pamphlet (print) | ${esc(B.short)}</title>
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+${ICONS}
 <link rel="stylesheet" href="/css/main.css">
 <style>
   @page{ size: 11in 8.5in; margin: 0 }
@@ -837,6 +1064,7 @@ emit('404.html', page({
   .cover .in{ padding: .26in .32in .3in; display: grid; gap: .1in }
   .cover h1{ font-size: 25pt; color: var(--dusk-fg) }
   .cover p{ color: var(--dusk-fg-2) }
+  .cover .cover-logo{ inline-size: 1.45in; block-size: auto; margin-block-start: -.95in; padding: .1in; background: var(--bg); border-radius: 50%; aspect-ratio: 1; object-fit: contain; position: relative }
   .cover .draft{ position: absolute; top: .12in; right: .12in; background: var(--warn); color: #fff; font-size: 7pt; padding: .03in .08in; border-radius: 2px }
   .back-cta{ display: grid; gap: .1in; justify-items: start }
   .back-cta svg{ inline-size: 1.3in; block-size: 1.3in }
@@ -854,16 +1082,15 @@ emit('404.html', page({
     </ul>
     <p class="note">There is no pharmacy in Island Park. The nearest are in West Yellowstone and Ashton, weekdays only.</p>
     <div class="box"><h3>Wi-Fi</h3><p>Network ${blank('network name')}<br>Password ${blank('password')}</p></div>
-    <p class="note">Cell service is patchy in the forest. Download offline maps before you head out.</p>
   </div>
   <div class="panel">
-    <span class="sign">Book direct</span>
+    <span class="sign">Book online</span>
     <h2>Come back in another season</h2>
-    <p>Island Park is a different place in every season. Returning guests can book directly with Robyn: no platform fees, and you deal with the owner.</p>
+    <p>Island Park is a different place in every season. Book your next stay on our website, with no Airbnb or VRBO service fees.</p>
     <div class="back-cta">${qr('home')}<b>${esc(B.domain.replace(/^www\./, ''))}</b></div>
     <div class="box">
-      <p>${phone ? esc(phone) : blank('phone')}<br>${email ? esc(email) : blank('email')}</p>
-      <p class="note" style="margin-top:.05in">${esc(B.street)}, ${esc(B.city)}, ${esc(B.region)} ${esc(B.zip)}</p>
+      <p>${email ? esc(email) : blank('email')}</p>
+      <p class="note" style="margin-top:.05in">Office: ${esc(B.street)}, ${esc(B.city)}, ${esc(B.region)} ${esc(B.zip)}</p>
     </div>
     <p class="note" style="margin-top:auto">Guide facts checked September 2026. Hours, fees and road openings change; check before you go.</p>
   </div>
@@ -871,6 +1098,7 @@ emit('404.html', page({
     ${SAMPLE ? '<span class="draft">Draft</span>' : ''}
     ${pic('teal-cabins-drive', { sizes: '4in', alt: C.photos['teal-cabins-drive'].alt }).replace(' loading="lazy" decoding="async"', '')}
     <div class="in">
+      <img class="cover-logo" src="${LOGO.png}" width="${LOGO.w}" height="${LOGO.h}" alt="${esc(B.name)} logo">
       <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
       <h1>${esc(B.short)}</h1>
       <p>Your guide to Island Park and Yellowstone, with drive times from the cabins.</p>
@@ -883,7 +1111,7 @@ emit('404.html', page({
     <span class="sign">Yellowstone</span>
     <h2>In through the West Entrance</h2>
     <ul class="rows">
-      <li><span>West Entrance<small>Cars mid-April to Oct 31. Mid-Dec to mid-March, snowcoach and snowmobile tours only</small></span><b>45 min</b></li>
+      <li><span>West Entrance<small>Cars mid-April to Oct 31. Mid-Dec to mid-March, snowcoach and snowmobile tours only</small></span><b>${drive(placeById('west-yellowstone').drive)}</b></li>
       <li><span>Entrance pass<small>$35 per vehicle for 7 days. No reservation needed (2026)</small></span><b>$35</b></li>
     </ul>
     <h3>Day plans</h3>
@@ -935,13 +1163,16 @@ fs.writeFileSync(path.join(ROOT, 'llms.txt'), `# ${B.name}
 
 > ${C.seo.llms}
 
-Address: ${B.street}, ${B.city}, ${B.region} ${B.zip}
-${phone ? `Phone: ${phone}\n` : ''}${email ? `Email: ${email}\n` : ''}Booking: direct through this website (OwnerRez booking engine)
+Office: ${B.street}, ${B.city}, ${B.region} ${B.zip}
+${phone ? `Phone: ${phone}\n` : ''}${email ? `Email: ${email}\n` : ''}Booking: online through this website (OwnerRez booking engine): ${abs('/book/')}
 
 ## Pages
 
 - [Home](${abs('/')}): the cabins, where they are, what to do by season, booking
 ${C.cabins.map(c => `- [${c.name}](${abs(`/cabins/${c.slug}/`)}): ${[c.sleeps && `sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedrooms`, c.baths != null && `${c.baths} baths`].filter(Boolean).join(', ')}`).join('\n')}
+- [Book now](${abs('/book/')}): both cabins' booking forms and availability
+- [Reviews](${abs('/reviews/')}): ${REV.length} five-star guest reviews
+- [FAQ](${abs('/faq/')}): Wi-Fi, kitchen, toiletries, booking both cabins, groceries, Yellowstone
 - [Things to do](${abs('/guide/')}): Yellowstone and ${B.city} guide with drive times, food, groceries, wildlife, events
 - [Map](${abs('/map/')}): interactive map of Yellowstone and ${B.city} with the cabins marked
 - [Privacy policy](${abs('/privacy/')})

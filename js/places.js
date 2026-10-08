@@ -9,6 +9,10 @@
    router (free-flowing traffic), rounded to 5 min. Real trips take
    longer, and much longer in Yellowstone traffic or snow. null
    means we could not estimate it honestly, so none is shown.
+   West Yellowstone and everything in town is 30 min: Robyn's own
+   figure for the 29.5 road miles (OSRM's free-flow estimate was 41,
+   and guests' reviews range from 30 to 40). Stops inside the park
+   keep their OSRM times.
 
    Rules: nothing goes in here that we could not confirm. Words are
    ours, not copied. After editing:   node tools/build.mjs
@@ -23,7 +27,7 @@ const SEASONS = [
 
 /* map pin colours sit on the dusk ground; every one is ≥3:1 there */
 const CATEGORIES = {
-  'cabins':      { label: 'The cabins',        color: '#E08A2E' },
+  'cabins':      { label: 'The cabins',        color: '#E9A64A' },
   'yellowstone': { label: 'Yellowstone sights', color: '#7FD3D1' },
   'wildlife':    { label: 'Wildlife valleys',   color: '#E6C36A' },
   'island-park': { label: 'Island Park',        color: '#C9D98C' },
@@ -171,7 +175,7 @@ const PLACES = [
      Coordinates and facts: ../Docs/research/yellowstone-map-points.json
      and yellowstone-guide.md (nps.gov). Drive times: OSRM, rounded. */
   { id: 'west-yellowstone', name: 'West Yellowstone and the West Entrance', short: 'West Yellowstone', chapter: null, cat: 'town',
-    seasons: ['summer', 'fall', 'winter', 'spring'], drive: 40, label: 1,
+    seasons: ['summer', 'fall', 'winter', 'spring'], drive: 30, label: 1,
     blurb: 'The gateway town at the West Entrance, the closest way into the park from the cabins: food, gas, the Grizzly and Wolf Discovery Center and the Museum of the Yellowstone.',
     lat: 44.6622, lng: -111.1041 },
   { id: 'macks-inn', name: 'Mack\'s Inn', short: 'Mack\'s Inn', chapter: null, cat: 'town',
@@ -285,7 +289,7 @@ const PLACES = [
     url: 'https://www.nps.gov/yell/planyourvisit/towerrplan.htm', lat: 44.8937, lng: -110.3872 },
 
   { id: 'yellowstone-winter', name: 'Yellowstone in winter', chapter: 'yellowstone', cat: 'yellowstone', map: false,
-    kind: 'Snowcoach and snowmobile tours', area: 'From West Yellowstone', seasons: ['winter'], drive: 40,
+    kind: 'Snowcoach and snowmobile tours', area: 'From West Yellowstone', seasons: ['winter'], drive: 30,
     blurb: 'From mid-December to mid-March the West Entrance is open only to snowcoaches and guided snowmobiles. Tours leave from West Yellowstone for Old Faithful and the geyser basins in the snow.',
     tip: 'Winter 2026-27 over-snow season: Dec 15 to Mar 15.',
     pick: true,
@@ -321,15 +325,22 @@ const PLACES = [
     kids: true,
     url: 'https://www.yellowstoneplayhouse.com/' },
 
+  { id: 'westgate', name: 'Westgate Theatre', chapter: 'shows', cat: 'shows', map: false,
+    kind: 'Live theatre', area: 'West Yellowstone', seasons: ['summer', 'fall'], drive: 30,
+    blurb: 'A Victorian-style opera house with 265 seats, reopened in June 2026 in the old Playmill building: three rotating family shows, from a Western melodrama with a variety act to a Broadway musical.',
+    tip: 'Monday to Saturday at 7 pm, early June to late September, with some afternoon matinees.',
+    kids: true,
+    url: 'https://westgatetheatre.com/' },
+
   { id: 'grizzly-wolf', name: 'Grizzly and Wolf Discovery Center', short: 'Grizzly and Wolf Center', chapter: 'shows', cat: 'shows',
-    kind: 'Wildlife center', area: 'West Yellowstone', seasons: ['summer', 'fall', 'winter', 'spring'], drive: 40,
+    kind: 'Wildlife center', area: 'West Yellowstone', seasons: ['summer', 'fall', 'winter', 'spring'], drive: 30,
     blurb: 'A nonprofit, accredited wildlife center with grizzlies, wolves, otters and birds of prey that could not survive in the wild. The bears do not hibernate here, so it is just as good in winter.',
     tip: 'Open every day of the year. Your ticket is good for two days in a row.',
     time: '1.5 to 2 hr', fee: 'Adults $17.50, ages 5 to 12 $12.50', kids: true, pick: true,
     url: 'https://www.grizzlydiscoveryctr.org/hours-rates', map: false },
 
   { id: 'museum-yellowstone', name: 'Museum of the Yellowstone', chapter: 'shows', cat: 'shows', map: false,
-    kind: 'History museum', area: 'West Yellowstone', seasons: ['summer', 'fall'], drive: 40,
+    kind: 'History museum', area: 'West Yellowstone', seasons: ['summer', 'fall'], drive: 30,
     blurb: 'Park history in the old Union Pacific depot: early travel, bears, the 1959 earthquake and the 1988 fires.',
     tip: 'Open mid-May to mid-October.',
     time: '1 to 2 hr', fee: 'Adults $10, under 18 free (2026)', kids: true,
@@ -420,23 +431,23 @@ const FOOD = [
   { name: 'Steakhouse 64', kind: 'Steakhouse inside the new Playmill Theatre', town: 'Mack\'s Inn area', drive: null, note: 'Opened 2026. Call for hours.', url: 'https://localnews8.com/home/2026/09/03/playmill-theatre-island-park/' },
   { name: 'Last Chance Bar and Grill', kind: 'Scratch breakfast, lunch and dinner on the river', town: 'Last Chance (TroutHunter)', drive: 20, note: 'Seasonal, during fishing season.', url: 'https://trouthunt.com/bar-grill/' },
   { name: 'Angler\'s Riverfront Restaurant', kind: 'Farm-to-table dinners, Henry\'s Fork views', town: 'Last Chance', drive: null, note: 'Dinner mid-May to mid-October. Reserve ahead.', url: 'https://www.anglerslodge.net/restaurant' },
-  { name: 'Running Bear Pancake House', kind: 'Breakfast and lunch', town: 'West Yellowstone', drive: 40, note: 'Early start before the park.', url: 'https://www.restaurantji.com/mt/west-yellowstone/running-bear-pancake-house-/' },
-  { name: 'Ernie\'s Bakery and Deli', kind: 'Bakery, breakfast, deli to go', town: 'West Yellowstone', drive: 40, note: 'Sandwiches to take into the park.', url: 'https://www.restaurantji.com/mt/west-yellowstone/ernies-/' },
-  { name: 'Firehole Bar-B-Que Co.', kind: 'Smoked brisket, pork, ribs', town: 'West Yellowstone', drive: 40, note: 'Seasonal; closes in late September.', url: 'https://fireholebbqco.com/' },
-  { name: 'Wild West Pizzeria and Saloon', kind: 'Pizza', town: 'West Yellowstone', drive: 40, note: 'Year-round, with a short spring closure.', url: 'https://www.wildwestpizza.com/' },
-  { name: 'Bullwinkle\'s Saloon and Eatery', kind: 'Italian, steaks, game', town: 'West Yellowstone', drive: 40, note: '', url: 'https://www.restaurantji.com/mt/west-yellowstone/bullwinkles-saloon-and-eatery-/' },
-  { name: 'Espresso West', kind: 'Coffee, house-made ice cream', town: 'West Yellowstone', drive: 40, note: '', url: 'https://www.restaurantji.com/mt/west-yellowstone/espresso-west-/' },
+  { name: 'Running Bear Pancake House', kind: 'Breakfast and lunch', town: 'West Yellowstone', drive: 30, note: 'Early start before the park.', url: 'https://www.restaurantji.com/mt/west-yellowstone/running-bear-pancake-house-/' },
+  { name: 'Ernie\'s Bakery and Deli', kind: 'Bakery, breakfast, deli to go', town: 'West Yellowstone', drive: 30, note: 'Sandwiches to take into the park.', url: 'https://www.restaurantji.com/mt/west-yellowstone/ernies-/' },
+  { name: 'Firehole Bar-B-Que Co.', kind: 'Smoked brisket, pork, ribs', town: 'West Yellowstone', drive: 30, note: 'Seasonal; closes in late September.', url: 'https://fireholebbqco.com/' },
+  { name: 'Wild West Pizzeria and Saloon', kind: 'Pizza', town: 'West Yellowstone', drive: 30, note: 'Year-round, with a short spring closure.', url: 'https://www.wildwestpizza.com/' },
+  { name: 'Bullwinkle\'s Saloon and Eatery', kind: 'Italian, steaks, game', town: 'West Yellowstone', drive: 30, note: '', url: 'https://www.restaurantji.com/mt/west-yellowstone/bullwinkles-saloon-and-eatery-/' },
+  { name: 'Espresso West', kind: 'Coffee, house-made ice cream', town: 'West Yellowstone', drive: 30, note: '', url: 'https://www.restaurantji.com/mt/west-yellowstone/espresso-west-/' },
   { name: 'Frostop Drive In', kind: 'Classic drive-in: burgers, root beer, huckleberry shakes', town: 'Ashton', drive: 45, note: 'On the Mesa Falls loop.', url: 'https://restaurantguru.com/Frostop-Drive-In-Ashton' },
 ];
 
 /* Groceries, gas, liquor, fly shops, pharmacies, rentals (research §4). */
 const SUPPLIES = [
-  { name: 'Elk Creek Station', kind: 'Groceries, snacks, bait, propane, gas, ATM', town: 'US-20 at Yale-Kilgore Rd', drive: 10, note: 'The closest store. Liquor store and post office next door.', url: 'https://islandparkidaho.com/groceries-gasoline' },
+  { name: 'Elk Creek Station', kind: 'Gas, snacks, basic groceries, bait, propane, ATM', town: 'US-20 at Yale-Kilgore Rd', drive: 10, note: 'The closest gas station. Liquor store and post office next door.', url: 'https://islandparkidaho.com/groceries-gasoline' },
   { name: 'Island Park Liquor and Sports', kind: 'Idaho liquor store (spirits)', town: 'Next to Elk Creek Station', drive: 10, note: 'Short hours, Wednesday to Saturday. Beer and wine are sold at the grocery stores.', url: 'https://idaholiquor.com/wp-content/uploads/2025/02/locations-directory-2-3.pdf' },
   { name: 'Island Park Post Office', kind: 'Post office', town: 'Next to Elk Creek Station', drive: 10, note: 'Closed Sundays.', url: 'https://www.postallocations.com/id/island-park/island-park' },
   { name: 'Pond\'s Lodge store', kind: 'Convenience store, 24-hour fuel', town: 'Ponds Lodge, US-20', drive: 10, note: '', url: 'https://www.pondslodge.com/amenities/' },
   { name: 'Stage Stop', kind: 'Fuel, propane, groceries', town: 'Mack\'s Inn', drive: 15, note: 'Open daily.', url: 'https://islandparkchamber.org/services/automotive/stage-stop' },
-  { name: 'Sam Patch Co. Grocer and Sundries', kind: 'Island Park\'s biggest grocery: produce, meat, deli, fuel, firewood, fishing licenses', town: 'Big Springs Loop Rd', drive: 15, note: 'Formerly Robin\'s Roost.', url: 'https://islandparkchamber.org/eat/groceries/sam-patch-co-grocery-and-sundries' },
+  { name: 'Sam Patch Co. Grocer and Sundries', kind: 'Island Park\'s biggest grocery: produce, meat, deli, fuel, firewood, fishing licenses', town: 'Big Springs Loop Rd', drive: 15, note: 'The closest grocery store to the cabins. Formerly Robin\'s Roost.', url: 'https://islandparkchamber.org/eat/groceries/sam-patch-co-grocery-and-sundries' },
   { name: 'Island Park Builders Supply', kind: 'Hardware, propane', town: 'Mack\'s Inn area', drive: 15, note: 'Closed Sundays.', url: 'https://islandparkgeneralstore.com/our-favorite-hardware-stores-in-and-around-island-park-idaho/' },
   { name: 'Island Park General Store', kind: 'Groceries, beer and wine, camping gear, licenses, 24-hour gas', town: 'Last Chance', drive: 20, note: '', url: 'https://islandparkgeneralstore.com/' },
   { name: 'Henry\'s Fork Anglers', kind: 'Fly shop and guides', town: 'Last Chance', drive: 20, note: 'Open year-round.', url: 'https://henrysforkanglers.com/pages/contact' },
@@ -444,10 +455,11 @@ const SUPPLIES = [
   { name: 'Mack\'s Inn River Adventures', kind: 'Float rentals with shuttle', town: 'Mack\'s Inn', drive: 15, note: 'Memorial Day to Labor Day.', url: 'https://www.macksinn.com/River-Adventures' },
   { name: 'Island Park Rentals', kind: 'ATVs, UTVs, boats, paddleboards, snowmobiles', town: 'Island Park', drive: null, note: '', url: 'https://islandparkrentals.com' },
   { name: 'Island Park Backcountry Rentals', kind: 'Snowmobiles and gear', town: 'Yale-Kilgore Rd', drive: null, note: 'Winter.', url: 'https://islandparkchamber.org/play/snowmobiling/island-park-back-country-rentals' },
-  { name: 'Market Place', kind: 'Full supermarket, deli, bakery; Montana liquor store inside', town: 'West Yellowstone', drive: 40, note: 'Open all year.', url: 'https://destinationyellowstone.com/places/market-place/' },
-  { name: 'Food Roundup Supermarket', kind: 'Supermarket with bakery and deli', town: 'West Yellowstone', drive: 40, note: '', url: 'https://www.foodroundupsupermarket.com/about-us' },
-  { name: 'Silvertip Pharmacy', kind: 'Pharmacy (there is none in Island Park)', town: 'West Yellowstone', drive: 40, note: 'Weekdays only.', url: 'https://www.healthgrades.com/pharmacy/silvertip-pharmacy-pa00011755' },
-  { name: 'Dave\'s Jubilee Market', kind: 'Supermarket with deli', town: 'Ashton', drive: 45, note: '', url: 'https://www.davesjubilee.com/' },
+  { name: 'Market Place', kind: 'Full supermarket, deli, bakery; Montana liquor store inside', town: 'West Yellowstone', drive: 30, note: 'Open all year.', url: 'https://destinationyellowstone.com/places/market-place/' },
+  { name: 'Food Roundup Supermarket', kind: 'Supermarket with bakery and deli', town: 'West Yellowstone', drive: 30, note: '', url: 'https://www.foodroundupsupermarket.com/about-us' },
+  { name: 'Silvertip Pharmacy', kind: 'Pharmacy (there is none in Island Park)', town: 'West Yellowstone', drive: 30, note: 'Weekdays only.', url: 'https://www.healthgrades.com/pharmacy/silvertip-pharmacy-pa00011755' },
+  { name: 'Dave\'s Jubilee Market', kind: 'Supermarket with deli', town: 'Ashton', drive: 45, note: 'A full supermarket on the way in from Idaho Falls.', url: 'https://www.davesjubilee.com/' },
+  { name: 'Broulim\'s Fresh Foods', kind: 'Full supermarket with bakery and deli', town: 'St. Anthony', drive: 60, note: '301 Aspen Square, about 46 miles.', url: 'https://www.broulims.com/' },
   { name: 'Walmart Supercenter', kind: 'Big-box store', town: 'Rexburg', drive: 70, note: '', url: 'https://nominatim.openstreetmap.org/search?q=Walmart,+Rexburg,+Idaho&format=json' },
   { name: 'Costco', kind: 'Warehouse store', town: 'Idaho Falls', drive: 100, note: 'Worth a stop on the drive in from Idaho Falls airport.', url: 'https://nominatim.openstreetmap.org/search?q=Costco,+Idaho+Falls&format=json' },
 ];
@@ -478,7 +490,6 @@ const PRACTICAL = [
   { label: 'Nearest ER', value: 'Madison Memorial Hospital, 450 E Main St, Rexburg: about 1 hr 15 min. (208) 359-6900.', url: 'https://madisonhealth.org/locations/emergency-room/' },
   { label: 'Clinic', value: 'Island Park Medical Clinic, by Pond\'s Lodge on US-20, about 10 min: weekdays 8 to 5, walk-ins welcome, X-ray and stitches. (208) 558-7766.', url: 'https://ashtonmemorial.com/services/island-park-medical-clinic' },
   { label: 'Pharmacy', value: 'There is none in Island Park. The nearest are in West Yellowstone and Ashton, both weekdays only.', url: 'https://ashtonmemorial.com/services/ashton-community-pharmacy' },
-  { label: 'Cell service', value: 'Patchy in the forest. Download offline maps and your booking details before you arrive.', url: 'https://coveragemap.com/coverage/us/idaho/fremont/island-park' },
   { label: 'Altitude', value: 'The cabins sit at about 6,300 feet. Headache, nausea or dizziness can be altitude sickness: rest, drink water, and get help if it gets worse.', url: 'https://www.nps.gov/yell/planyourvisit/safety.htm' },
   { label: 'Weather', value: 'July averages 77°F by day and 43°F at night; frost is possible in any month. January averages 27°F by day and 6°F at night, with over 200 inches of snow a year. Pack layers and rain gear in every season.', url: 'https://en.wikipedia.org/wiki/Island_Park,_Idaho' },
   { label: 'Fishing licenses', value: 'Idaho: everyone 14 and older needs a license; a nonresident day license is $22.75 for the first day and $7 for each extra day. Yellowstone needs its own permit ($40 for 3 days), and state licenses do not count there. The Henry\'s Fork from the Henrys Lake Outlet up to Big Springs is closed to fishing.', url: 'https://idfg.idaho.gov/licenses/fees-nonresident' },

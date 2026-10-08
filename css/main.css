@@ -1,8 +1,9 @@
 /* ============================================================================
    Wilderness Escape Rentals · the one stylesheet
-   Contract: DESIGN.md. Palette from the drone photos (bark, canopy, the aqua
-   roofs, last light). Type: Besley (the routed Clarendon of the Forest
-   Service signs) over Public Sans (public-lands plain). No shadows.
+   Contract: DESIGN.md. Palette from Robyn's own brand (Oct 2026): the navy
+   and light blue of her old site, around her logo, with last light kept for
+   drive times. Type: Besley (the routed Clarendon of the Forest Service signs,
+   and close kin to her logo's lettering) over Public Sans. No shadows.
    motion.css is linked separately (two <link>s download in parallel) and
    owns the four motion tokens; do not redefine them here.
    ========================================================================== */
@@ -22,29 +23,35 @@
 
 :root{
   /* ---- base ramp (DESIGN.md §2) ------------------------------------------ */
-  --bg:          #F2EFE6;   /* bleached lodgepole bark: page ground            */
-  --bg-2:        #E7E2D4;   /* raised: cards, wells, filters                   */
-  --bg-3:        #DAD3C1;   /* pressed / hover ground                          */
-  --fg:          #17231D;   /* canopy ink: 14.1:1 on --bg                      */
-  --fg-2:        #4A564F;   /* muted: 6.7:1 on --bg, 5.9:1 on --bg-2           */
-  --line:        #C9C1AD;   /* decorative hairlines only                       */
-  --line-ui:     #8C8470;   /* control edges: 3.2:1 on --bg                    */
+  --bg:          #FAFAF6;   /* warm white, after her old nav bar (#FCFCF7)     */
+  --bg-2:        #E9EEF5;   /* raised: pale sky. Cards, wells, filters         */
+  --bg-3:        #DCE4EF;   /* pressed / hover ground                          */
+  --fg:          #16233A;   /* navy ink: 15.0:1 on --bg                        */
+  --fg-2:        #4A5870;   /* muted: 6.9:1 on --bg, 6.2:1 on --bg-2           */
+  --line:        #C9D3E0;   /* decorative hairlines only                       */
+  --line-ui:     #7A88A0;   /* control edges: 3.4:1 on --bg                    */
 
   /* ---- intents: ONE job each ------------------------------------------- */
-  --accent:      #0B6B67;   /* deep roof aqua. Job: the booking path           */
-  --accent-fg:   #FFFFFF;   /* 6.3:1                                           */
-  --accent-2:    #095955;   /* accent pressed                                  */
+  --accent:      #1B4070;   /* Robyn's navy, her old site's primary. Job: the
+                                booking path (Book now, Book this cabin)     */
+  --accent-fg:   #FFFFFF;   /* 10.4:1                                          */
+  --accent-2:    #13315A;   /* accent pressed                                  */
+  --sky:         #64799C;   /* her light blue, exactly. Rules and large fills
+                                only: white on it is 4.4:1                   */
+  --sky-ink:     #5A6F92;   /* the same blue a step deeper, for small text on
+                                it (top bar, sign labels): white 5.1:1        */
   --marker:      #9A5412;   /* last light. Job: the cabins as a place, and
-                                every "from the cabins" drive time. 5.0:1    */
+                                every "from the cabins" drive time. 5.5:1    */
+  --star:        #A86F0F;   /* review stars: 4.1:1 on --bg, 3.6:1 on --bg-2    */
 
-  /* ---- dusk grounds (hero, footer, map) --------------------------------- */
-  --dusk:        #0E1A15;
-  --dusk-2:      #16261F;
-  --dusk-line:   #2E4038;
-  --dusk-fg:     #EDEAE0;   /* 14.8:1 on --dusk                                */
-  --dusk-fg-2:   #A9B3AA;   /* 8.3:1                                           */
-  --roof:        #7FD3D1;   /* the accent's job on dark grounds                */
-  --marker-dusk: #E08A2E;   /* the marker's job on dark grounds: 6.7:1         */
+  /* ---- dusk grounds (hero shade, footer, map): deep navy ----------------- */
+  --dusk:        #11243F;
+  --dusk-2:      #183052;
+  --dusk-line:   #2D4566;
+  --dusk-fg:     #EEF2F7;   /* 13.9:1 on --dusk                                */
+  --dusk-fg-2:   #AEBBD0;   /* 8.0:1                                           */
+  --roof:        #BCD0EA;   /* light sky: the accent's job on dark grounds, 9.9:1 */
+  --marker-dusk: #E9A64A;   /* the marker's job on dark grounds: 7.4:1         */
 
   --warn:        #8A4B00;  --warn-fg: #FFFFFF;
 
@@ -66,13 +73,13 @@
   --step-4:  clamp(2.07rem, 1.7rem + 1.6vw, 2.6rem);
   --step-5:  clamp(2.2rem, 1.6rem + 2.6vw, 3.9rem);
 
-  --head-h: 4.25rem;
+  --head-h: 5.25rem;
   color-scheme: light;
 }
 
 /* ---- reset, the useful parts only ---------------------------------------- */
 *,*::before,*::after{ box-sizing: border-box }
-html{ -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--head-h) + 1rem); -webkit-tap-highlight-color: rgba(11,107,103,.18) }
+html{ -webkit-text-size-adjust: 100%; scroll-padding-top: calc(var(--head-h) + 1rem); -webkit-tap-highlight-color: rgba(27,64,112,.16) }
 a, button, [role="button"], summary{ touch-action: manipulation }
 body{
   margin: 0; background: var(--bg); color: var(--fg);
@@ -131,21 +138,22 @@ section{ padding-block: clamp(3.5rem, 8vw, 7rem) }
 .btn--book:hover{ background: var(--accent-2) }
 .btn--quiet{ background: transparent; color: var(--fg); border-color: var(--line-ui) }
 .btn--quiet:hover{ background: var(--bg-2) }
+.btn--big{ min-block-size: 54px; padding: .8em 1.5em; font-size: var(--step-1) }
 /* on dusk grounds */
 .on-dusk .btn--book{ background: var(--roof); color: var(--dusk) }
-.on-dusk .btn--book:hover{ background: #A6E3E1 }
-.on-dusk .btn--quiet{ color: var(--dusk-fg); border-color: #6F7F76 }
-.on-dusk .btn--quiet:hover{ background: rgba(237,234,224,.08) }
+.on-dusk .btn--book:hover{ background: #D3E1F2 }
+.on-dusk .btn--quiet{ color: var(--dusk-fg); border-color: #7F92B0 }
+.on-dusk .btn--quiet:hover{ background: rgba(238,242,247,.08) }
 
 /* Forest-sign label: routed Clarendon on board. Chapter eyebrows only. */
 .sign{
   display: inline-block; justify-self: start; inline-size: fit-content;
   font: 600 var(--step--1)/1 var(--font-display);
   letter-spacing: .09em; text-transform: uppercase;
-  background: var(--fg); color: var(--bg);
+  background: var(--sky-ink); color: #FFFFFF;
   padding: .45em .7em .4em; border-radius: 2px;
 }
-.on-dusk .sign{ background: var(--dusk-fg); color: var(--dusk) }
+.on-dusk .sign{ background: var(--roof); color: var(--dusk) }
 
 .drive{            /* "38 min from the cabins" */
   font: 600 var(--step--1)/1.3 var(--font-body);
@@ -155,54 +163,56 @@ section{ padding-block: clamp(3.5rem, 8vw, 7rem) }
 .on-dusk .drive{ color: var(--marker-dusk) }
 
 /* ============================================================================
-   Header. Dusk bar everywhere; transparent over the home hero.
+   Top bar (her old site's light blue strip) and the header: white, with
+   Robyn's logo, the way her old site carried it.
    ========================================================================== */
+.topbar{ background: var(--sky-ink); color: #FFFFFF; font-size: var(--step--1) }
+.topbar .wrap{ display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0 1.5rem; min-block-size: 2.25rem }
+.topbar b{ font-weight: 700; margin-inline-end: .3em }
+.topbar a{ display: inline-flex; align-items: center; gap: .45em; min-block-size: 2.25rem; color: #FFFFFF; text-decoration: none }
+.topbar a:hover{ text-decoration: underline }
+.topbar svg{ inline-size: 1.05em; block-size: 1.05em }
+@media (max-width: 40rem){ .topbar{ display: none } }
+
 .site-head{
   position: sticky; top: 0; z-index: 150;
-  background: var(--dusk); color: var(--dusk-fg);
-  border-block-end: 1px solid var(--dusk-line);
+  background: #FFFFFF; color: var(--fg);
+  border-block-end: 1px solid var(--line);
 }
-.site-head--over{
-  position: absolute; inset: 0 0 auto; background: transparent; border: 0;
-}
-.sample-flag ~ .site-head--over{ top: auto }
-.site-head .wrap{
+.site-head > .wrap{
   display: flex; align-items: center; gap: 1rem;
   min-block-size: var(--head-h);
 }
-.brand{
-  display: grid; text-decoration: none; margin-inline-end: auto; line-height: 1.1;
-}
-.brand b{ font: 700 var(--step-1)/1.05 var(--font-display); letter-spacing: -.01em }
-.brand span{ font-size: var(--step--1); color: var(--dusk-fg-2) }
+.brand{ display: flex; align-items: center; gap: .7rem; text-decoration: none; margin-inline-end: auto; line-height: 1.1 }
+.brand img{ block-size: 64px; inline-size: auto; flex: none }
+.brand__text{ display: grid }
+.brand b{ font: 700 var(--step-1)/1.05 var(--font-display); letter-spacing: -.01em; color: var(--accent) }
+.brand__text span{ font-size: var(--step--1); color: var(--fg-2) }
 .nav{ display: none }
 .nav a{
   display: inline-flex; align-items: center; min-block-size: 44px; padding-inline: .7rem;
-  text-decoration: none; font-weight: 500; color: var(--dusk-fg);
+  text-decoration: none; font-weight: 600; color: var(--fg);
 }
-.nav a:hover, .nav a[aria-current="page"]{ text-decoration: underline; text-decoration-color: var(--roof) }
-.head-call .long{ display: none }
-.head-book{ display: none }
-@media (min-width: 40rem){ .head-book{ display: inline-flex } }
-@media (max-width: 26rem){ .brand span{ display: none } }
-@media (min-width: 64rem){
-  .nav{ display: flex }
-  .head-call .long{ display: inline }
-  .head-call .short{ display: none }
-}
+.nav a:hover, .nav a[aria-current="page"]{ text-decoration: underline; text-decoration-color: var(--sky); text-decoration-thickness: 2px; color: var(--accent) }
+@media (min-width: 64rem){ .nav{ display: flex } }
 .menu-btn{ display: inline-flex }
 @media (min-width: 64rem){ .menu-btn{ display: none } }
 .menu{
-  display: none; background: var(--dusk); border-block-start: 1px solid var(--dusk-line);
+  display: none; background: #FFFFFF; border-block-start: 1px solid var(--line);
   padding-block: .5rem 1rem;
 }
 .menu.is-open{ display: block }
 .menu a{
   display: flex; align-items: center; min-block-size: 48px; text-decoration: none;
-  font: 600 var(--step-1)/1.2 var(--font-display); color: var(--dusk-fg);
-  border-block-end: 1px solid var(--dusk-line);
+  font: 600 var(--step-1)/1.2 var(--font-display); color: var(--fg);
+  border-block-end: 1px solid var(--line);
 }
 @media (min-width: 64rem){ .menu{ display: none !important } }
+@media (max-width: 40rem){
+  :root{ --head-h: 4.4rem }
+  .brand img{ block-size: 52px }
+  .brand__text{ position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
+}
 
 /* ============================================================================
    Home hero: the top-down canopy. The descent lives in motion.css §4.
@@ -217,12 +227,12 @@ section{ padding-block: clamp(3.5rem, 8vw, 7rem) }
 .hero::after{              /* legibility: dusk rising from the ground, roofs left clear */
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background:
-    linear-gradient(to top, rgba(14,26,21,.92) 0%, rgba(14,26,21,.72) 30%, rgba(14,26,21,.15) 58%, rgba(14,26,21,0) 70%),
-    linear-gradient(to right, rgba(14,26,21,.5) 0%, rgba(14,26,21,0) 55%);
+    linear-gradient(to top, rgba(17,36,63,.92) 0%, rgba(17,36,63,.7) 30%, rgba(17,36,63,.15) 58%, rgba(17,36,63,0) 70%),
+    linear-gradient(to right, rgba(17,36,63,.5) 0%, rgba(17,36,63,0) 55%);
 }
-.hero h1, .hero__lede{ text-shadow: 0 1px 18px rgba(14,26,21,.45) }
+.hero h1, .hero__copy .hero__lede{ text-shadow: 0 1px 18px rgba(17,36,63,.45) }
 .hero__head{ display: grid; gap: 1.1rem }
-.hero-after{ background: var(--dusk); color: var(--dusk-fg) }
+.hero-after{ display: none; background: var(--dusk); color: var(--dusk-fg) }
 .hero-after .wrap{ padding-block: .25rem 1.25rem }
 .hero-after .hero__lede{ display: none }
 .hero-after .hero__facts{ margin: 0 }
@@ -235,7 +245,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 .hero__actions{ display: flex; flex-wrap: wrap; gap: .75rem; margin-block-start: .4rem }
 .hero__facts{
   display: flex; flex-wrap: wrap; gap: .35rem 1.4rem; margin-block-start: 1.2rem;
-  padding-block-start: 1rem; border-block-start: 1px solid rgba(237,234,224,.28);
+  padding-block-start: 1rem; border-block-start: 1px solid rgba(238,242,247,.28);
   list-style: none; font-size: var(--step--1); color: var(--dusk-fg-2);
 }
 .hero__facts b{ color: var(--dusk-fg); font-weight: 600 }
@@ -254,10 +264,10 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
    ========================================================================== */
 .cabins{ display: grid; gap: clamp(1.25rem, 3vw, 2rem); list-style: none }
 @media (min-width: 40rem){ .cabins{ grid-template-columns: repeat(2, 1fr) } }
-@media (min-width: 64rem){ .cabins{ grid-template-columns: repeat(3, 1fr) } }
 .cabin-card{ display: grid; gap: .8rem; align-content: start }
 .cabin-card figure{ margin: 0; overflow: clip; border-radius: var(--radius-box); background: var(--bg-3) }
-.cabin-card img{ inline-size: 100%; aspect-ratio: 4 / 3; object-fit: cover }
+.cabin-card figure a{ display: block }
+.cabin-card img{ inline-size: 100%; aspect-ratio: 3 / 2; object-fit: cover }
 .cabin-card h3{ font-size: var(--step-2) }
 .cabin-card h3 a{ text-decoration: none }
 .cabin-card h3 a:hover{ text-decoration: underline }
@@ -323,15 +333,6 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 .guide-card--photo{ padding: 0; overflow: clip; border: 0 }
 .guide-card--photo img{ inline-size: 100%; aspect-ratio: 16/10; object-fit: cover }
 .guide-card--photo .in{ display: grid; gap: .5rem; padding: 1rem 1.2rem 1.25rem }
-
-/* ============================================================================
-   Reviews: real only, attributed, dated
-   ========================================================================== */
-.reviews{ display: grid; gap: 1.25rem; list-style: none }
-@media (min-width: 64rem){ .reviews{ grid-template-columns: repeat(3, 1fr) } }
-.review{ margin: 0; padding-block-start: 1rem; border-block-start: 1px solid var(--line) }
-.review blockquote{ margin: 0; font: 400 var(--step-1)/1.45 var(--font-display) }
-.review figcaption{ margin-block-start: .8rem; font-size: var(--step--1); color: var(--fg-2) }
 
 /* ============================================================================
    Plan your stay: facts + FAQ
@@ -424,17 +425,14 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
   transition: transform 1.3s var(--reveal-ease);
 }
 @media (prefers-reduced-motion: reduce){ .map__world{ transition: none } }
-.map__park{ fill: #1C3128; stroke: #4F6B5E; stroke-width: 1.2; vector-effect: non-scaling-stroke }
-.map__water{ fill: #2C4E5C; stroke: none }
-.map__road{ fill: none; stroke: #6F7F76; stroke-width: 1.6; stroke-linejoin: round; vector-effect: non-scaling-stroke }
-.map__road--loop{ stroke: #B7C2BA }
+.map__park{ fill: #1B3A3E; stroke: #4F7A74; stroke-width: 1.2; vector-effect: non-scaling-stroke }
+.map__water{ fill: #3A6B8F; stroke: none }
+.map__road{ fill: none; stroke: #7F92B0; stroke-width: 1.6; stroke-linejoin: round; vector-effect: non-scaling-stroke }
+.map__road--loop{ stroke: #C3CEDE }
 .map__label{ font-family: var(--font-body); font-weight: 600; fill: var(--dusk-fg); paint-order: stroke; stroke: var(--dusk); stroke-linejoin: round }
-.map__label--park{ font-family: var(--font-display); font-weight: 600; letter-spacing: .12em; fill: #7E998C; stroke: none }
+.map__label--park{ font-family: var(--font-display); font-weight: 600; letter-spacing: .12em; fill: #8FA8C4; stroke: none }
 .pin{ cursor: pointer }
-.pin circle{ fill: var(--roof); stroke: var(--dusk); stroke-width: 2; vector-effect: non-scaling-stroke }
-.pin--cabins circle{ fill: var(--marker-dusk) }
-.pin--town circle{ fill: var(--dusk-fg) }
-.pin--island-park circle{ fill: #C9D98C }
+.pin circle{ fill: var(--c, var(--roof)); stroke: var(--dusk); stroke-width: 2; vector-effect: non-scaling-stroke }   /* --c: the category colour from js/places.js, same as its legend chip */
 .pin:hover circle, .pin:focus-visible circle, .pin[aria-pressed="true"] circle{ stroke: var(--dusk-fg); stroke-width: 3 }
 .pin:focus-visible{ outline: 2px solid var(--roof); outline-offset: 3px }
 .pin[hidden]{ display: none }
@@ -449,7 +447,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 }
 .chip:hover{ border-color: var(--fg) }
 .chip[aria-pressed="true"]{ background: var(--fg); color: var(--bg); border-color: var(--fg) }
-.chip i{ inline-size: .7em; block-size: .7em; border-radius: 50%; background: var(--c, var(--roof)); outline: 1px solid rgba(0,0,0,.25) }
+.chip i{ inline-size: .7em; block-size: .7em; border-radius: 50%; background: var(--c, var(--sky)); outline: 1px solid rgba(0,0,0,.25) }
 .map__card{ padding: 1.1rem 1.2rem; background: var(--bg-2); border-radius: var(--radius-box); min-block-size: 9rem }
 .map__card h3{ font-size: var(--step-2); margin-block: .3rem .5rem }
 .map__card p{ color: var(--fg) }
@@ -463,12 +461,20 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
    Cabin page
    ========================================================================== */
 .gallery{ display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr) }
-.gallery img{ inline-size: 100%; block-size: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-box) }
-.gallery img:first-child{ grid-column: 1 / -1; aspect-ratio: 16/9 }
+.gallery > a{ display: block; overflow: clip; border-radius: var(--radius-box); background: var(--bg-3) }
+.gallery img{ inline-size: 100%; block-size: 100%; aspect-ratio: 3/2; object-fit: cover }
+.gallery > a:first-child{ grid-column: 1 / -1 }
+.gallery > a:first-child img{ aspect-ratio: 16/9 }
 @media (min-width: 64rem){
-  .gallery{ grid-template-columns: 2fr 1fr 1fr; grid-template-rows: repeat(2, 1fr) }
-  .gallery img:first-child{ grid-column: 1; grid-row: 1 / 3; aspect-ratio: auto }
+  .gallery{ grid-template-columns: 2fr 1fr 1fr; grid-template-rows: repeat(2, auto) }
+  .gallery > a:first-child{ grid-column: 1; grid-row: 1 / 3 }
+  .gallery > a:first-child img{ aspect-ratio: auto }
 }
+.gallery a:focus-visible, .more-photos a:focus-visible, .inside a:focus-visible{ outline: 3px solid var(--accent); outline-offset: 2px }
+.gallery a:hover img, .more-photos a:hover img, .inside a:hover img, .cabin-card figure a:hover img{ opacity: .9 }
+.gallery-count{ margin-block-start: .5rem; font-size: var(--step--1); font-weight: 600; text-align: end; max-inline-size: none }
+.gallery-count a{ display: inline-flex; align-items: center; gap: .4em; min-block-size: 44px; color: var(--accent) }
+.gallery-count svg{ inline-size: 1.1em; block-size: 1.1em }
 .cabin-body{ display: grid; gap: clamp(2rem, 5vw, 4rem) }
 @media (min-width: 64rem){ .cabin-body{ grid-template-columns: 1.3fr .7fr; align-items: start } .cabin-body aside{ position: sticky; top: calc(var(--head-h) + 1.5rem) } }
 .amenities{ columns: 2 12rem; column-gap: 2rem; list-style: none }
@@ -485,14 +491,18 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 /* ============================================================================
    Footer
    ========================================================================== */
-.site-foot{ background: var(--dusk); color: var(--dusk-fg); padding-block: clamp(3rem, 6vw, 4.5rem) 2rem }
+.site-foot{ background: var(--dusk); color: var(--dusk-fg); padding-block: clamp(3rem, 6vw, 4.5rem) 2rem; border-block-start: 1px solid var(--dusk-line) }
+.foot-logo{ display: inline-grid; place-items: center; inline-size: 9.5rem; aspect-ratio: 1; padding: .85rem; background: var(--bg); border-radius: 50% }
+.foot-logo img{ inline-size: 100%; block-size: auto }
+.site-foot .foot-h{ font: 600 var(--step--1)/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--dusk-fg-2); margin-block-end: .8rem }
+.site-foot address b{ color: var(--dusk-fg) }
 .site-foot .cols{ display: grid; gap: 2rem }
 @media (min-width: 40rem){ .site-foot .cols{ grid-template-columns: repeat(2, 1fr) } }
 @media (min-width: 64rem){ .site-foot .cols{ grid-template-columns: 1.4fr 1fr 1fr } }
 .site-foot h2{ font-size: var(--step-2) }
 .site-foot h3{ font: 600 var(--step--1)/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--dusk-fg-2); margin-block-end: .8rem }
 .site-foot ul{ list-style: none; display: grid; gap: .1rem }
-.site-foot li a{ display: inline-flex; align-items: center; min-block-size: 40px; text-decoration: none }
+.site-foot li a{ display: inline-flex; align-items: center; min-block-size: 44px; text-decoration: none }
 .site-foot li a:hover{ text-decoration: underline }
 .site-foot address{ font-style: normal; color: var(--dusk-fg-2) }
 .site-foot .fine{ margin-block-start: 2.5rem; padding-block-start: 1.25rem; border-block-start: 1px solid var(--dusk-line); display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; font-size: var(--step--1); color: var(--dusk-fg-2) }
@@ -503,7 +513,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
    Print: the guide doubles as the pamphlet draft
    ========================================================================== */
 @media print{
-  .site-head, .guide-bar, .map__controls, .map__filters, .sample-flag, .skip, .btn, .menu{ display: none !important }
+  .site-head, .topbar, .guide-bar, .map__controls, .map__filters, .sample-flag, .skip, .btn, .menu, .hero-book{ display: none !important }
   body{ background: #fff; color: #000; font-size: 10.5pt }
   .dusk, .site-foot{ background: #fff; color: #000 }
   .guide-card{ break-inside: avoid; border: 1px solid #999; background: #fff }
@@ -554,17 +564,10 @@ h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1re
 .or-widget iframe{ inline-size: 100% !important; border: 0 }
 .book-grid{ display: grid; gap: clamp(1.5rem, 4vw, 2.5rem) }
 @media (min-width: 64rem){ .book-grid{ grid-template-columns: 1fr 1fr; align-items: start } }
-.hosts{ padding: 1.25rem 1.4rem; background: var(--bg); border-radius: var(--radius-box) }
+.hosts{ padding: 1.25rem 1.4rem; background: var(--bg-2); border-radius: var(--radius-box) }
 .hosts p{ color: var(--fg-2); margin-block-start: .5rem }
-.ratings{ list-style: none; display: grid; gap: .75rem }
-@media (min-width: 40rem){ .ratings{ grid-template-columns: repeat(2, 1fr) } }
-@media (min-width: 64rem){ .ratings{ grid-template-columns: repeat(4, 1fr) } }
-.ratings a{ display: grid; gap: .15rem; padding: 1rem 1.1rem; background: var(--bg); border-radius: var(--radius-box); text-decoration: none; border-block-start: 3px solid var(--accent) }
-.ratings b{ font: 700 var(--step-2)/1.1 var(--font-display) }
-.ratings span{ font-weight: 600 }
-.ratings small{ color: var(--fg-2) }
-.more-photos{ display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr) }
-.more-photos img{ inline-size: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius-box) }
+.on-dusk .hosts{ background: var(--dusk-2) }
+.on-dusk .hosts p{ color: var(--dusk-fg-2) }
 .or-widget--preview{ min-block-size: 0; display: grid; place-items: center; padding: 1.25rem; border: 1px dashed var(--line-ui); border-radius: var(--radius-box); background: var(--bg); text-align: center }
 .or-widget--preview p{ color: var(--fg-2); font-size: var(--step--1); max-inline-size: 36ch }
 .site-foot .stack p > a:not(.btn){ display: inline-flex; align-items: center; min-block-size: 44px }
@@ -573,22 +576,198 @@ h1[id], h2[id], h3[id], section[id]{ scroll-margin-top: calc(var(--head-h) + 1re
   .chapter h2[id], .guide-card h3[id]{ scroll-margin-top: calc(var(--head-h) + 1rem) }
 }
 @media (max-width: 26rem){
-  .brand b{ font-size: 1.08rem; white-space: nowrap }
   .site-head .btn{ padding-inline: .75em }
-  .site-head .wrap{ gap: .6rem }
+  .site-head > .wrap{ gap: .6rem }
 }
+
+/* ============================================================================
+   Home hero booking card (desktop): the cabins, one tap from booking
+   ========================================================================== */
+.hero__grid{ display: grid; gap: 2rem; align-items: end }
+.hero-book{ display: none }
+@media (min-width: 64rem){
+  .hero__grid{ grid-template-columns: minmax(0, 1fr) 22rem; gap: 3rem }
+  .hero-book{
+    display: grid; gap: .85rem; padding: 1.3rem 1.3rem 1.1rem;
+    background: var(--bg); color: var(--fg); border-radius: var(--radius-box);
+    border-block-start: 4px solid var(--sky);
+  }
+}
+.on-dusk .hero-book .sign{ background: var(--sky-ink); color: #FFFFFF }
+.hero-book__head{ font: 700 var(--step-2)/1.15 var(--font-display); letter-spacing: -.01em; color: var(--fg) }
+.hero-book__cabins{ list-style: none; display: grid; gap: .5rem }
+.hero-book__cabins a{
+  display: grid; grid-template-columns: 4.5rem 1fr auto; gap: .8rem; align-items: center;
+  padding: .45rem .7rem .45rem .45rem; background: #FFFFFF; color: var(--fg); text-decoration: none;
+  border: 1px solid var(--line); border-radius: var(--radius-box);
+}
+.hero-book__cabins a:hover{ border-color: var(--accent); background: var(--bg-2) }
+.hero-book__cabins a:focus-visible{ outline: 3px solid var(--accent); outline-offset: 2px }
+.hero-book__cabins img{ inline-size: 4.5rem; block-size: 4.5rem; object-fit: cover; border-radius: 2px }
+.hero-book__cabins b{ display: block; font-weight: 700; line-height: 1.2 }
+.hero-book__cabins small{ color: var(--fg-2); font-variant-numeric: tabular-nums }
+.hero-book__cabins svg{ inline-size: 1.25rem; block-size: 1.25rem; color: var(--accent) }
+.on-dusk .hero-book .btn--book{ background: var(--accent); color: var(--accent-fg) }
+.on-dusk .hero-book .btn--book:hover{ background: var(--accent-2) }
+.on-dusk .hero-book .note{ color: var(--fg-2) }
+/* desktop: the card carries the booking button, so the copy keeps one quiet action */
+@media (min-width: 64rem){ .hero__copy .hero__actions .btn--book{ display: none } }
+
+/* ============================================================================
+   Home: a look inside, and what is close to the cabins
+   ========================================================================== */
+.inside-head{ margin-block: clamp(2.5rem, 5vw, 3.5rem) 1rem; font-size: var(--step-2) }
+.inside{ list-style: none; display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr) }
+@media (min-width: 40rem){ .inside{ grid-template-columns: repeat(3, 1fr) } }
+.inside a{ display: block; position: relative; overflow: clip; border-radius: var(--radius-box); text-decoration: none; background: var(--bg-3) }
+.inside img{ inline-size: 100%; aspect-ratio: 3/2; object-fit: cover }
+.inside span{
+  position: absolute; inset: auto 0 0 0; padding: 1.4rem .75rem .55rem;
+  font-size: var(--step--1); font-weight: 600; color: #FFFFFF;
+  background: linear-gradient(to top, rgba(17,36,63,.88), rgba(17,36,63,0));
+}
+.nearby{ display: grid; gap: 2.25rem }
+@media (min-width: 64rem){ .nearby{ grid-template-columns: repeat(3, 1fr); gap: 2.5rem } }
+.near h3{ font-size: var(--step-2); margin-block-end: .75rem }
+.near__list{ list-style: none; border-block-start: 1px solid var(--line) }
+.near__list li{ display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: baseline; padding-block: .7rem; border-block-end: 1px solid var(--line) }
+.near__list .name{ font-weight: 600 }
+.near__list .sub{ display: block; font-size: var(--step--1); color: var(--fg-2); font-weight: 400 }
+.near__list .t{ font: 600 var(--step-0)/1 var(--font-body); font-variant-numeric: tabular-nums; color: var(--marker); white-space: nowrap }
+.near p{ margin-block-start: .6rem; font-size: var(--step--1); font-weight: 600 }
+.near p a{ display: inline-flex; align-items: center; min-block-size: 44px; color: var(--accent) }
+.raised .guide-card{ background: var(--bg) }
+
+/* ============================================================================
+   Reviews: real guests, five stars each, attributed and dated
+   ========================================================================== */
+.review-grid{ list-style: none; display: grid; gap: 1rem }
+@media (min-width: 40rem){ .review-grid{ grid-template-columns: repeat(2, 1fr) } }
+@media (min-width: 64rem){ .review-grid{ grid-template-columns: repeat(3, 1fr) } }
+.review-grid--all{ display: block; columns: 1; column-gap: 1rem }
+@media (min-width: 40rem){ .review-grid--all{ columns: 2 } }
+@media (min-width: 64rem){ .review-grid--all{ columns: 3 } }
+.review-grid--all .review-card{ break-inside: avoid; margin-block-end: 1rem }
+.review-card[hidden]{ display: none }
+.review-card figure{
+  margin: 0; display: grid; gap: .75rem; align-content: start; block-size: 100%;
+  padding: 1.2rem 1.3rem 1.25rem; background: var(--bg-2); border-radius: var(--radius-box);
+  border-block-start: 3px solid var(--sky);
+}
+.raised .review-card figure{ background: var(--bg) }
+.stars{ display: inline-flex; gap: 2px; color: var(--star) }
+.stars svg{ inline-size: 1.15rem; block-size: 1.15rem }
+.review-card blockquote{ margin: 0 }
+.review-card blockquote p{ font-size: var(--step-0); line-height: 1.55 }
+.review-card figcaption{ font-size: var(--step--1); color: var(--fg-2) }
+.review-card figcaption b{ color: var(--fg); font-weight: 600 }
+.review-card figcaption a{ display: inline-flex; align-items: center; min-block-size: 44px; padding-block: 10px; margin-block: -10px }
+.review-filter{ margin-block-start: 1.5rem }
+.review-filter[hidden]{ display: none }
+
+/* ============================================================================
+   Cabin page: every photo, and the photo viewer
+   ========================================================================== */
+.more-photos{ display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr) }
+@media (min-width: 40rem){ .more-photos{ grid-template-columns: repeat(3, 1fr) } }
+@media (min-width: 64rem){ .more-photos{ grid-template-columns: repeat(4, 1fr) } }
+.more-photos a{ display: block; overflow: clip; border-radius: var(--radius-box); background: var(--bg-3) }
+.more-photos img{ inline-size: 100%; aspect-ratio: 3/2; object-fit: cover }
+.all-photos{ margin-block-start: 1rem }
+.all-photos > summary{ list-style: none; display: inline-flex }
+.all-photos > summary::-webkit-details-marker{ display: none }
+.all-photos > .more-photos{ margin-block-start: 1rem }
+.photos-sec{ padding-block-start: 0 }
+
+.lightbox{
+  inline-size: 100vw; block-size: 100dvh; max-inline-size: none; max-block-size: none;
+  margin: 0; padding: 0; border: 0; background: rgba(9,19,34,.97); color: #FFFFFF;
+  overscroll-behavior: contain;
+}
+.lightbox::backdrop{ background: rgba(9,19,34,.9) }
+.lightbox figure{ margin: 0; block-size: 100%; display: grid; grid-template-rows: 1fr auto; place-items: center; gap: .75rem; padding: 4rem 1rem 1.25rem }
+.lightbox img{ inline-size: auto; block-size: auto; max-inline-size: min(100%, 75rem); max-block-size: calc(100dvh - 9rem); object-fit: contain }
+.lightbox figcaption{ font-size: var(--step--1); color: var(--dusk-fg-2); text-align: center; max-inline-size: 60ch }
+.lb-btn{
+  position: absolute; display: grid; place-items: center; inline-size: 48px; block-size: 48px;
+  border: 1px solid rgba(238,242,247,.35); border-radius: var(--radius-field);
+  background: rgba(17,36,63,.75); color: #FFFFFF; cursor: pointer;
+}
+.lb-btn svg{ inline-size: 1.4rem; block-size: 1.4rem }
+.lb-btn:hover{ background: var(--accent) }
+.lb-btn:focus-visible{ outline: 2px solid var(--roof); outline-offset: 2px }
+.lb-close{ top: .75rem; right: .75rem }
+.lb-prev{ left: .75rem; top: 50%; translate: 0 -50% }
+.lb-next{ right: .75rem; top: 50%; translate: 0 -50% }
+.lb-count{ position: absolute; top: 1.2rem; left: 1rem; font-size: var(--step--1); color: var(--dusk-fg-2); font-variant-numeric: tabular-nums }
+html:has(.lightbox[open]){ overflow: hidden }
+
+/* ============================================================================
+   Book now page
+   ========================================================================== */
+.perks{ list-style: none; display: grid; gap: .75rem; margin-block-start: 1.75rem }
+@media (min-width: 40rem){ .perks{ grid-template-columns: repeat(2, 1fr) } }
+@media (min-width: 64rem){ .perks{ grid-template-columns: repeat(4, 1fr) } }
+.perks li{ display: grid; gap: .2rem; padding: .9rem 1rem; background: var(--bg-2); border-radius: var(--radius-box); border-inline-start: 3px solid var(--sky) }
+.perks b{ font: 700 var(--step-1)/1.2 var(--font-display) }
+.perks span{ font-size: var(--step--1); color: var(--fg-2) }
+.book-cabins{ display: grid; gap: clamp(2.5rem, 5vw, 3rem) }
+@media (min-width: 64rem){ .book-cabins{ grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start } }
+.book-cabin{ display: grid; gap: 1rem; align-content: start; scroll-margin-top: calc(var(--head-h) + 1rem) }
+.book-cabin figure{ margin: 0; overflow: clip; border-radius: var(--radius-box); background: var(--bg-3) }
+.book-cabin img{ inline-size: 100%; aspect-ratio: 16/9; object-fit: cover }
+.book-cabin__head{ display: grid; gap: .5rem }
+.book-cabin h2{ font-size: var(--step-3) }
+.book-cabin .note a{ display: inline-flex; align-items: center; min-block-size: 44px; padding-block: 10px; margin-block: -10px; color: var(--accent); font-weight: 600 }
+
+/* ============================================================================
+   FAQ page, and the closing call to book
+   ========================================================================== */
+@media (min-width: 64rem){ .plan--faq{ grid-template-columns: 1.3fr .7fr } }
+/* Wi-Fi callout: Robyn wants the fast Wi-Fi said loudly (FAQ page, cabin pages) */
+.wifi-callout{
+  display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: start;
+  padding: 1.3rem 1.4rem; background: var(--bg-2); border-radius: var(--radius-box);
+  border-inline-start: 4px solid var(--accent);
+}
+.wifi-callout__icon{ display: grid; place-items: center; inline-size: 3rem; block-size: 3rem; border-radius: 50%; background: var(--accent); color: var(--accent-fg) }
+.wifi-callout__icon svg{ inline-size: 1.6rem; block-size: 1.6rem }
+.wifi-callout h2{ font-size: var(--step-3); margin-block-end: .5rem }
+.wifi-callout p{ font-size: var(--step-1); line-height: 1.45; color: var(--fg) }
+.wifi-callout--small{ margin-block-start: 1.5rem; padding: 1rem 1.2rem }
+.wifi-callout--small .wifi-callout__icon{ inline-size: 2.5rem; block-size: 2.5rem }
+.wifi-callout--small .wifi-callout__icon svg{ inline-size: 1.3rem; block-size: 1.3rem }
+.wifi-callout--small h3{ font-size: var(--step-1); margin-block-end: .3rem }
+.wifi-callout--small p{ font-size: var(--step-0) }
+.nobr{ white-space: nowrap }
+@media (max-width: 40rem){
+  .wifi-callout{ grid-template-columns: 1fr; gap: .75rem; padding: 1.1rem 1.15rem }
+  .wifi-callout h2{ font-size: var(--step-2) }
+  .wifi-callout p{ font-size: var(--step-0) }
+}
+.faq-group{ font-size: var(--step-3); margin-block-end: 1rem; scroll-margin-top: calc(var(--head-h) + 1rem) }
+.faq-aside{ align-self: start; padding: 1.4rem; background: var(--bg-2); border-radius: var(--radius-box) }
+.faq-aside .faq-group{ font-size: var(--step-2) }
+@media (min-width: 64rem){ .faq-aside{ position: sticky; top: calc(var(--head-h) + 1.5rem) } }
+.page-head .lede a{ color: var(--accent); font-weight: 600 }
+.cta__grid{ display: grid; gap: clamp(2rem, 5vw, 4rem) }
+@media (min-width: 64rem){ .cta__grid{ grid-template-columns: 1.2fr .8fr; align-items: center } }
+.cta .sec-head{ margin-block-end: 0 }
+.cta .hero__actions{ margin-block-start: .6rem }
 
 /* ---- hero on phones (kept last so it wins over the base hero rules) ------
    Headline up top, buttons at the bottom of the first screen, the aqua roofs
    clear in between. The lede and facts follow below the photo. */
 @media (max-width: 40rem){
   .hero{ --hero-pos: var(--hero-pos-m); --descent-origin: var(--descent-origin-m); align-items: stretch; padding-block: 1.25rem 1.5rem }
-  .hero > .wrap{ display: flex }
+  .hero > .wrap{ display: flex; align-items: stretch }
   .hero .hero__copy{ flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem }
   .hero .hero__lede{ display: none }
   .hero::after{
-    background: linear-gradient(to bottom, rgba(14,26,21,.92) 0%, rgba(14,26,21,.72) 24%, rgba(14,26,21,0) 42%, rgba(14,26,21,0) 72%, rgba(14,26,21,.8) 88%, rgba(14,26,21,.94) 100%);
+    background: linear-gradient(to bottom, rgba(17,36,63,.92) 0%, rgba(17,36,63,.72) 24%, rgba(17,36,63,0) 42%, rgba(17,36,63,0) 72%, rgba(17,36,63,.8) 88%, rgba(17,36,63,.94) 100%);
   }
+  .hero__facts--in{ display: none }
+  .hero-after{ display: block }
   .hero-after .wrap{ padding-block: .5rem 2.5rem }
   .hero-after .hero__lede{ display: block; font-size: var(--step-1); line-height: 1.45; color: var(--dusk-fg) }
   .hero-after .hero__facts{ margin-block-start: 1.25rem }
