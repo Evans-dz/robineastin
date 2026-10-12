@@ -335,7 +335,7 @@ const PLACES = [
   { id: 'grizzly-wolf', name: 'Grizzly and Wolf Discovery Center', short: 'Grizzly and Wolf Center', chapter: 'shows', cat: 'shows',
     kind: 'Wildlife center', area: 'West Yellowstone', seasons: ['summer', 'fall', 'winter', 'spring'], drive: 30,
     blurb: 'A nonprofit, accredited wildlife center with grizzlies, wolves, otters and birds of prey that could not survive in the wild. The bears do not hibernate here, so it is just as good in winter.',
-    tip: 'Open every day of the year. Your ticket is good for two days in a row.',
+    tip: 'Open every day of the year, 8:30 am to 6:00 pm (last entry 5:30 pm). Your ticket is good for two days in a row.',
     time: '1.5 to 2 hr', fee: 'Adults $17.50, ages 5 to 12 $12.50', kids: true, pick: true,
     url: 'https://www.grizzlydiscoveryctr.org/hours-rates', map: false },
 

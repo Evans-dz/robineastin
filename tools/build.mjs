@@ -549,6 +549,7 @@ for (const c of C.cabins) {
   <div class="wrap cabin-body">
     <div class="stack" style="--stack:1.25rem">
       <h2 class="reveal">${esc(c.headline || 'The cabin')}</h2>
+      ${c.intro ? `<p class="cabin-intro">${esc(c.intro)}</p>` : ''}
       ${list(c.description, para => `<p>${esc(para)}</p>`)}
       <p class="note">Sleeps ${c.sleeps}: ${esc(c.beds)}.</p>
       ${C.wifi ? `<div class="wifi-callout wifi-callout--small"><span class="wifi-callout__icon">${icon.wifi}</span><div><h3>${nobr(esc(C.wifi.head))}</h3><p>${nobr(esc(C.wifi.short))}</p></div></div>` : ''}

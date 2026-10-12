@@ -477,6 +477,7 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
 .gallery-count svg{ inline-size: 1.1em; block-size: 1.1em }
 .cabin-body{ display: grid; gap: clamp(2rem, 5vw, 4rem) }
 @media (min-width: 64rem){ .cabin-body{ grid-template-columns: 1.3fr .7fr; align-items: start } .cabin-body aside{ position: sticky; top: calc(var(--head-h) + 1.5rem) } }
+.cabin-intro{ font-size: var(--step-1); line-height: 1.45; max-inline-size: 56ch; text-wrap: pretty }
 .amenities{ columns: 2 12rem; column-gap: 2rem; list-style: none }
 .amenities li{ break-inside: avoid; padding-block: .35rem; border-block-end: 1px solid var(--line) }
 
