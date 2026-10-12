@@ -237,7 +237,7 @@ const CONFIG = {
       description: [
         'Pine Shadows sits on a secluded one-acre wooded lot that backs onto Forest Service land, so there are no neighbors behind you. It is the aqua-roofed cabin in our drone photos, about 30 minutes from Yellowstone\'s West Entrance.',
         'Downstairs is a master bedroom with a king bed and a Jack and Jill bathroom. Upstairs is a second master with a king and its own bath, and a big family loft with two bunk beds, a queen and a floor mattress. Upstairs, a mini split on the wall gives you cool or warm air. The laundry mudroom has a half bath and a sink for muddy boots or cleaning fish.',
-        'Gather by the fireplace, cook in the fully stocked kitchen, grill on the front deck, and finish the day at the fire pit by the circular drive.',
+        'Gather by the fireplace, cook in the fully stocked kitchen, grill on the front deck, and finish the day at the fire pit by the circular drive, with the firewood provided.',
         'Need to work while you are here? The Wi-Fi is fast and free, good for video calls and big uploads, and the upstairs master is a quiet spot for calls.',
         'Bringing the toys? The circular driveway has room for trucks, trailers and RVs, with water and electric hookups for one camping trailer ($75 per stay). The activity garage next door, with ping pong, foosball, an electronic basketball game, cornhole, a microwave, a serving table and extra picnic tables and chairs, can be added for $30 a night, up to $150 per stay.',
         'Planning a reunion? Wilderness Escape Retreat is right next door, so two families can stay close with a cabin each.',
@@ -246,8 +246,8 @@ const CONFIG = {
         'Fast, free Wi-Fi, great for remote work', 'Air conditioning upstairs: a wall mini split for cool or warm air', 'Central heat', 'Fully stocked kitchen with dishwasher',
         'Crockpot, Instant Pot, electric grill and waffle iron', 'Shampoo, conditioner, body wash and hand soap',
         'Washer and dryer', 'Smart TV, satellite and sound system', 'Front deck with grill',
-        /* no firewood at Pine Shadows (Robyn, 12 Oct 2026); the fireplace sits next to the fire pit */
-        'Fireplace', 'Fire pit',
+        /* firewood goes with the fire pit, not the fireplace (Robyn, 12 Oct 2026) */
+        'Fireplace', 'Fire pit, firewood provided',
         'Crib and highchair', 'Keypad self check-in', 'Circular drive with room for RVs and trailers',
         'Trailer hookup, $75 per stay', 'Activity garage add-on, $30 a night (up to $150 per stay)',
       ],
@@ -434,7 +434,7 @@ const CONFIG = {
     { group: 'cabins', home: true, q: 'What toiletries are provided?', a: 'Shampoo, conditioner, body wash and hand soap are in both cabins, along with all the linens and towels.' },
     { group: 'cabins', home: true, q: 'What is in the kitchen?', a: 'Both kitchens are stocked for real cooking: pots, pans, dishes, coffee and spices, plus a Crockpot, an Instant Pot, an electric grill, a waffle iron, food storage containers and Ziploc bags for packing a park lunch. Pine Shadows also has a dishwasher.' },
     { group: 'cabins', q: 'Is there air conditioning?', a: 'Yes. Pine Shadows has air conditioning upstairs: a mini split unit on the wall that gives you cool or warm air. Wilderness Escape Retreat has an air conditioner in the master bedroom, plus ceiling and portable fans, and summer nights here are cool, usually in the 40s.' },
-    { group: 'cabins', q: 'What else is provided?', a: 'A crib and a highchair at both cabins, and board games, puzzles, and firewood and roasting sticks for the fire pit at Wilderness Escape Retreat. Bring bear spray if you plan to hike.' },   // TODO(client) firewood: none at Pine Shadows (12 Oct 2026); her old listing says it is included at Wilderness, confirm
+    { group: 'cabins', q: 'What else is provided?', a: 'Firewood for the fire pit, a crib and a highchair at both cabins, and board games, puzzles and roasting sticks at Wilderness Escape Retreat. Bring bear spray if you plan to hike.' },
     { group: 'cabins', q: 'What is the activity garage?', a: 'A garage between the cabins with ping pong, foosball, an electronic basketball game and cornhole, plus a microwave, an extra fridge, a serving table, and extra picnic tables and chairs for big group meals. It can be added to a Pine Shadows stay for $30 a night, up to $150 per stay.' },
     { group: 'cabins', q: 'Can we bring a trailer or RV?', a: 'Yes. Pine Shadows has a circular drive with room for trailers and RVs, and water and electric hookups for one camping trailer for $75 per stay.' },
     { group: 'cabins', q: 'What time are check-in and checkout?', a: 'Check-in is from 4:00 pm with a keypad, so you can arrive whenever suits you after that. Checkout is 10:00 am.' },

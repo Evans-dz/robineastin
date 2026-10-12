@@ -362,6 +362,11 @@ body:has(.sample-flag) .hero{ min-block-size: calc(100svh - var(--head-h) - 2.15
   display: grid; gap: .8rem; padding: 1.4rem;
   border: 1px dashed var(--line-ui); border-radius: var(--radius-box); background: var(--bg);
 }
+/* The OwnerRez form's iframe is transparent and its theme draws fields
+   #f9f9f9 with a #f0f0f0 edge, which vanish on --bg. A pressed ground
+   behind it turns them back into boxes; the navy top rule marks the
+   booking path (the accent's one job). */
+.book-slot--form{ border: 1px solid var(--line-ui); border-block-start: 4px solid var(--accent); background: var(--bg-3) }
 .book-slot p{ color: var(--fg-2) }
 .book-slot .row{ display: flex; flex-wrap: wrap; gap: .6rem }
 

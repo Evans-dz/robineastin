@@ -260,7 +260,7 @@ function bookSlot(cabin, { heading = true } = {}) {
   const widget = cabin
     ? orWidget('Booking/Inquiry', (OR.perCabin || {}).booking, cabin.ownerrez && cabin.ownerrez.key)
     : orWidget('Booking/Inquiry', (OR.all || {}).booking);
-  return `<div class="book-slot">
+  return `<div class="book-slot book-slot--form">
       ${heading ? `<h3>${cabin ? `Book ${esc(cabin.name)}` : 'Pick your dates'}</h3>` : ''}
       ${widget || '<p>Online booking with live availability connects here at launch.</p>'}
       <noscript><p>The booking calendar needs JavaScript. Email us for dates.</p></noscript>
