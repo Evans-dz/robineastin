@@ -8,22 +8,22 @@
   "trailingSlash": true,
   "redirects": [
     {
-      "source": "/properties",
+      "source": "/properties/",
       "destination": "/#cabins",
       "permanent": true
     },
     {
-      "source": "/pine-shadows-orp5b73d5cx",
+      "source": "/pine-shadows-orp5b73d5cx/",
       "destination": "/cabins/pine-shadows/",
       "permanent": true
     },
     {
-      "source": "/wilderness-escape-retreat-orp5b73d5bx",
+      "source": "/wilderness-escape-retreat-orp5b73d5bx/",
       "destination": "/cabins/wilderness-escape-retreat/",
       "permanent": true
     },
     {
-      "source": "/availability",
+      "source": "/availability/",
       "destination": "/book/",
       "permanent": true
     }
