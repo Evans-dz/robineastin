@@ -6,3 +6,5 @@ DESIGN.md
 README.md
 .env
 .env.*
+# print sources and their photos: only needed to render the PDFs
+print

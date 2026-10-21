@@ -15,11 +15,11 @@
    a "Draft for review" flag while it is.
    ═══════════════════════════════════════════════════════════════ */
 
-const SAMPLE = true;   /* → false only when every TODO(client) below is resolved */
+const SAMPLE = false;  /* launched 20 Oct 2026; true brings back the draft flag on every page and print piece */
 
 const CONFIG = {
 
-  launched: null,       // 'October 2026' at launch: removes noindex, fills legal dates
+  launched: 'October 2026',   // removes noindex, fills legal dates, opens robots.txt
 
   /* Until launch, the real domain still serves the old OwnerRez site, so
      link previews (og:image, og:url) point at the Vercel share link
@@ -37,7 +37,7 @@ const CONFIG = {
     city:   'Island Park',
     state:  'Idaho',
     region: 'ID',
-    zip:    '83440',                       // TODO(client) Robyn wrote 83440, which is Rexburg's ZIP; Island Park is 83429
+    zip:    '83429',                       // Island Park (Dylan, 20 Oct 2026); Robyn had written Rexburg's 83440
     lat:    44.4448,                       // Pine Shadows pin on the OwnerRez site (the map's "you are here")
     lng:    -111.3945,
     toYellowstone: '30 min',               // Robyn's figure: 29.5 road miles to the West Entrance
@@ -52,8 +52,8 @@ const CONFIG = {
   },
 
   /* Wi-Fi: Robyn wants this said loudly (7 Oct 2026): fast, great to work
-     from. TODO(client) a speed-test number (Mbps) from each cabin would
-     make it concrete; until then no number is claimed. */
+     from. A speed-test number (Mbps) from each cabin would make it
+     concrete; until then no number is claimed. */
   wifi: {
     head: 'Fast Wi-Fi, made for working from the cabin',
     body: 'Both cabins have free high-speed Wi-Fi that is great for getting work done. Video calls, sending big files and streaming all run smoothly, so you can take a meeting at the kitchen table in the morning, head out to Yellowstone after lunch, and stream a movie on the smart TV that night.',
@@ -152,8 +152,10 @@ const CONFIG = {
   },
 
   /* ── BOOKING: OwnerRez stays the engine ─────────────────────
-     Widget codes copied from the live OwnerRez site (research §4.2).
-     widget.js injects an iframe; without JS the page links out.   */
+     Standalone widgets created 20 Oct 2026 under OwnerRez Settings >
+     Widgets ("New website: ..."), free on every account. The first
+     codes belonged to her OwnerRez hosted website and would have died
+     with it. widget.js injects an iframe; without JS the page links out. */
   booking: {
     script:   'https://app.ownerrez.com/widget.js',
     /* OwnerRez serves these widgets to any real domain (tested 26 Sept
@@ -161,12 +163,12 @@ const CONFIG = {
        refuses localhost with 403, so local dev shows a note instead. */
     blockedHosts: ['localhost', '127.0.0.1', '[::1]', ''],
     all: {
-      calendar: '5165c6bf71b742fc9d8b532d619c4fe4',   // Ribbon Calendar, every listing
-      booking:  '49db33f0e0d14eb3a5efda0c3dfe7d37',   // Booking/Inquiry with a listing dropdown
+      calendar: 'e7786fe2b1fc4ce890d1344c98a40b2e',   // Ribbon Calendar, both cabins
+      booking:  'f7ba18aa3bad4f79b9257de34a55e3dd',   // Booking/Inquiry with a "Cabin" dropdown
     },
     perCabin: {
-      booking:  '531d1ebf1e4344cda61aa2ec5c9b82b6',   // + data-propertyId per cabin
-      calendar: '067f30290c8f4565aa580e6abdd0c685',
+      booking:  '98f5ac2c63fb498aa736a90afa41ba99',   // + data-propertyId per cabin
+      calendar: 'e7696711a6c64417870e353415a99c54',   // Multiple Month, 3 months, nightly rates shown
     },
   },
 
@@ -255,7 +257,9 @@ const CONFIG = {
       lead: 'teal-cabin-golden',
       /* Robyn's own photos, shown from her OwnerRez photo host, in the
          order they appear: the first four sit beside the lead photo.
-         TODO(client) self-host optimised copies at launch (originals from Robyn). */
+         They stay on OwnerRez's photo host after the hosted website is off
+         (it serves the channels too). Self-hosting optimised copies is a
+         later nicety, not a launch need. */
       gallery: [
         { id: '396c8d8ac2f94d9b90128b4eae326b66', alt: 'Pine Shadows with its front deck, circular drive and game garage' },
         { id: '3afeb11684574eeb922915bd5c863234', alt: 'Living room with the fireplace and the stairs to the loft' },
@@ -309,6 +313,22 @@ const CONFIG = {
         { id: 'ad2c53f248514213a1a3c8212163b7e2', alt: 'Floor plan of both levels' },
       ],
       listings: { airbnb: 'https://www.airbnb.com/rooms/783248560719883922', vrbo: 'https://www.vrbo.com/2216216' },
+      /* Wi-Fi for the welcome sign, the binder and their scan-to-join QR code.
+         Print only, never on the website. Left null, the print pieces show
+         lines to write it in by hand. OwnerRez already emails it to guests
+         ({PXWIFICODE} in the check-in instructions). */
+      wifiNetwork: { name: null, password: null },
+      /* the /checkin/ page, the welcome sign and the binder */
+      checkin: [
+        { title: 'Check in from 4:00 pm', detail: 'Arrive any time after 4:00 pm. The keypad lets you in, so there is no one to meet and no key to pick up.' },
+        { title: 'Find the cabin', detail: 'Pine Shadows is 3810 Mortensen Ln, in the pines on the northeast side of Island Park Reservoir, off US-20 between Ponds Lodge and Mack\'s Inn. It is the aqua-roofed cabin beside the game garage.' },
+        { title: 'Park in the circular drive', detail: 'There is room for trucks, trailers and RVs. If you booked the trailer hookup, it has water and electric for one camping trailer.' },
+        /* door codes: OwnerRez's Schlage Home integration makes one per booking and
+           the check-in instructions email ({BDOORCODE}) sends it 3 days before arrival */
+        { title: 'Let yourself in', detail: 'Enter your door code on the keypad. It is in the check-in instructions we email you three days before you arrive.' },
+        { title: 'Get on the Wi-Fi', detail: 'The network name and password are on the welcome sign and in the welcome binder inside.' },
+        { title: 'Make yourselves at home', detail: 'The welcome binder has the house guide, things to do and the checkout steps. Firewood for the fire pit is provided.' },
+      ],
       checkout: [
         { title: 'Check out by 10:00 am', detail: '' },
         { title: 'Leave all the beds unmade', detail: '' },
@@ -322,7 +342,7 @@ const CONFIG = {
     },
     {
       slug: 'wilderness-escape-retreat',
-      name: 'Wilderness Escape Retreat',     // TODO(client) four names in use: Retreat, Wilderness Escape, Wilderness Pines, Wilderness Pines Retreat
+      name: 'Wilderness Escape Retreat',     // confirmed by Dylan, 20 Oct 2026 (OwnerRez lists it as Wilderness Escape)
       address: '3808 Mortensen Ln',
       roof: 'mauve',
       ownerrez: { propertyId: 474459, key: 'a8800880b6f74e2fa5ec37989fe553ff' },
@@ -394,12 +414,21 @@ const CONFIG = {
         { id: '4350364df639421199d667bf627d558e', alt: 'The one-acre lot in the trees' },
       ],
       listings: { airbnb: 'https://www.airbnb.com/rooms/43855219', vrbo: 'https://www.vrbo.com/1935077' },
+      wifiNetwork: { name: null, password: null },   // print only, see Pine Shadows
+      checkin: [
+        { title: 'Check in from 4:00 pm', detail: 'Arrive any time after 4:00 pm. The keypad lets you in, so there is no one to meet and no key to pick up.' },
+        { title: 'Find the cabin', detail: 'Wilderness Escape Retreat is 3808 Mortensen Ln, next door to Pine Shadows, in the pines on the northeast side of Island Park Reservoir, off US-20 between Ponds Lodge and Mack\'s Inn. Look for the wooden cabin sign at the drive.' },
+        { title: 'Park in the circular drive', detail: 'Pull up in the drive by the front deck.' },
+        { title: 'Let yourself in', detail: 'Enter your door code on the keypad. It is in the check-in instructions we email you three days before you arrive.' },
+        { title: 'Get on the Wi-Fi', detail: 'The network name and password are on the welcome sign and in the welcome binder inside.' },
+        { title: 'Make yourselves at home', detail: 'The welcome binder has the house guide, things to do and the checkout steps. Firewood and roasting sticks are provided for the fire pit, and propane for the grill is included.' },
+      ],
       checkout: [
         { title: 'Check out by 10:00 am', detail: '' },
         { title: 'Leave all the beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Wash the dishes and clear the food', detail: 'Wash the dishes; the cleaner will put them away. Take your food out of the fridge, freezer and cupboards.' },
-        { title: 'Take out the garbage', detail: 'All garbage goes in the cans outside next to the cabin. Pickup is Monday and Thursday.' },   // TODO(client) Pine Shadows next door is Thursday at 6:00 am only (Robyn, 12 Oct 2026); same here?
+        { title: 'Take out the garbage', detail: 'All garbage goes in the cans outside next to the cabin. Pickup is Monday and Thursday.' },   // confirmed by Dylan, 20 Oct 2026
         { title: 'Lock up', detail: 'Shut and lock the windows and doors. Press the lock button on the keypad as you leave.' },
         { title: 'Sign the guest book', detail: 'We love reading about your stay.' },
         { title: 'Leave us a 5-star review', detail: 'Please take time to leave a 5-star review wherever you booked. It helps other families find our cabins.' },
@@ -410,7 +439,7 @@ const CONFIG = {
   policies: [
     { label: 'Check-in', value: '4:00 pm, self check-in with a keypad' },
     { label: 'Checkout', value: '10:00 am' },
-    { label: 'Minimum stay', value: null },                    // TODO(client) not published anywhere
+    { label: 'Minimum stay', value: null },                    // left off: OwnerRez's booking form enforces it (1 night base, seasonal rules there)
     { label: 'Pets', value: 'Not allowed' },
     { label: 'Smoking', value: 'Not inside the cabins, including vaping. Outside is fine' },
     { label: 'Age to rent', value: '21 or older' },
@@ -445,10 +474,37 @@ const CONFIG = {
     { group: 'area', q: 'Where are the nearest restaurants?', a: 'Lakeside Lodge, Pond\'s Lodge and Boondocks Roadhouse are about 10 minutes away, and Cafe Sabor and The Parlor at Mack\'s Inn about 15. West Yellowstone has dozens more. Our guide lists them all with drive times.' },
   ],
 
+  /* Check-in: the /checkin/ pages. Guests reach them from the QR code on
+     the welcome sign and in the binder, or from the link in OwnerRez's
+     arrival message. Steps live on each cabin; the "good to know" rows
+     come from policies, each cabin's garbage step and the guide's
+     practical notes. */
+  checkin: {
+    lede: 'Welcome! Here is everything you need to get settled.',
+    directions: 'Get directions',
+  },
+
   checkout: {
     lede: 'Thanks for staying with us. A few quick things before you head out.',
     returnHead: 'Come back in another season',
     returnLede: 'Island Park is a different place in winter, spring and fall. Book your next stay on our website anytime.',
+  },
+
+  /* The printed pieces (tools/print.mjs): tri-fold pamphlet, flyers,
+     each cabin's welcome sign, checkout sign and welcome binder. The
+     booking flyer reuses the home hero (home.h1, lede, facts, bookCard).
+     {cabin} becomes the cabin's name. No phone number in print either
+     (Robyn, 7 Oct 2026). */
+  print: {
+    welcome: [
+      'Welcome to {cabin}! We are so glad you are here.',
+      'We are Robyn and Eric Eastin. We live in Rexburg, look after both cabins ourselves, and hold our own family reunions here too, so we hope it feels like your family cabin for the week.',
+      'This binder has everything for your stay: getting settled, how the cabin works, things to do in Island Park and Yellowstone with drive times from our door, where to eat and shop, what to do in an emergency, and the checkout steps. Scan any QR code to open the same page on your phone.',
+      'If you need anything at all, email us and we will get right back to you.',
+    ],
+    signoff: 'Enjoy the forest,',
+    signLede: 'We are so glad you are here. Make yourselves at home.',
+    backHead: 'Thank you for staying with us',
   },
 
   /* Every photo on the site, with its alt text and shape (w:h).

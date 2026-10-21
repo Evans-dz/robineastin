@@ -208,3 +208,40 @@ these files. `SAMPLE = true` until every `TODO(client)` is resolved.
 - [ ] Audit clean against the **deployed** URL, including the site-level polish checks
 - [ ] `node verify/audit.mjs --url http://localhost:4214` clean
 - [ ] Skill pass: `/web-design-guidelines index.html css/main.css`
+
+## 11. Print and QR codes (added 20 Oct 2026)
+
+`node tools/print.mjs` builds every printed piece from `js/config.js` and
+`js/places.js` (no fact typed into a print layout) and renders the PDFs into
+`../Print Materials/`. Print HTML lives in `print/` (off the public site via
+`.vercelignore`); `print/print.css` sits on top of `main.css`, so the palette,
+Besley over Public Sans, the forest-sign labels, hairlines and no shadows are
+the site's own. Sizes are physical (in, pt).
+
+| Piece | Size | QR codes |
+|---|---|---|
+| Guest pamphlet | Letter tri-fold, both sides, flip on short edge | check-in, checkout, book, guide, map |
+| Book your stay flyer | Letter | book |
+| Things to do flyer | Letter | one per season, map, guide |
+| Welcome sign, per cabin (frame by the door) | Letter | that cabin's check-in, guide, that cabin's checkout, Wi-Fi join once set |
+| Checkout sign, per cabin (on the fridge) | Letter | that cabin's checkout, book |
+| Welcome binder, per cabin | Letter, 15 pages | one per section, to the same page on the site |
+
+**Check-in and checkout are two halves.** The QR codes cover the cabin;
+OwnerRez's automated messages (drafts in `Print Materials/6 Guest Messages/`)
+send the same `/checkin/<cabin>/` and `/checkout/<cabin>/` links before arrival
+and the evening before departure. `/checkin/` pages are public and noindexed,
+so they never carry the door code or the Wi-Fi password; those stay on paper
+(`wifiNetwork` per cabin, print only) and in OwnerRez's own message.
+
+**QR rules.** Navy ink (`--fg`) on a white plate with a 3-module quiet zone,
+rounded finder eyes, error correction M (the longest address stays at 37
+modules), no logo in the middle (from version 7 it would cover an alignment
+pattern). Every code opens the real domain, so nothing goes to the printer
+before launch. All 22 were decoded with Apple Vision at full size and at 110 px.
+
+**Photos in print.** JPEG only: Chrome writes WebP into a PDF uncompressed.
+Small placements use the site's `-1200.jpg`; full-width covers use a 2400 px
+JPEG that print.mjs makes with `sips` into `print/img/` (gitignored).
+
+The draft flag prints while `SAMPLE` is true, like the site's banner.

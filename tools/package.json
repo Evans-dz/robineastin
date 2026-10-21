@@ -1,0 +1,9 @@
+{
+  "name": "wilderness-escape-tools",
+  "private": true,
+  "description": "Dev-only helpers for tools/print.mjs (QR codes). Not part of the site; .vercelignore keeps tools/ off it.",
+  "type": "module",
+  "devDependencies": {
+    "qrcode": "1.5.4"
+  }
+}

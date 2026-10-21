@@ -1,5 +1,6 @@
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /checkin/
+Disallow: /checkout/
 
-# Pre-launch. At launch: Allow: /, Disallow: /checkout/, and
-# Sitemap: https://www.wildernessescaperentals.com/sitemap.xml
+Sitemap: https://www.wildernessescaperentals.com/sitemap.xml

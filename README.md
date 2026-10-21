@@ -26,8 +26,19 @@ Every fact lives in three data files. Edit, then regenerate the pages:
 
 ```bash
 node tools/build.mjs      # writes every page; fails on an em dash
-node tools/pdf.mjs        # guest pamphlet PDF (needs the dev server running)
+node tools/print.mjs      # every printed piece as PDF, into ../Print Materials/
 ```
+
+## Print
+
+`tools/print.mjs` builds the pamphlet, flyers, both cabins' welcome and
+checkout signs, both welcome binders, every QR code (SVG + PNG) and the
+OwnerRez message drafts from the same data files, in the site's colours and
+type, then renders them into `../Print Materials/`. It serves this folder
+itself, so the dev server need not be running. Once: `cd tools && npm install`
+(the `qrcode` package). Needs macOS (`sips`) and Chrome. QR codes open the real
+domain, so print only after launch; `--origin https://robineastin.vercel.app`
+makes a test set in `Print Materials/_Test proofs/`. See DESIGN.md §11.
 
 The generated HTML is committed, so Vercel deploys the folder as-is: no build
 step (`vercel.json`). `.vercelignore` keeps tools and notes off the public site.

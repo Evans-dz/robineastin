@@ -4,3 +4,5 @@ node_modules/
 # secrets: the OwnerRez token lives here and nowhere else
 .env
 .env.*
+# print.mjs makes these JPEGs from assets/photos/*-2400.webp
+print/img/

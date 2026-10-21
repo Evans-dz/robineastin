@@ -61,6 +61,7 @@ const icon = {
   arrow: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
   mail: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 7 9 6 9-6"/></svg>',
   wifi: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.6a10 10 0 0 1 14 0M8.5 16.4a5 5 0 0 1 7 0"/><circle cx="12" cy="19.8" r="1" fill="currentColor"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
   star: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>',
 };
 
@@ -137,7 +138,7 @@ function footer() {
       </div>
       <div>
         <h2 class="foot-h">Stay</h2>
-        <ul>${list(C.cabins, c => `<li><a href="/cabins/${c.slug}/">${esc(c.name)}</a></li>`, '')}<li><a href="/book/">Book now</a></li><li><a href="/reviews/">Reviews</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/checkout/">Checkout guide</a></li></ul>
+        <ul>${list(C.cabins, c => `<li><a href="/cabins/${c.slug}/">${esc(c.name)}</a></li>`, '')}<li><a href="/book/">Book now</a></li><li><a href="/reviews/">Reviews</a></li><li><a href="/faq/">FAQ</a></li><li><a href="/checkin/">Check-in guide</a></li><li><a href="/checkout/">Checkout guide</a></li></ul>
       </div>
       <div>
         <h2 class="foot-h">Explore</h2>
@@ -935,6 +936,67 @@ ${reviews.length ? `<section aria-labelledby="rev-h">
   }
 }
 
+/* ---- check-in (QR on each cabin's welcome sign and binder, and the link for
+   OwnerRez's arrival message; never indexed). No Wi-Fi password or door code
+   here: the page is public, so those stay on paper inside the cabin.        */
+{
+  const X = C.checkin;
+  const trail = [['Home', '/'], ['Check-in guide', '/checkin/']];
+  const rule = label => (C.policies.find(p => p.label === label) || {}).value;
+  const practical = label => (G.PRACTICAL.find(p => p.label === label) || {}).value;
+  emit('checkin/index.html', page({
+    route: '/checkin/', index: false, title: `Check-in Guide | ${B.short}`,
+    desc: `How to check in to your ${B.name} cabin in ${B.city}, ${B.state}.`,
+    ld: [crumbsLd(trail)], body: `
+<div class="wrap page-head">
+  ${crumbsNav(trail)}
+  <span class="sign">For guests</span>
+  <h1 style="margin-top:.9rem">Checking in</h1>
+  <p class="lede">Which cabin are you in?</p>
+  <p style="margin-top:1.5rem;display:flex;flex-wrap:wrap;gap:.6rem">${list(C.cabins, c => `<a class="btn btn--quiet" href="/checkin/${c.slug}/">${esc(c.name)}</a>`, '')}</p>
+</div>`,
+  }), { route: '/checkin/', sitemap: false });
+
+  for (const c of C.cabins) {
+    const route = `/checkin/${c.slug}/`;
+    const t = [...trail, [c.name, route]];
+    const maps = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${c.address}, ${B.city}, ${B.region}`)}`;
+    const know = [
+      ['Check-in', rule('Check-in')], ['Checkout', rule('Checkout')],
+      ['Smoking', rule('Smoking')], ['Pets', rule('Pets')],
+      ['Garbage', (c.checkout.find(s => /garbage/i.test(s.title)) || {}).detail],
+      ['Bears', practical('Bears and moose')], ['Fire', practical('Fire')],
+      ['Emergencies', practical('Emergencies')],
+    ].filter(([, v]) => v);
+    emit(`checkin/${c.slug}/index.html`, page({
+      route, index: false, title: `Checking In to ${c.name} | ${B.short}`,
+      desc: `Check-in steps for ${c.name}, ${c.address}, ${B.city}, ${B.state}.`,
+      ld: [crumbsLd(t)], body: `
+<div class="wrap page-head">
+  ${crumbsNav(t)}
+  <span class="sign">${esc(c.name)}</span>
+  <h1 style="margin-top:.9rem">Checking in</h1>
+  <p class="lede">${esc(X.lede)}</p>
+  <p style="margin-top:1.5rem"><a class="btn btn--quiet" href="${esc(maps)}" rel="noopener">${icon.pin}${esc(X.directions)} to ${esc(c.address)}</a></p>
+</div>
+<section style="padding-top:0">
+  <div class="wrap">
+    <ol class="checklist">${list(c.checkin, st => `<li><div><b>${esc(st.title)}</b>${st.detail ? `<p>${esc(st.detail)}</p>` : ''}</div></li>`, '')}</ol>
+    <h2 style="font-size:var(--step-2);margin:2.5rem 0 1rem">Good to know</h2>
+    ${C.wifi ? `<div class="wifi-callout wifi-callout--small" style="margin:0 0 1.5rem"><span class="wifi-callout__icon">${icon.wifi}</span><div><h3>${nobr(esc(C.wifi.head))}</h3><p>${nobr(esc(C.wifi.short))}</p></div></div>` : ''}
+    <dl class="policy">${list(know, ([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`, '')}</dl>
+    <div class="book-slot" style="margin-top:2.5rem">
+      <h2 style="font-size:var(--step-2)">Plan your days</h2>
+      <p>${esc(C.guide.lede)}</p>
+      <div class="row"><a class="btn btn--quiet" href="/guide/">Things to do ${icon.arrow}</a><a class="btn btn--quiet" href="/map/">Map</a><a class="btn btn--quiet" href="/checkout/${c.slug}/">Checkout steps</a></div>
+    </div>
+    ${email ? `<p class="note" style="margin-top:2rem">Questions? Email us at <a href="mailto:${esc(email)}?subject=${encodeURIComponent(`${c.name} check-in`)}">${esc(email)}</a>.</p>` : ''}
+  </div>
+</section>`,
+    }), { route, sitemap: false });
+  }
+}
+
 /* ---- 404 ------------------------------------------------------------------------ */
 emit('404.html', page({
   route: '/404', index: false, title: `Page not found | ${B.short}`,
@@ -1003,143 +1065,7 @@ emit('404.html', page({
   }), { route: '/terms/' });
 }
 
-/* ---- pamphlet: Letter tri-fold for each cabin (print, never indexed) ------------------
-   Outside: [inside flap | back | cover]   Inside: [Yellowstone | seasons | safety + QR]
-   PDF: node tools/pdf.mjs  →  ../Docs/Wilderness-Escape-Pamphlet-DRAFT.pdf            */
-{
-  const blank = s => `<mark class="blank">[${esc(s)}]</mark>`;
-  const sup = name => G.SUPPLIES.find(x => x.name === name);
-  const near = [
-    ['Elk Creek Station', 'Gas, snacks, propane, ATM'],
-    ['Island Park Liquor and Sports', 'Liquor store, Wed to Sat'],
-    ['Island Park Post Office', 'Closed Sundays'],
-    ['Sam Patch Co. Grocer and Sundries', 'Closest grocery store, firewood, licenses'],
-  ].map(([n, what]) => ({ name: n, what, drive: (sup(n) || {}).drive }));
-  const seasonsBlock = G.SEASONS.map(s => {
-    const ids = (C.home.picks || {})[s.id] || [];
-    return `<div class="p-season"><h3>${esc(s.label)}</h3><ul>${ids.map(id => placeById(id)).filter(Boolean).map(p =>
-      `<li><span>${esc(p.short || p.name)}</span>${p.drive != null ? `<b>${drive(p.drive)}</b>` : ''}</li>`).join('')}</ul></div>`;
-  }).join('');
-  const qr = f => read(`assets/qr/${f}.svg`).replace('<svg ', '<svg aria-hidden="true" ');
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Guest pamphlet (print) | ${esc(B.short)}</title>
-${ICONS}
-<link rel="stylesheet" href="/css/main.css">
-<style>
-  @page{ size: 11in 8.5in; margin: 0 }
-  html, body{ background: #D9D4C7 }
-  body{ margin: 0; font-size: 8.4pt; line-height: 1.38 }
-  .sheet{ inline-size: 11in; block-size: 8.5in; margin: .4in auto; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr);
-          background: var(--bg); overflow: hidden; break-after: page }
-  .sheet:last-child{ break-after: auto }
-  @media print{ html, body{ background: #fff } .sheet{ margin: 0 } }
-  .panel{ padding: .34in .32in; display: flex; flex-direction: column; gap: .13in; min-inline-size: 0; overflow: hidden }
-  .panel + .panel{ border-inline-start: 1px dashed #CFC8B6 }
-  .panel h2{ font-size: 15pt; line-height: 1.05 }
-  .panel h3{ font: 700 9pt/1.2 var(--font-display) }
-  .panel p, .panel li{ max-inline-size: none }
-  .sign{ font-size: 6.8pt }
-  .rows{ list-style: none; display: grid; border-block-start: 1px solid var(--line) }
-  .rows li{ display: grid; grid-template-columns: 1fr auto; gap: .08in; padding-block: .05in; border-block-end: 1px solid var(--line) }
-  .rows small{ display: block; color: var(--fg-2); font-size: 7.4pt }
-  .rows b, .p-season b{ color: var(--marker); font-variant-numeric: tabular-nums; white-space: nowrap }
-  .p-season ul{ list-style: none; display: grid; gap: .02in }
-  .p-season li{ display: flex; justify-content: space-between; gap: .1in; border-block-end: 1px dotted var(--line); padding-block: .02in }
-  .p-season + .p-season{ margin-block-start: .02in }
-  .note{ font-size: 7.4pt; color: var(--fg-2) }
-  .box{ padding: .1in .12in; background: var(--bg-2); border-radius: 3px }
-  .blank{ background: #FFE58A; color: #17231D; padding: 0 .04in }
-  .qrs{ display: grid; grid-template-columns: 1fr 1fr; gap: .14in; margin-block-start: auto }
-  .qr{ display: grid; gap: .04in; justify-items: center; text-align: center; font-weight: 600; font-size: 7.6pt }
-  .qr svg{ inline-size: 1.15in; block-size: 1.15in }
-  .rules-p{ list-style: none; display: grid; gap: .05in }
-  .rules-p li{ padding-inline-start: .14in; position: relative }
-  .rules-p li::before{ content: ""; position: absolute; left: 0; top: .055in; inline-size: .06in; block-size: .06in; background: var(--fg) }
-  .cover{ padding: 0; background: var(--dusk); color: var(--dusk-fg); position: relative }
-  .cover img{ inline-size: 100%; block-size: 5.3in; object-fit: cover; object-position: 50% 12% }
-  .cover .in{ padding: .26in .32in .3in; display: grid; gap: .1in }
-  .cover h1{ font-size: 25pt; color: var(--dusk-fg) }
-  .cover p{ color: var(--dusk-fg-2) }
-  .cover .cover-logo{ inline-size: 1.45in; block-size: auto; margin-block-start: -.95in; padding: .1in; background: var(--bg); border-radius: 50%; aspect-ratio: 1; object-fit: contain; position: relative }
-  .cover .draft{ position: absolute; top: .12in; right: .12in; background: var(--warn); color: #fff; font-size: 7pt; padding: .03in .08in; border-radius: 2px }
-  .back-cta{ display: grid; gap: .1in; justify-items: start }
-  .back-cta svg{ inline-size: 1.3in; block-size: 1.3in }
-</style>
-</head>
-<body>
-<main>
-<section class="sheet" aria-label="Outside">
-  <div class="panel">
-    <span class="sign">Close to the cabins</span>
-    <h2>Groceries, gas and help</h2>
-    <ul class="rows">${near.map(n => `<li><span>${esc(n.name)}<small>${esc(n.what)}</small></span>${n.drive != null ? `<b>${drive(n.drive)}</b>` : ''}</li>`).join('')}
-      <li><span>Island Park Medical Clinic<small>By Pond's Lodge. Weekdays 8 to 5, walk-ins</small></span><b>10 min</b></li>
-      <li><span>Nearest ER: Madison Memorial<small>Rexburg. Call 911 in an emergency</small></span><b>1 hr 15 min</b></li>
-    </ul>
-    <p class="note">There is no pharmacy in Island Park. The nearest are in West Yellowstone and Ashton, weekdays only.</p>
-    <div class="box"><h3>Wi-Fi</h3><p>Network ${blank('network name')}<br>Password ${blank('password')}</p></div>
-  </div>
-  <div class="panel">
-    <span class="sign">Book online</span>
-    <h2>Come back in another season</h2>
-    <p>Island Park is a different place in every season. Book your next stay on our website, with no Airbnb or VRBO service fees.</p>
-    <div class="back-cta">${qr('home')}<b>${esc(B.domain.replace(/^www\./, ''))}</b></div>
-    <div class="box">
-      <p>${email ? esc(email) : blank('email')}</p>
-      <p class="note" style="margin-top:.05in">Office: ${esc(B.street)}, ${esc(B.city)}, ${esc(B.region)} ${esc(B.zip)}</p>
-    </div>
-    <p class="note" style="margin-top:auto">Guide facts checked September 2026. Hours, fees and road openings change; check before you go.</p>
-  </div>
-  <div class="panel cover">
-    ${SAMPLE ? '<span class="draft">Draft</span>' : ''}
-    ${pic('teal-cabins-drive', { sizes: '4in', alt: C.photos['teal-cabins-drive'].alt }).replace(' loading="lazy" decoding="async"', '')}
-    <div class="in">
-      <img class="cover-logo" src="${LOGO.png}" width="${LOGO.w}" height="${LOGO.h}" alt="${esc(B.name)} logo">
-      <span class="sign">${esc(B.city)}, ${esc(B.state)}</span>
-      <h1>${esc(B.short)}</h1>
-      <p>Your guide to Island Park and Yellowstone, with drive times from the cabins.</p>
-    </div>
-  </div>
-</section>
-
-<section class="sheet" aria-label="Inside">
-  <div class="panel">
-    <span class="sign">Yellowstone</span>
-    <h2>In through the West Entrance</h2>
-    <ul class="rows">
-      <li><span>West Entrance<small>Cars mid-April to Oct 31. Mid-Dec to mid-March, snowcoach and snowmobile tours only</small></span><b>${drive(placeById('west-yellowstone').drive)}</b></li>
-      <li><span>Entrance pass<small>$35 per vehicle for 7 days. No reservation needed (2026)</small></span><b>$35</b></li>
-    </ul>
-    <h3>Day plans</h3>
-    <ul class="rows">${G.DAYS.slice(0, 4).map(d => `<li><span>${esc(d.title)}<small>${esc(d.stops[d.stops.length - 1])}</small></span><b>${esc(d.driveNote.replace(/^About /, '').replace(/ each way.*$/, '').replace(/ to .*$/, ''))}</b></li>`).join('')}</ul>
-    <p class="note">Times are one way, with no stops or traffic. Be at the gate before 7 am, or come in after noon. No gas at Madison or Norris: fill up in West Yellowstone.</p>
-  </div>
-  <div class="panel">
-    <span class="sign">Island Park</span>
-    <h2>What to do, by season</h2>
-    ${seasonsBlock}
-  </div>
-  <div class="panel">
-    <span class="sign">Wildlife</span>
-    <h2>How close is too close</h2>
-    <ul class="rules-p">${G.PARK_RULES.slice(0, 5).map(r => `<li>${esc(r)}</li>`).join('')}</ul>
-    <div class="qrs">
-      <div class="qr">${qr('map')}<span>Map and full guide</span></div>
-      <div class="qr">${qr('checkout')}<span>Checking out</span></div>
-    </div>
-  </div>
-</section>
-</main>
-</body>
-</html>
-`;
-  emit('print/pamphlet/index.html', html, { sitemap: false });
-}
+/* The pamphlet, flyers, welcome signs and binders are built by tools/print.mjs. */
 
 /* ---- write, guard, site files ---------------------------------------------------------- */
 let failed = false;
@@ -1158,8 +1084,8 @@ ${routes.map(r => `  <url><loc>${abs(r)}</loc></url>`).join('\n')}
 </urlset>
 `);
 fs.writeFileSync(path.join(ROOT, 'robots.txt'), C.launched
-  ? `User-agent: *\nAllow: /\nDisallow: /checkout/\n\nSitemap: ${abs('/sitemap.xml')}\n`
-  : `User-agent: *\nDisallow: /\n\n# Pre-launch. At launch: Allow: /, Disallow: /checkout/, and\n# Sitemap: ${abs('/sitemap.xml')}\n`);
+  ? `User-agent: *\nAllow: /\nDisallow: /checkin/\nDisallow: /checkout/\n\nSitemap: ${abs('/sitemap.xml')}\n`
+  : `User-agent: *\nDisallow: /\n\n# Pre-launch. At launch: Allow: /, Disallow: /checkin/ and /checkout/, and\n# Sitemap: ${abs('/sitemap.xml')}\n`);
 fs.writeFileSync(path.join(ROOT, 'llms.txt'), `# ${B.name}
 
 > ${C.seo.llms}

@@ -1,0 +1,301 @@
+/* ============================================================================
+   Wilderness Escape Rentals · print.css
+   Every printed piece (tools/print.mjs): the tri-fold pamphlet, the booking
+   and things-to-do flyers, each cabin's welcome sign, checkout sign and
+   welcome binder, and the QR sheet. Tokens, fonts, .sign and the reset come
+   from main.css, so print and site share one palette (DESIGN.md §2), one
+   type pair (§3) and the forest-sign labels. Sizes here are physical (in, pt).
+   No shadows: hairlines and ground changes only (§6). Sheets are <div>s, not
+   <section>s, so main.css's own print rules leave them alone.
+   ========================================================================== */
+
+/* ---- sheets ------------------------------------------------------------------ */
+html, body{ background: #9AA4B4 }             /* on screen the sheets sit on a grey desk */
+body.print{
+  margin: 0; color: var(--fg); font: 400 10pt/1.42 var(--font-body);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+@media print{
+  html, body, body.print{ background: none; color: var(--fg); font-size: 10pt }
+  .sheet{ margin: 0 !important }
+}
+.sheet{ position: relative; margin: .4in auto; background: var(--bg); overflow: hidden; break-after: page; break-inside: avoid }
+.sheet:last-child{ break-after: auto }
+.sheet--letter{ inline-size: 8.5in; block-size: 11in }
+.sheet--wide{ inline-size: 11in; block-size: 8.5in }
+.print p, .print li{ max-inline-size: none }
+.print ul, .print ol{ margin: 0; padding: 0; list-style: none }
+.print h1{ font-size: 28pt }
+.print h2{ font-size: 16pt; line-height: 1.1 }
+.print h3{ font: 600 11pt/1.2 var(--font-display); letter-spacing: 0 }
+.print .sign{ font-size: 7pt }
+.print .lede{ font-size: 12pt; line-height: 1.42; color: var(--fg-2) }
+.print .note{ font-size: 8pt; line-height: 1.4; color: var(--fg-2) }
+.print img{ max-inline-size: none }
+.on-dusk{ background: var(--dusk); color: var(--dusk-fg) }
+.on-dusk h1, .on-dusk h2, .on-dusk h3{ color: var(--dusk-fg) }
+.on-dusk p, .on-dusk .note{ color: var(--dusk-fg-2) }
+
+/* the draft flag, while SAMPLE is true (same job as the site's sample flag) */
+.draft{
+  position: absolute; top: .2in; right: .2in; z-index: 5;
+  background: var(--warn); color: var(--warn-fg); border-radius: 2px;
+  font: 600 7pt/1 var(--font-body); letter-spacing: .02em; padding: .05in .09in;
+}
+
+/* her logo on a warm-white disc: on navy it always sits on one (DESIGN §2) */
+.disc{ display: block; background: var(--bg); border-radius: 50%; aspect-ratio: 1; object-fit: contain; padding: .1in }
+
+/* ---- shared parts --------------------------------------------------------------- */
+/* rows: a name with a small note, the drive time on the right in last light */
+.rows{ border-block-start: 1px solid var(--line) }
+.rows > li{ display: grid; grid-template-columns: 1fr auto; column-gap: .14in; align-items: baseline; padding-block: .05in; border-block-end: 1px solid var(--line); break-inside: avoid }
+.rows small{ display: block; color: var(--fg-2); font-size: .86em; line-height: 1.33 }
+.rows b, .t{ color: var(--marker); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap }
+.on-dusk .rows b, .on-dusk .t{ color: var(--marker-dusk) }
+
+/* definition rows: policies, park facts, practical notes */
+.dl{ display: grid; margin: 0; border-block-start: 1px solid var(--line) }
+.dl > div{ display: grid; grid-template-columns: 1.3in 1fr; gap: .16in; padding-block: .06in; border-block-end: 1px solid var(--line); break-inside: avoid }
+.dl dt{ font-weight: 600 }
+.dl dd{ margin: 0; color: var(--fg-2) }
+
+/* numbered steps (check-in, checkout): the site's .checklist at print size */
+.steps{ counter-reset: step; border-block-start: 1px solid var(--line) }
+.steps > li{ display: grid; grid-template-columns: .42in 1fr; gap: .04in; padding-block: .085in; border-block-end: 1px solid var(--line); counter-increment: step; break-inside: avoid }
+.steps > li::before{ content: counter(step); font: 700 17pt/1 var(--font-display); color: var(--marker) }
+.steps b{ display: block; font-size: 11.5pt; line-height: 1.25 }
+.steps p{ color: var(--fg-2); margin-block-start: .03in }
+
+/* bullets: small navy squares, like the routed sign posts */
+.bullets{ display: grid; gap: .06in }
+.bullets > li{ position: relative; padding-inline-start: .17in }
+.bullets > li::before{ content: ""; position: absolute; left: 0; top: .065in; inline-size: .065in; block-size: .065in; background: var(--accent) }
+
+/* QR codes: navy ink on a white plate with its own quiet zone */
+.qr{ display: grid; justify-items: center; align-content: start; gap: .05in; text-align: center }
+.qr svg{ display: block; inline-size: var(--qr, 1.1in); block-size: var(--qr, 1.1in) }
+.qr b{ font-weight: 600; font-size: 8.5pt; line-height: 1.2; max-inline-size: calc(var(--qr, 1.1in) + .4in) }
+.qr small{ font-size: 7pt; line-height: 1.25; color: var(--fg-2); max-inline-size: calc(var(--qr, 1.1in) + .6in) }
+.on-dusk .qr b{ color: var(--dusk-fg) }
+.on-dusk .qr small{ color: var(--dusk-fg-2) }
+
+/* Wi-Fi: said loudly (Robyn, 7 Oct 2026), written in by hand until config has it */
+.wifi{
+  display: grid; grid-template-columns: auto 1fr auto; gap: .18in; align-items: center;
+  padding: .18in .22in; background: var(--bg-2); border-radius: var(--radius-box);
+  border-inline-start: 4px solid var(--accent);
+}
+.wifi__icon{ display: grid; place-items: center; inline-size: .5in; block-size: .5in; border-radius: 50%; background: var(--accent); color: var(--accent-fg); align-self: start }
+.wifi__icon svg{ inline-size: .28in; block-size: .28in }
+.wifi h3{ font-size: 12pt }
+.wifi > div > p{ font-size: 8.5pt; color: var(--fg-2); margin-block-start: .02in }
+.wifi dl{ display: grid; grid-template-columns: auto 1fr; gap: .08in .14in; margin: .1in 0 0; align-items: end }
+.wifi dt{ font-weight: 600; font-size: 8.5pt; color: var(--fg-2) }
+.wifi dd{ margin: 0; font: 600 13pt/1.2 var(--font-body); overflow-wrap: anywhere }
+.wifi dd.blank{ block-size: .3in; border-block-end: 1px solid var(--line-ui) }
+
+/* ============================================================================
+   Pamphlet: Letter tri-fold, landscape, printed both sides (flip on short edge)
+   Outside: [inside flap | back | cover]   Inside: [Yellowstone | seasons | wildlife]
+   ========================================================================== */
+.pam{ display: grid; grid-template-columns: repeat(3, 1fr); font-size: 8.4pt; line-height: 1.38 }
+.pam .panel{ padding: .36in .34in; display: flex; flex-direction: column; gap: .13in; min-inline-size: 0; overflow: hidden }
+.pam h2{ font-size: 15pt; line-height: 1.05 }
+.pam h3{ font-size: 9pt }
+.pam .rows small{ font-size: 7.4pt }
+.pam .p-season ul{ display: grid; gap: .015in }
+.pam .p-season li{ display: flex; justify-content: space-between; gap: .1in; border-block-end: 1px dotted var(--line); padding-block: .02in }
+.pam .p-season b{ color: var(--marker); font-variant-numeric: tabular-nums; white-space: nowrap }
+.pam .qrs{ display: flex; justify-content: space-around; gap: .14in; margin-block-start: auto; padding-block-start: .1in }
+.pam .box{ padding: .1in .12in; background: var(--bg-2); border-radius: 3px }
+.pam .box h3{ margin-block-end: .04in }
+.pam .quote{ margin: 0; padding-inline-start: .12in; border-inline-start: 3px solid var(--sky) }
+.pam .quote p{ font: italic 400 9.5pt/1.45 var(--font-display) }
+.pam .quote footer{ font-size: 7.4pt; color: var(--fg-2); margin-block-start: .03in }
+.pam .stars{ color: var(--star); letter-spacing: .1em; font-size: 9pt }
+.pam .cover{ padding: 0; gap: 0 }
+.pam .cover > img{ inline-size: 100%; block-size: 5.15in; object-fit: cover }
+.pam .cover .in{ padding: 0 .34in .3in; display: grid; gap: .1in }
+.pam .cover .disc{ inline-size: 1.45in; margin-block-start: -.8in; position: relative }
+.pam .cover h1{ font-size: 25pt }
+
+/* ============================================================================
+   Booking flyer (Letter portrait)
+   ========================================================================== */
+.fb{ display: flex; flex-direction: column }
+.fb__photo{ inline-size: 100%; block-size: 2.9in; object-fit: cover }
+.fb__body{ position: relative; padding: 0 .55in .26in; display: grid; gap: .12in }
+.fb__body .disc{ inline-size: 1.45in; margin-block-start: -.9in }
+.fb h1{ font-size: 28pt; max-inline-size: 6.6in }
+.fb .lede{ font-size: 12.5pt; color: var(--fg-2); margin-block-start: -.02in }
+.fb__facts{ display: flex; flex-wrap: wrap; gap: .08in }
+.fb__facts li{ background: var(--bg-2); border-radius: 3px; padding: .04in .09in; font-size: 8.6pt }
+.fb__cabins{ display: grid; grid-template-columns: 1fr 1fr; gap: .24in; margin-block-start: .04in }
+.fb__cabin img{ inline-size: 100%; block-size: 1.5in; object-fit: cover; border-radius: 3px; border-block-start: 4px solid var(--sky) }
+.fb__cabin h2{ font-size: 15pt; margin-block-start: .08in }
+.fb__cabin .t{ font-size: 8.5pt; display: block; margin-block: .03in .04in }
+.fb__cabin p{ font-size: 9pt; color: var(--fg-2); line-height: 1.4 }
+.fb__cta{ margin-block-start: auto; display: grid; grid-template-columns: 1fr auto; gap: .3in; align-items: center; padding: .28in .55in .32in }
+.fb__cta h2{ font-size: 20pt; margin-block: .08in .05in }
+.fb__cta p{ font-size: 10.5pt }
+.fb__cta .contact{ margin-block-start: .1in; font-size: 10pt; color: var(--dusk-fg); font-weight: 600 }
+.fb__cta .qr{ --qr: 1.3in }
+
+/* ============================================================================
+   Things-to-do flyer (Letter portrait)
+   ========================================================================== */
+.ft{ display: flex; flex-direction: column }
+.ft__strip{ display: grid; grid-template-columns: repeat(4, 1fr); block-size: 1.4in }
+.ft__strip img{ inline-size: 100%; block-size: 1.4in; object-fit: cover }
+.ft__head{ padding: .32in .55in .12in; display: grid; gap: .08in }
+.ft__head h1{ font-size: 27pt }
+.ft__head .lede{ font-size: 11pt }
+.ft__seasons{ display: grid; grid-template-columns: 1fr 1fr; gap: .2in .3in; padding: .06in .55in 0 }
+.ft__season{ display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; gap: .02in .16in; align-content: start; border-block-start: 4px solid var(--sky); padding-block-start: .1in }
+.ft__season h2{ font-size: 15pt; grid-column: 1 }
+.ft__season > p{ grid-column: 1; font-size: 8pt; color: var(--fg-2); line-height: 1.35 }
+.ft__season .qr{ grid-column: 2; grid-row: 1 / span 2; --qr: .74in }
+.ft__season .rows{ grid-column: 1 / -1; font-size: 9pt; margin-block-start: .06in }
+.ft__foot{ margin-block-start: auto; display: grid; grid-template-columns: 1fr auto auto; gap: .3in; align-items: center; padding: .24in .55in .3in; background: var(--bg-2) }
+.ft__foot h2{ font-size: 14pt; margin-block-end: .04in }
+.ft__foot .qr{ --qr: .95in }
+
+/* ============================================================================
+   Welcome sign and checkout sign (Letter portrait, one per cabin)
+   ========================================================================== */
+.ws{ display: flex; flex-direction: column; padding: .55in .6in .5in; gap: .26in }
+.ws__top{ display: grid; justify-items: center; text-align: center; gap: .1in }
+.ws__top img{ inline-size: 2.35in }
+.ws__top .sign{ justify-self: center }
+.ws__top h1{ font-size: 40pt; line-height: 1.02 }
+.ws__top .lede{ font-size: 13pt; max-inline-size: 5.6in }
+.ws .wifi{ padding: .26in .28in; grid-template-columns: auto 1fr auto }
+.ws .wifi h3{ font-size: 15pt }
+.ws .wifi dd{ font-size: 19pt }
+.ws .wifi dd.blank{ block-size: .5in }
+.ws .wifi .qr{ --qr: 1.05in }
+.ws__qrs{ display: grid; grid-template-columns: repeat(3, 1fr); gap: .25in; border-block: 1px solid var(--line); padding-block: .24in }
+.ws__qrs .qr{ --qr: 1.55in }
+.ws__qrs .qr b{ font-size: 10.5pt }
+.ws__qrs .qr small{ font-size: 7.6pt }
+.ws__foot{ margin-block-start: auto; display: flex; justify-content: space-between; align-items: end; gap: .3in; font-size: 9.5pt; color: var(--fg-2) }
+.ws__foot b{ color: var(--fg) }
+.ws__times{ display: flex; gap: .3in }
+.ws__times div{ display: grid }
+.ws__times span{ font-size: 8pt; text-transform: uppercase; letter-spacing: .08em }
+.ws__times b{ font: 700 15pt/1.1 var(--font-display) }
+
+.co{ display: flex; flex-direction: column; padding: .55in .6in 0; gap: .16in }
+.co__head{ display: grid; grid-template-columns: 1fr auto; gap: .3in; align-items: end }
+.co__head h1{ font-size: 32pt; margin-block: .08in .06in }
+.co__head img{ inline-size: 1.25in }
+.co .steps > li{ padding-block: .13in; grid-template-columns: .5in 1fr }
+.co .steps b{ font-size: 15pt }
+.co .steps p{ font-size: 11pt }
+.co .steps > li::before{ font-size: 23pt }
+.co__foot{ margin: auto -.6in 0; display: grid; grid-template-columns: auto 1fr auto; gap: .28in; align-items: center; padding: .3in .6in .36in }
+.co__foot h2{ font-size: 16pt; margin-block-end: .04in }
+.co__foot .qr{ --qr: 1.05in }
+
+/* ============================================================================
+   Welcome binder (Letter portrait, one per cabin, single or double sided)
+   ========================================================================== */
+.bp{ display: flex; flex-direction: column; padding: .5in .6in .38in }
+.bp__head{ display: flex; justify-content: space-between; align-items: center; gap: .2in; padding-block-end: .12in; border-block-end: 1px solid var(--line) }
+.bp__head .cab{ font: 600 8.5pt/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-2) }
+.bp__body{ flex: 1; min-block-size: 0; overflow: hidden; padding-block: .26in .16in; display: flex; flex-direction: column; gap: .2in }
+.bp__title{ display: grid; grid-template-columns: 1fr auto; gap: .3in; align-items: start }
+.bp__title h1{ font-size: 27pt }
+.bp__title .lede{ margin-block-start: .08in; font-size: 11pt; max-inline-size: 5in }
+.bp__title .qr{ --qr: .92in }
+.bp__foot{ display: flex; justify-content: space-between; padding-block-start: .1in; border-block-start: 1px solid var(--line); font-size: 7.5pt; color: var(--fg-2) }
+.bp__foot b{ font-variant-numeric: tabular-nums; color: var(--fg) }
+.bp h2{ font-size: 14pt }
+.cols{ display: grid; grid-template-columns: 1fr 1fr; gap: .32in; align-items: start }
+.cols--wide{ grid-template-columns: 1.35fr 1fr }
+.two{ columns: 2; column-gap: .32in }
+.two > li{ break-inside: avoid }
+
+.bc{ display: flex; flex-direction: column }
+.bc > img{ inline-size: 100%; block-size: 6.3in; object-fit: cover }
+.bc__in{ padding: 0 .7in .6in; display: flex; flex-direction: column; align-items: flex-start; gap: .14in; flex: 1 }
+.bc__in .disc{ inline-size: 1.9in; margin-block-start: -1.05in; position: relative }
+.bc__in h1{ font-size: 38pt; line-height: 1.02 }
+.bc__in p{ font-size: 13pt }
+.bc__in .fine{ margin-block-start: auto; font-size: 9pt }
+
+.letter p + p{ margin-block-start: .12in }
+.letter p{ font-size: 11pt; line-height: 1.55 }
+.letter .sig{ font: italic 500 17pt/1.2 var(--font-display); color: var(--fg); margin-block-start: .06in }
+.toc{ padding: .2in .24in; background: var(--bg-2); border-radius: var(--radius-box) }
+.toc h2{ font-size: 13pt; margin-block-end: .08in }
+.toc li{ display: flex; justify-content: space-between; gap: .12in; padding-block: .045in; border-block-end: 1px dotted var(--line-ui); font-size: 9.5pt }
+.toc li:last-child{ border: 0 }
+.toc b{ font-variant-numeric: tabular-nums; color: var(--fg-2); font-weight: 600 }
+
+.addr{ display: grid; grid-template-columns: 1fr auto; gap: .2in; align-items: center; padding: .16in .2in; border: 1px solid var(--line-ui); border-radius: var(--radius-box) }
+.addr span{ font-size: 8.5pt; color: var(--fg-2); text-transform: uppercase; letter-spacing: .07em; font-weight: 600 }
+.addr b{ display: block; font: 700 15pt/1.2 var(--font-display) }
+.sos{ display: grid; grid-template-columns: auto 1fr; gap: .22in; align-items: center; padding: .2in .24in; background: var(--dusk); color: var(--dusk-fg); border-radius: var(--radius-box) }
+.sos strong{ font: 700 34pt/1 var(--font-display); color: var(--marker-dusk) }
+.sos p{ color: var(--dusk-fg-2); font-size: 10pt }
+.sos b{ color: var(--dusk-fg) }
+
+.photos2{ display: grid; grid-template-columns: 1fr 1fr; gap: .16in }
+.photos2 img{ inline-size: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 3px }
+.photos2--short img{ aspect-ratio: auto; block-size: 2.25in }
+.bottom{ margin-block-start: auto }
+.wide-photo{ inline-size: 100%; block-size: 3.4in; object-fit: cover; border-radius: 3px }
+.amen{ columns: 2; column-gap: .3in; font-size: 9pt }
+.amen li{ break-inside: avoid; padding-block: .045in; border-block-end: 1px solid var(--line) }
+
+.dayplan{ display: grid; grid-template-columns: 1fr auto; gap: .02in .2in; padding-block: .09in; border-block-end: 1px solid var(--line); break-inside: avoid }
+.dayplan:first-child{ border-block-start: 1px solid var(--line) }
+.dayplan h3{ font-size: 11.5pt }
+.dayplan > p{ grid-column: 1 / -1; color: var(--fg-2); font-size: 9pt }
+.dayplan ol{ grid-column: 1 / -1; counter-reset: stop; display: grid; gap: .01in; margin-block: .02in; font-size: 9pt }
+.dayplan ol li{ counter-increment: stop; padding-inline-start: .2in; position: relative }
+.dayplan ol li::before{ content: counter(stop); position: absolute; left: 0; font-weight: 700; color: var(--sky-ink) }
+.dayplan .tip{ grid-column: 1 / -1; font-size: 8.4pt; color: var(--fg-2); font-style: italic }
+
+.seasons4{ display: grid; grid-template-columns: 1fr 1fr; gap: .24in .32in }
+.season{ display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr; gap: .04in .14in; align-content: start; border-block-start: 4px solid var(--sky); padding-block-start: .1in }
+.season h2{ font-size: 15pt }
+.season > p{ grid-column: 1; font-size: 8.4pt; color: var(--fg-2); line-height: 1.38 }
+.season .qr{ grid-column: 2; grid-row: 1 / span 2; --qr: .78in }
+.season .rows{ grid-column: 1 / -1; font-size: 9pt }
+
+.wild{ font-size: 8.6pt }
+.wild > li{ grid-template-columns: 1.05in 1fr; align-items: start }
+.wild b{ color: var(--fg); white-space: normal }
+
+.ev{ font-size: 8.6pt }
+.ev > li{ grid-template-columns: 1fr }
+.ev em{ font-style: normal; font-weight: 600; color: var(--sky-ink) }
+
+.back{ display: flex; flex-direction: column; padding: .7in .7in .6in; gap: .26in }
+.back h1{ font-size: 32pt }
+.back .lede{ color: var(--dusk-fg-2); font-size: 12.5pt }
+.back__book{ display: grid; grid-template-columns: auto 1fr; gap: .3in; align-items: center; padding: .24in; border: 1px solid var(--dusk-line); border-radius: var(--radius-box) }
+.back__book .qr{ --qr: 1.5in }
+.back__book h2{ font-size: 17pt; margin-block-end: .06in }
+.quotes{ display: grid; gap: .16in }
+.quotes blockquote{ margin: 0; padding-inline-start: .18in; border-inline-start: 3px solid var(--sky) }
+.quotes p{ font: italic 400 11pt/1.5 var(--font-display); color: var(--dusk-fg) }
+.quotes footer{ font-size: 8.5pt; color: var(--dusk-fg-2); margin-block-start: .05in }
+.back__foot{ margin-block-start: auto; display: grid; grid-template-columns: auto 1fr; gap: .26in; align-items: center }
+.back__foot .disc{ inline-size: 1.3in }
+.back__foot p{ font-size: 9.5pt }
+
+/* ============================================================================
+   QR sheet: every code, what it opens and where it is printed
+   ========================================================================== */
+.qs{ padding: .5in .55in; display: flex; flex-direction: column; gap: .2in }
+.qs h1{ font-size: 22pt }
+.qs__grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: .18in .2in }
+.qs__item{ display: grid; gap: .05in; justify-items: start; align-content: start; font-size: 7.5pt; line-height: 1.3; break-inside: avoid }
+.qs__item svg{ inline-size: 1.1in; block-size: 1.1in }
+.qs__item b{ font-size: 8.5pt }
+.qs__item code{ font: 7.5pt/1.3 ui-monospace, Menlo, monospace; color: var(--fg); overflow-wrap: anywhere }
+.qs__item i{ font-style: normal; color: var(--fg-2) }
