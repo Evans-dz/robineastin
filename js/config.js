@@ -145,8 +145,8 @@ const CONFIG = {
     islandParkLede:  'You do not have to enter Yellowstone to have a full week. Springs, waterfalls, famous fly fishing and hundreds of miles of trails start close to the cabins.',
     wildlifeLede:    'You will almost certainly see bison and elk. With patience and an early start, maybe wolves and bears. Here is where to look, and how close is too close.',
     showsLede:       'Live theatre is a big part of summer here: the Playmill, the Yellowstone Playhouse and the Westgate Theatre. Good for evenings, rainy afternoons and kids who need a break from the car.',
-    foodLede:        'Places we could confirm are operating. Many close or cut hours in the off season, so check ahead from October to May.',
-    suppliesLede:    'Sam Patch Co. in Island Park is the closest grocery store. Dave\'s Jubilee in Ashton is about 45 minutes away and Broulim\'s in St. Anthony about an hour.',
+    foodLede:        'Places we could confirm are operating, with hours as listed in October 2026. Many close or cut hours in the off season, so check ahead from October to May.',
+    suppliesLede:    'Sam Patch Co. in Island Park is the closest grocery store. Dave\'s Jubilee in Ashton is about 45 minutes away and Broulim\'s in St. Anthony about an hour. Grocery hours are as listed in October 2026 and change with the season.',
     eventsLede:      'Dates change year to year. Check the organizer\'s site before you plan around one.',
     checkedNote:     'Guide facts checked September and October 2026 against official and local sources linked on each item. Hours, fees and road openings change; check before you go.',
   },
@@ -334,7 +334,7 @@ const CONFIG = {
         { title: 'Leave all the beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Run the dishwasher and clear the food', detail: 'Load and start the dishwasher; the cleaner will put the dishes away. Take your food out of the fridge, freezer and cupboards.' },
-        { title: 'Take out the garbage', detail: 'All garbage goes in the designated can outside. Pickup is Thursday at 6:00 am.' },
+        { title: 'Take out the garbage', detail: 'Pickup for both cabins from the blue PSI garbage dumpster is early Thursday morning. You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday.' },   // Robyn, 30 Oct 2026
         { title: 'Lock up', detail: 'Shut and lock the windows and doors. Press the lock button on the keypad as you leave.' },
         { title: 'Sign the guest book', detail: 'We love reading about your stay.' },
         { title: 'Leave us a 5-star review', detail: 'Please take time to leave a 5-star review wherever you booked. It helps other families find our cabins.' },
@@ -428,7 +428,7 @@ const CONFIG = {
         { title: 'Leave all the beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Wash the dishes and clear the food', detail: 'Wash the dishes; the cleaner will put them away. Take your food out of the fridge, freezer and cupboards.' },
-        { title: 'Take out the garbage', detail: 'All garbage goes in the cans outside next to the cabin. Pickup is Monday and Thursday.' },   // confirmed by Dylan, 20 Oct 2026
+        { title: 'Take out the garbage', detail: 'Pickup for both cabins from the blue PSI garbage dumpster is early Thursday morning. You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday.' },   // Robyn, 30 Oct 2026
         { title: 'Lock up', detail: 'Shut and lock the windows and doors. Press the lock button on the keypad as you leave.' },
         { title: 'Sign the guest book', detail: 'We love reading about your stay.' },
         { title: 'Leave us a 5-star review', detail: 'Please take time to leave a 5-star review wherever you booked. It helps other families find our cabins.' },
@@ -505,6 +505,9 @@ const CONFIG = {
     signoff: 'Enjoy the forest,',
     signLede: 'We are so glad you are here. Make yourselves at home.',
     backHead: 'Thank you for staying with us',
+    /* binder only, in the Good to know weather row (Robyn, 30 Oct 2026). The site
+       still offers Pine Shadows' trailer hookup, so it stays off the web for now. */
+    weatherNote: 'No motor homes or camp trailers.',
   },
 
   /* Every photo on the site, with its alt text and shape (w:h).

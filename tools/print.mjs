@@ -54,6 +54,7 @@ const esc = s => String(s ?? '')
 const NB = ' ';
 const drive = min => {
   if (min == null) return '';
+  if (typeof min === 'string') return `${min}${NB}min`;   /* a range, "10 to 15" */
   if (min < 60) return `${min}${NB}min`;
   const h = Math.floor(min / 60), m = min % 60;
   return `${h}${NB}hr${m ? `${NB}${m}${NB}min` : ''}`;
@@ -78,6 +79,14 @@ const supply = name => G.SUPPLIES.find(x => x.name === name) || {};
 const garbage = c => (c.checkout.find(s => /garbage/i.test(s.title)) || {}).detail;
 /* the guide's pharmacy note reads "There is none", which needs its subject on paper */
 const pharmacy = () => practical('Pharmacy').value.replace(/^There is none/, 'There is no pharmacy');
+/* two columns of about equal height: a row counts as its text plus a name line and padding */
+const balance = arr => {
+  const len = x => 60 + `${x.kind}${x.town}${x.note}${x.hours || ''}`.length;
+  const half = arr.reduce((n, x) => n + len(x), 0) / 2;
+  let run = 0, i = 0;
+  while (i < arr.length - 1 && run + len(arr[i]) / 2 < half) run += len(arr[i++]);
+  return [arr.slice(0, i), arr.slice(i)];
+};
 /* a cabin's own photo whose alt text matches, for the binder's quieter pages */
 const galleryPhoto = (c, re, not = []) => (c.gallery || []).find(g => re.test(g.alt) && !not.includes(g.id));
 const cabinFacts = c => [c.sleeps && `Sleeps ${c.sleeps}`, c.bedrooms != null && `${c.bedrooms} bedrooms`, c.baths != null && `${c.baths} baths`, c.sqft && `${c.sqft.toLocaleString('en-US')} sq ft`].filter(Boolean);
@@ -391,11 +400,11 @@ for (const c of C.cabins) {
           ['Smoking', policy('Smoking')], ['Pets', policy('Pets')],
           ['Garbage', garbage(c)],
           ['Bears and moose', practical('Bears and moose').value], ['Fire', practical('Fire').value],
-          ['Altitude', practical('Altitude').value], ['Weather', practical('Weather').value],
+          ['Altitude', practical('Altitude').value], ['Weather', practical('Weather').value, C.print.weatherNote],
         ].filter(([, v]) => v);
         const fire = galleryPhoto(c, /fire pit/i);
         const more = galleryPhoto(c, /snow|winter/i) || galleryPhoto(c, /^(?!.*(living|kitchen)).*deck/i, [fire && fire.id, c.lead]);
-        return `<dl class="dl">${list(rows, ([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`)}</dl>
+        return `<dl class="dl">${list(rows, ([k, v, strong]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}${strong ? ` <b>${esc(strong)}</b>` : ''}</dd></div>`)}</dl>
         ${fire && more ? `<div class="photos2 photos2--short bottom">${orPhoto(fire.id)}${orPhoto(more.id)}</div>` : ''}`;
       } },
       { label: 'Yellowstone', title: 'Yellowstone', lede: C.guide.yellowstoneLede, qr: 'yellowstone', qrLabel: 'Latest road and park news', body: () => {
@@ -412,14 +421,12 @@ for (const c of C.cabins) {
         <ul class="rows wild">${list(G.WILDLIFE, w => `<li><b>${esc(w.name)}</b><span>${esc(w.where)}<small>${esc(w.when)}</small></span></li>`)}</ul>
         <ul class="bullets">${list(G.PARK_RULES.slice(4), r => `<li>${esc(r)}</li>`)}</ul>` },
       { label: 'Eat', title: 'Restaurants', lede: C.guide.foodLede, qr: 'food', qrLabel: 'Restaurants', body: () => {
-        const half = Math.ceil(G.FOOD.length / 2);
-        const col = arr => `<ul class="rows">${list(arr, f => `<li><span>${esc(f.name)}<small>${esc(f.kind)}. ${esc(f.town)}.${f.note ? ` ${esc(f.note)}` : ''}</small></span>${f.drive != null ? `<b>${drive(f.drive)}</b>` : ''}</li>`)}</ul>`;
-        return `<div class="cols">${col(G.FOOD.slice(0, half))}${col(G.FOOD.slice(half))}</div>`;
+        const col = arr => `<ul class="rows">${list(arr, f => `<li><span>${esc(f.name)}<small>${esc(f.kind)}. ${esc(f.town)}.${f.note ? ` ${esc(f.note)}` : ''}</small>${f.hours ? `<small class="hrs">${esc(f.hours)}</small>` : ''}</span>${f.drive != null ? `<b>${drive(f.drive)}</b>` : ''}</li>`)}</ul>`;
+        return `<div class="cols cols--list">${list(balance(G.FOOD), col)}</div>`;
       } },
       { label: 'Supplies', title: 'Groceries, gas and supplies', lede: C.guide.suppliesLede, qr: 'supplies', qrLabel: 'Groceries and gas', body: () => {
-        const half = Math.ceil(G.SUPPLIES.length / 2);
-        const col = arr => `<ul class="rows">${list(arr, s => `<li><span>${esc(s.name)}<small>${esc(s.kind)}. ${esc(s.town)}.${s.note ? ` ${esc(s.note)}` : ''}</small></span>${s.drive != null ? `<b>${drive(s.drive)}</b>` : ''}</li>`)}</ul>`;
-        return `<div class="cols">${col(G.SUPPLIES.slice(0, half))}${col(G.SUPPLIES.slice(half))}</div>`;
+        const col = arr => `<ul class="rows">${list(arr, s => `<li><span>${esc(s.name)}<small>${esc(s.kind)}. ${esc(s.town)}.${s.note ? ` ${esc(s.note)}` : ''}</small>${s.hours ? `<small class="hrs">${esc(s.hours)}</small>` : ''}</span>${s.drive != null ? `<b>${drive(s.drive)}</b>` : ''}</li>`)}</ul>`;
+        return `<div class="cols cols--list">${list(balance(G.SUPPLIES), col)}</div>`;
       } },
       { label: 'Shows and events', title: 'Shows and events', lede: C.guide.showsLede, qr: 'shows', qrLabel: 'Shows and events', body: () => {
         const shows = G.PLACES.filter(p => p.chapter === 'shows');

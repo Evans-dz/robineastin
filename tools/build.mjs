@@ -44,6 +44,7 @@ const telHref = p => 'tel:' + String(p).replace(/[^\d+]/g, '');
 const NB = '\u00A0';                                     /* non-breaking space */
 const drive = min => {
   if (min == null) return '';
+  if (typeof min === 'string') return `${min}${NB}min`;   /* a range, "10 to 15" */
   if (min < 60) return `${min}${NB}min`;
   const h = Math.floor(min / 60), m = min % 60;
   return `${h}${NB}hr${m ? `${NB}${m}${NB}min` : ''}`;
@@ -743,6 +744,7 @@ ${reviews.length ? `<section aria-labelledby="rev-h">
   const table = (rows, cols) => rows && rows.length ? `<div class="table-wrap"><table class="simple"><thead><tr>${cols.map(([, h]) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${list(rows, r => `<tr>${cols.map(([k]) => {
     if (k === 'drive') return `<td class="num drive">${r.drive != null ? drive(r.drive) : ''}</td>`;
     if (k === 'name') return `<td><b>${r.url ? `<a href="${esc(r.url)}" rel="noopener">${esc(r.name)}</a>` : esc(r.name)}</b></td>`;
+    if (k === 'note') return `<td>${esc([r.hours, r.note].filter(Boolean).join(' '))}</td>`;
     return `<td>${esc(r[k] ?? '')}</td>`;
   }).join('')}</tr>`, '')}</tbody></table></div>` : '';
 
@@ -820,7 +822,7 @@ ${reviews.length ? `<section aria-labelledby="rev-h">
       <h2 id="fd-h" class="reveal">Where to eat</h2>
       <p>${esc(C.guide.foodLede)}</p>
     </div>
-    ${table(G.FOOD, [['name', 'Place'], ['kind', 'Food'], ['town', 'Where'], ['drive', 'Drive'], ['note', 'Good to know']])}
+    ${table(G.FOOD, [['name', 'Place'], ['kind', 'Food'], ['town', 'Where'], ['drive', 'Drive'], ['note', 'Hours and notes']])}
   </div>
 </section>
 
@@ -831,7 +833,7 @@ ${reviews.length ? `<section aria-labelledby="rev-h">
       <h2 id="sp-h" class="reveal">Groceries, gas and supplies</h2>
       <p>${esc(C.guide.suppliesLede)}</p>
     </div>
-    ${table(G.SUPPLIES, [['name', 'Store'], ['kind', 'What'], ['town', 'Where'], ['drive', 'Drive'], ['note', 'Good to know']])}
+    ${table(G.SUPPLIES, [['name', 'Store'], ['kind', 'What'], ['town', 'Where'], ['drive', 'Drive'], ['note', 'Hours and notes']])}
   </div>
 </section>
 

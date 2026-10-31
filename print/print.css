@@ -51,6 +51,9 @@ body.print{
 .rows{ border-block-start: 1px solid var(--line) }
 .rows > li{ display: grid; grid-template-columns: 1fr auto; column-gap: .14in; align-items: baseline; padding-block: .05in; border-block-end: 1px solid var(--line); break-inside: avoid }
 .rows small{ display: block; color: var(--fg-2); font-size: .86em; line-height: 1.33 }
+.rows small.hrs{ color: var(--fg); font-weight: 500; margin-block-start: .015in }
+.cols.cols--list{ gap: .2in }
+.cols--list .rows > li{ padding-block: .03in }
 .rows b, .t{ color: var(--marker); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap }
 .on-dusk .rows b, .on-dusk .t{ color: var(--marker-dusk) }
 
