@@ -9,6 +9,8 @@
      4 Welcome Binders per cabin, 15 pages
      5 QR Codes        every code as SVG and PNG, plus a sheet of them all
      6 Guest Messages  OwnerRez automated message drafts (check-in, checkout)
+     Social Media      this month's post images (PNG) and captions, from
+                       tools/social-posts.mjs, into ../Social Media/<batch>/
 
    Writes the print HTML to print/ (kept off the public site by
    .vercelignore), then renders the PDFs into ../Print Materials/ with the
@@ -32,6 +34,7 @@ import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { SOCIAL } from './social-posts.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
@@ -44,6 +47,13 @@ try { QRCode = createRequire(path.join(ROOT, 'tools', 'package.json'))('qrcode')
 catch { console.error('The qrcode package is missing. Run:  cd tools && npm install'); process.exit(1); }
 
 const { SAMPLE, CONFIG: C } = load('js/config.js', ['SAMPLE', 'CONFIG']);
+/* each cabin's Wi-Fi name, password and speed, for print only: js/config.js is
+   public on the website, so they live in this gitignored file instead */
+const WIFI_FILE = path.join(ROOT, 'tools', 'wifi.local.json');
+if (fs.existsSync(WIFI_FILE)) {
+  const w = JSON.parse(fs.readFileSync(WIFI_FILE, 'utf8'));
+  for (const c of C.cabins) if (w[c.slug]) c.wifiNetwork = { ...c.wifiNetwork, ...w[c.slug] };
+}
 const G = load('js/places.js', ['SEASONS', 'PLACES', 'DAYS', 'SIGHTS_NOTE', 'WILDLIFE', 'PARK_RULES', 'PARK_FACTS', 'FOOD', 'SUPPLIES', 'EVENTS', 'PRACTICAL']);
 
 /* ---- helpers (the same rules as tools/build.mjs) ------------------------- */
@@ -76,7 +86,6 @@ const policy = label => (C.policies.find(p => p.label === label) || {}).value;
 const practical = label => G.PRACTICAL.find(p => p.label === label);
 const parkFact = label => G.PARK_FACTS.find(p => p.label === label);
 const supply = name => G.SUPPLIES.find(x => x.name === name) || {};
-const garbage = c => (c.checkout.find(s => /garbage/i.test(s.title)) || {}).detail;
 /* the guide's pharmacy note reads "There is none", which needs its subject on paper */
 const pharmacy = () => practical('Pharmacy').value.replace(/^There is none/, 'There is no pharmacy');
 /* two columns of about equal height: a row counts as its text plus a name line and padding */
@@ -187,7 +196,7 @@ function wifiBox(c, { join = true } = {}) {
   const w = c.wifiNetwork || {};
   const val = v => v ? `<dd>${esc(v)}</dd>` : '<dd class="blank"></dd>';
   return `<div class="wifi"><span class="wifi__icon">${wifiIcon}</span><div><h3>${esc(C.wifi.head)}</h3><p>${esc(C.wifi.short)}</p>
-    <dl><dt>Network</dt>${val(w.name)}<dt>Password</dt>${val(w.password)}</dl></div>
+    <dl><dt>Network</dt>${val(w.name)}<dt>Password</dt>${val(w.password)}${w.speed ? `<dt>Speed</dt><dd>${esc(w.speed)}</dd>` : ''}</dl></div>
     ${join && w.name ? qr(`wifi-${c.slug}`, { label: 'Scan to join', size: '.95in' }) : ''}</div>`;
 }
 
@@ -382,7 +391,7 @@ for (const c of C.cabins) {
    page on the site, so the paper never has to be the last word.           */
 for (const c of C.cabins) {
   add(`binder-${c.slug}`, `4 Welcome Binders/${c.name} - Welcome Binder.pdf`, `${c.name} welcome binder`, 'letter', () => {
-    const inside = (C.home.inside || []).filter(([slug]) => slug === c.slug).map(([, id]) => id).slice(0, 2);
+    const inside = [c.front, ...(C.home.inside || []).filter(([slug]) => slug === c.slug).map(([, id]) => id)].filter(Boolean).slice(0, 2);
     const reviews = C.reviews.items.filter(r => r.cabin === c.slug && r.text.length > 90 && r.text.length < 330).slice(0, 2);
     const cover = c.slug === 'pine-shadows' ? photo('teal-cabin-golden', { pos: '50% 38%', big: true }) : photo('canopy-mauve-roof', { pos: '50% 50%', big: true });
     const sections = [
@@ -390,6 +399,9 @@ for (const c of C.cabins) {
         <ol class="steps">${list(c.checkin, st => `<li><div><b>${esc(st.title)}</b><p>${esc(st.detail)}</p></div></li>`)}</ol>
         ${wifiBox(c)}
         <div class="addr"><div><span>Your address</span><b>${esc(c.address)}, ${esc(B.city)}, ${esc(B.region)}</b></div><p class="note">For deliveries, ride shares<br>and 911</p></div>` },
+      /* checkout sits right after check-in, page 4 (Robyn, 7 Nov 2026) */
+      { label: 'Checking out', title: 'Checking out', lede: C.checkout.lede, qr: `checkout-${c.slug}`, qrLabel: 'On your phone', body: () => `
+        <ol class="steps">${list(c.checkout, st => `<li><div><b>${esc(st.title)}</b>${st.detail ? `<p>${esc(st.detail)}</p>` : ''}</div></li>`)}</ol>` },
       { label: 'Your cabin', title: `About ${c.name}`, lede: c.intro, qr: `cabin-${c.slug}`, qrLabel: 'Every photo', body: () => `
         <div class="photos2">${list(inside, id => orPhoto(id))}</div>
         <div><h2>Rooms and beds</h2><p style="margin-top:.06in">${esc(c.description[1])}</p><p class="note" style="margin-top:.06in">Sleeps ${c.sleeps}: ${esc(c.beds)}.</p></div>
@@ -398,7 +410,7 @@ for (const c of C.cabins) {
         const rows = [
           ['Check-in', policy('Check-in')], ['Checkout', policy('Checkout')],
           ['Smoking', policy('Smoking')], ['Pets', policy('Pets')],
-          ['Garbage', garbage(c)],
+          ['Garbage', C.checkin.garbage],
           ['Bears and moose', practical('Bears and moose').value], ['Fire', practical('Fire').value],
           ['Altitude', practical('Altitude').value], ['Weather', practical('Weather').value, C.print.weatherNote],
         ].filter(([, v]) => v);
@@ -439,8 +451,6 @@ for (const c of C.cabins) {
         return `<div class="sos"><strong>911</strong><div><p><b>${esc(practical('Emergencies').value)}</b></p><p style="margin-top:.04in">Tell the dispatcher you are at <b>${esc(c.address)}, ${esc(B.city)}, ${esc(B.region)}</b>.</p></div></div>
         <dl class="dl">${list(rows, f => `<div><dt>${esc(f.label)}</dt><dd>${esc(f.label === 'Pharmacy' ? pharmacy() : f.value)}</dd></div>`)}</dl>`;
       } },
-      { label: 'Checking out', title: 'Checking out', lede: C.checkout.lede, qr: `checkout-${c.slug}`, qrLabel: 'On your phone', body: () => `
-        <ol class="steps">${list(c.checkout, st => `<li><div><b>${esc(st.title)}</b>${st.detail ? `<p>${esc(st.detail)}</p>` : ''}</div></li>`)}</ol>` },
     ];
     const first = 3;                               /* cover is 1, the welcome letter 2 */
     const last = first + sections.length;           /* the back page */
@@ -489,6 +499,47 @@ for (const c of C.cabins) {
     ];
   });
 }
+
+/* ---- social posts: 1080 x 1350, the 4:5 feed size Facebook and Instagram share ------
+   A photo over a dusk panel with the logo disc on the seam, like the booking
+   flyer. Rendered to PNG, not PDF; captions go to Posts.md beside them.    */
+const SOCIAL_OUT = path.join(ROOT, '..', 'Social Media', SOCIAL.batch);
+for (const s of SOCIAL.posts) {
+  piece = `Social post: ${s.title}`;
+  const img = C.photos[s.photo] ? photo(s.photo, { pos: s.pos, big: true }) : orPhoto(s.photo, { pos: s.pos });
+  pieces.push({ dir: `social-${s.file.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, png: path.join(SOCIAL_OUT, `${s.file}.png`), title: piece, html: shell(piece, 'post', [`<div class="sheet sheet--post sp">
+  ${img}
+  <div class="sp__body on-dusk">
+    ${logoImg('disc')}
+    <span class="sign">${esc(s.sign)}</span>
+    <h1>${esc(s.title)}</h1>
+    <p class="lede">${esc(s.lede)}</p>
+    <ul class="sp__facts">${list(s.facts, f => `<li>${esc(f)}</li>`)}</ul>
+    <p class="sp__foot">${esc(s.foot)}</p>
+  </div>
+</div>`]) });
+}
+const postsMd = `# Social posts: ${SOCIAL.batch}
+
+Built by \`wilderness-escape/tools/print.mjs\` from \`tools/social-posts.mjs\`.
+Each image is 1080 x 1350, the feed size Facebook and Instagram share.
+Instagram captions have no links (Instagram doesn't make them clickable), so
+put ${B.domain.replace(/^www\./, '')} in the Instagram bio.
+
+${SOCIAL.posts.map((s, i) => `## ${i + 1}. ${s.title} (${s.when})
+
+Image: \`${s.file}.png\`
+
+**Facebook**
+
+${s.facebook}
+
+**Instagram**
+
+${s.instagram}
+
+${SOCIAL.hashtags}
+`).join('\n')}`;
 
 /* ---- 5 · the QR sheet: every code, what it opens, where it is printed --------------
    Built last, so "printed on" is complete.                                  */
@@ -591,6 +642,7 @@ for (const p of pieces) {
   fs.writeFileSync(path.join(ROOT, 'print', p.dir, 'index.html'), p.html);
 }
 if (msgText.includes('—')) { failed = true; console.error('EM DASH in the guest messages'); }
+if (postsMd.includes('—')) { failed = true; console.error('EM DASH in the social captions'); }
 if (failed) process.exit(1);
 console.log(`wrote ${pieces.length} print pages to print/ · ${CODES.size} QR codes${SAMPLE ? ' (SAMPLE = true, draft flag on)' : ''}${TEST ? ` · TEST codes open ${ORIGIN}` : ''}`);
 if (NO_PDF) process.exit(0);
@@ -610,6 +662,7 @@ const { chromium } = createRequire('/Users/dylanevans/Projects/EZHD/ezhd-lab/pac
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const page = await browser.newPage();
 for (const p of pieces) {
+  if (p.png) await page.setViewportSize({ width: 1200, height: 1500 });
   await page.goto(`${base}/print/${p.dir}/`, { waitUntil: 'networkidle' });
   await page.evaluate(async () => {
     await document.fonts.ready;
@@ -625,6 +678,12 @@ for (const p of pieces) {
     return out;
   });
   bad.forEach(b => warnings.push(`${p.title}: ${b}`));
+  if (p.png) {
+    fs.mkdirSync(path.dirname(p.png), { recursive: true });
+    await page.locator('.sheet').screenshot({ path: p.png });
+    console.log('wrote', path.relative(path.join(ROOT, '..'), p.png));
+    continue;
+  }
   const file = path.join(OUT, p.pdf);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   await page.pdf({ path: file, preferCSSPageSize: true, printBackground: true });
@@ -647,6 +706,8 @@ console.log(`wrote ${codeList.length} QR codes (SVG + PNG)`);
 fs.mkdirSync(path.join(OUT, '6 Guest Messages'), { recursive: true });
 fs.writeFileSync(path.join(OUT, '6 Guest Messages', 'OwnerRez Automated Messages.txt'), msgText);
 console.log('wrote the OwnerRez message drafts');
+fs.writeFileSync(path.join(SOCIAL_OUT, 'Posts.md'), postsMd);
+console.log('wrote the social captions');
 
 await browser.close();
 server.close();

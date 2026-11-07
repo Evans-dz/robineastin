@@ -6,3 +6,6 @@ node_modules/
 .env.*
 # print.mjs makes these JPEGs from assets/photos/*-2400.webp
 print/img/
+
+# Wi-Fi names and passwords for print (tools/print.mjs); js/config.js is public
+tools/wifi.local.json

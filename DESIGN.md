@@ -232,7 +232,8 @@ OwnerRez's automated messages (drafts in `Print Materials/6 Guest Messages/`)
 send the same `/checkin/<cabin>/` and `/checkout/<cabin>/` links before arrival
 and the evening before departure. `/checkin/` pages are public and noindexed,
 so they never carry the door code or the Wi-Fi password; those stay on paper
-(`wifiNetwork` per cabin, print only) and in OwnerRez's own message.
+(`tools/wifi.local.json`, gitignored and off the site, merged over each cabin's
+always-null `wifiNetwork` by `tools/print.mjs`) and in OwnerRez's own message.
 
 **QR rules.** Navy ink (`--fg`) on a white plate with a 3-module quiet zone,
 rounded finder eyes, error correction M (the longest address stays at 37

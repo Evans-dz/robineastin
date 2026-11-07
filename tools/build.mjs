@@ -966,7 +966,7 @@ ${reviews.length ? `<section aria-labelledby="rev-h">
     const know = [
       ['Check-in', rule('Check-in')], ['Checkout', rule('Checkout')],
       ['Smoking', rule('Smoking')], ['Pets', rule('Pets')],
-      ['Garbage', (c.checkout.find(s => /garbage/i.test(s.title)) || {}).detail],
+      ['Garbage', C.checkin.garbage],
       ['Bears', practical('Bears and moose')], ['Fire', practical('Fire')],
       ['Emergencies', practical('Emergencies')],
     ].filter(([, v]) => v);

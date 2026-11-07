@@ -247,7 +247,7 @@ const CONFIG = {
       amenities: [
         'Fast, free Wi-Fi, great for remote work', 'Air conditioning upstairs: a wall mini split for cool or warm air', 'Central heat', 'Fully stocked kitchen with dishwasher',
         'Crockpot, Instant Pot, electric grill and waffle iron', 'Shampoo, conditioner, body wash and hand soap',
-        'Washer and dryer', 'Smart TV, satellite and sound system', 'Front deck with grill',
+        'Washer and dryer, detergent pods included', 'Smart TV, satellite and sound system', 'Front deck with grill',
         /* firewood goes with the fire pit, not the fireplace (Robyn, 12 Oct 2026) */
         'Fireplace', 'Fire pit, firewood provided',
         'Crib and highchair', 'Keypad self check-in', 'Circular drive with room for RVs and trailers',
@@ -314,10 +314,14 @@ const CONFIG = {
       ],
       listings: { airbnb: 'https://www.airbnb.com/rooms/783248560719883922', vrbo: 'https://www.vrbo.com/2216216' },
       /* Wi-Fi for the welcome sign, the binder and their scan-to-join QR code.
-         Print only, never on the website. Left null, the print pieces show
-         lines to write it in by hand. OwnerRez already emails it to guests
-         ({PXWIFICODE} in the check-in instructions). */
-      wifiNetwork: { name: null, password: null },
+         Always null HERE: the website serves this file, so the real name,
+         password and speed go in tools/wifi.local.json (gitignored, off the
+         site; tools/wifi.local.example.json shows the shape). Without them
+         the print pieces show lines to write in by hand. OwnerRez already
+         emails it to guests ({PXWIFICODE} in the check-in instructions). */
+      wifiNetwork: { name: null, password: null, speed: null },
+      /* the binder's "Your cabin" page leads with the front (Robyn, 7 Nov 2026) */
+      front: '396c8d8ac2f94d9b90128b4eae326b66',
       /* the /checkin/ page, the welcome sign and the binder */
       checkin: [
         { title: 'Check in from 4:00 pm', detail: 'Arrive any time after 4:00 pm. The keypad lets you in, so there is no one to meet and no key to pick up.' },
@@ -334,7 +338,7 @@ const CONFIG = {
         { title: 'Leave all the beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Run the dishwasher and clear the food', detail: 'Load and start the dishwasher; the cleaner will put the dishes away. Take your food out of the fridge, freezer and cupboards.' },
-        { title: 'Take out the garbage', detail: 'Pickup for both cabins from the blue PSI garbage dumpster is early Thursday morning. You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday.' },   // Robyn, 30 Oct 2026
+        { title: 'Take out the garbage', detail: 'You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday morning.' },   // Robyn, 7 Nov 2026: pickup line off the checkout list (it is in checkin.garbage)
         { title: 'Lock up', detail: 'Shut and lock the windows and doors. Press the lock button on the keypad as you leave.' },
         { title: 'Sign the guest book', detail: 'We love reading about your stay.' },
         { title: 'Leave us a 5-star review', detail: 'Please take time to leave a 5-star review wherever you booked. It helps other families find our cabins.' },
@@ -360,7 +364,7 @@ const CONFIG = {
       amenities: [
         'Fast, free Wi-Fi, great for remote work', 'Air conditioner in the master bedroom', 'Central heat, ceiling and portable fans', 'Bathroom with a tub and shower',
         'Stocked kitchen with a new range', 'Crockpot, Instant Pot, electric grill and waffle iron', 'Shampoo, conditioner, body wash and hand soap',
-        'Washer and dryer, soap included', '55-inch smart TV with streaming', 'Board games and puzzles', 'Back deck', 'Grill, propane included',
+        'Washer and dryer, detergent pods included', '55-inch smart TV with streaming', 'Board games and puzzles', 'Back deck', 'Grill, propane included',
         'Fire pit with firewood and roasting sticks', 'Crib and highchair', 'Keypad self check-in', 'Single-level home',
       ],
       /* Robyn did not like the old lead photos (7 Oct 2026), so this
@@ -414,7 +418,8 @@ const CONFIG = {
         { id: '4350364df639421199d667bf627d558e', alt: 'The one-acre lot in the trees' },
       ],
       listings: { airbnb: 'https://www.airbnb.com/rooms/43855219', vrbo: 'https://www.vrbo.com/1935077' },
-      wifiNetwork: { name: null, password: null },   // print only, see Pine Shadows
+      wifiNetwork: { name: null, password: null, speed: null },   // always null here, see Pine Shadows
+      front: '3284d043e87146c0a1baf03ccf0f1773',
       checkin: [
         { title: 'Check in from 4:00 pm', detail: 'Arrive any time after 4:00 pm. The keypad lets you in, so there is no one to meet and no key to pick up.' },
         { title: 'Find the cabin', detail: 'Wilderness Escape Retreat is 3808 Mortensen Ln, next door to Pine Shadows, in the pines on the northeast side of Island Park Reservoir, off US-20 between Ponds Lodge and Mack\'s Inn. Look for the wooden cabin sign at the drive.' },
@@ -428,7 +433,7 @@ const CONFIG = {
         { title: 'Leave all the beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Wash the dishes and clear the food', detail: 'Wash the dishes; the cleaner will put them away. Take your food out of the fridge, freezer and cupboards.' },
-        { title: 'Take out the garbage', detail: 'Pickup for both cabins from the blue PSI garbage dumpster is early Thursday morning. You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday.' },   // Robyn, 30 Oct 2026
+        { title: 'Take out the garbage', detail: 'You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday morning.' },   // Robyn, 7 Nov 2026: pickup line off the checkout list (it is in checkin.garbage)
         { title: 'Lock up', detail: 'Shut and lock the windows and doors. Press the lock button on the keypad as you leave.' },
         { title: 'Sign the guest book', detail: 'We love reading about your stay.' },
         { title: 'Leave us a 5-star review', detail: 'Please take time to leave a 5-star review wherever you booked. It helps other families find our cabins.' },
@@ -477,10 +482,12 @@ const CONFIG = {
   /* Check-in: the /checkin/ pages. Guests reach them from the QR code on
      the welcome sign and in the binder, or from the link in OwnerRez's
      arrival message. Steps live on each cabin; the "good to know" rows
-     come from policies, each cabin's garbage step and the guide's
-     practical notes. */
+     come from policies, garbage below and the guide's practical notes. */
   checkin: {
     lede: 'Welcome! Here is everything you need to get settled.',
+    /* both cabins share the blue PSI dumpster (Robyn, 30 Oct and 7 Nov 2026); the
+       checkout lists carry only the part about the can */
+    garbage: 'Pickup for both cabins from the blue PSI garbage dumpster is early Thursday morning. You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday morning.',
     directions: 'Get directions',
   },
 
@@ -498,8 +505,9 @@ const CONFIG = {
   print: {
     welcome: [
       'Welcome to {cabin}! We are so glad you are here.',
-      'We are Robyn and Eric Eastin. We live in Rexburg, look after both cabins ourselves, and hold our own family reunions here too, so we hope it feels like your family cabin for the week.',
-      'This binder has everything for your stay: getting settled, how the cabin works, things to do in Island Park and Yellowstone with drive times from our door, where to eat and shop, what to do in an emergency, and the checkout steps. Scan any QR code to open the same page on your phone.',
+      /* Robyn, 7 Nov 2026: "live in Rexburg, but spend a lot of time weekly at their personal cabin" */
+      'We are Robyn and Eric Eastin. We live in Rexburg, but spend a lot of time each week at our personal cabin. We look after both cabins ourselves and hold our own family reunions here too, so we hope it feels like your family cabin for the week.',
+      'This binder has everything for your stay: checking in and out, how the cabin works, things to do in Island Park and Yellowstone with drive times from our door, where to eat and shop, and what to do in an emergency. Scan any QR code to open the same page on your phone.',
       'If you need anything at all, email us and we will get right back to you.',
     ],
     signoff: 'Enjoy the forest,',
