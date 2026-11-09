@@ -392,7 +392,6 @@ const emit = (file, html, { sitemap = true, route } = {}) => out.push({ file, ht
   <div class="wrap hero__grid">
     <div class="hero__copy">
       <div class="hero__head">
-        <span class="sign">${esc(H.welcome)}</span>
         <h1 id="hero-h">${esc(H.h1)}</h1>
       </div>
       <p class="hero__lede">${esc(H.lede)}</p>

@@ -77,7 +77,6 @@ const CONFIG = {
   },
 
   home: {
-    welcome: 'Welcome to our website',
     h1:    'Escape to the forest in Island Park, ID.',
     lede:  'Two family cabins surrounded by lodgepole forest and nature\'s adventures.',
     facts: [
