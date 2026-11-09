@@ -229,7 +229,7 @@ const CONFIG = {
       roof: 'aqua',
       ownerrez: { propertyId: 474460, key: '2a1ab7b60cfa428ca0975819dfbdabad' },
       sleeps: 12, bedrooms: 3, baths: 2.5, sqft: 1800,
-      beds: '2 kings, a queen, 2 bunk beds',
+      beds: '2 kings, 2 bunk beds (one with a full-size bottom bunk), a queen pull-out and a fold-out foam floor mattress',
       summary: 'The bigger cabin: two king bedrooms, a family loft with bunks, a fireplace and a big stocked kitchen, backing onto Forest Service land.',
       headline: 'Room for the whole family, backed by national forest',
       /* the warm welcome above the description, in Robyn's own words from
@@ -237,7 +237,7 @@ const CONFIG = {
       intro: 'Experience the perfect blend of comfort, privacy and adventure at Pine Shadows, a beautiful mountain cabin in the pines and the perfect home base for creating unforgettable memories.',
       description: [
         'Pine Shadows sits on a secluded one-acre wooded lot that backs onto Forest Service land, so there are no neighbors behind you. It is the aqua-roofed cabin in our drone photos, about 30 minutes from Yellowstone\'s West Entrance.',
-        'Downstairs is a master bedroom with a king bed and a Jack and Jill bathroom. Upstairs is a second master with a king and its own bath, and a big family loft with two bunk beds, a queen and a floor mattress. Upstairs, a mini split on the wall gives you cool or warm air. The laundry mudroom has a half bath and a sink for muddy boots or cleaning fish.',
+        'Downstairs is a master bedroom with a king bed and a Jack and Jill bathroom. Upstairs is a second master with a king and its own bath, and a big family loft with two bunk beds (one with a full-size bottom bunk), a queen pull-out and an extra fold-out foam floor mattress. Upstairs, a mini split on the wall gives you cool or warm air. The laundry mudroom has a half bath and a sink for muddy boots or cleaning fish.',
         'Gather by the fireplace, cook in the fully stocked kitchen, grill on the front deck, and finish the day at the fire pit by the circular drive, with the firewood provided.',
         'Need to work while you are here? The Wi-Fi is fast and free, good for video calls and big uploads, and the upstairs master is a quiet spot for calls.',
         'Bringing the toys? The circular driveway has room for trucks, trailers and RVs, with water and electric hookups for one camping trailer ($75 per stay). The activity garage next door, with ping pong, foosball, an electronic basketball game, cornhole, a microwave, a serving table and extra picnic tables and chairs, can be added for $30 a night, up to $150 per stay.',
@@ -334,7 +334,7 @@ const CONFIG = {
       ],
       checkout: [
         { title: 'Check out by 10:00 am', detail: '' },
-        { title: 'Leave all the beds unmade', detail: '' },
+        { title: 'Leave all used beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Run the dishwasher and clear the food', detail: 'Load and start the dishwasher; the cleaner will put the dishes away. Take your food out of the fridge, freezer and cupboards.' },
         { title: 'Take out the garbage', detail: 'You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday morning.' },   // Robyn, 7 Nov 2026: pickup line off the checkout list (it is in checkin.garbage)
@@ -356,13 +356,13 @@ const CONFIG = {
       intro: 'Share treasured moments with friends and family at Wilderness Escape Retreat, a comfy, inviting cabin in the beautiful mountains and trees of Idaho that is just waiting for you to relax and unwind.',
       description: [
         'Wilderness Escape Retreat is the cabin next door to Pine Shadows: a remodeled, single-level cabin on its own one-acre lot in the pines, about 30 minutes from Yellowstone\'s West Entrance.',
-        'There are three bedrooms: a master with a king bed, an air conditioner and its own bathroom, a queen room, and a room with a queen and a twin. The second full bathroom has a tub and shower, and the living room has a queen pull-out. The kitchen has a new range and is stocked to cook for the whole group.',
+        'There are three bedrooms: a master with a king bed, an air conditioner and its own bathroom, a queen room, and a room with a queen and a twin. The second full bathroom has a tub and shower, and the living room has a queen pull-out. The kitchen has a new range and fridge and is stocked to cook for the whole group.',
         'The Wi-Fi is fast and free, so working from the cabin is easy: take your calls at the kitchen table, then take your coffee out to the back deck. In the evening, play the board games and puzzles or stream a movie on the 55-inch smart TV. Out back is a fire pit with firewood and roasting sticks, and propane for the grill is included.',
         'ATV and snowmobile trails are close by, and Island Park Reservoir is about 5 minutes away.',
       ],
       amenities: [
         'Fast, free Wi-Fi, great for remote work', 'Air conditioner in the master bedroom', 'Central heat, ceiling and portable fans', 'Bathroom with a tub and shower',
-        'Stocked kitchen with a new range', 'Crockpot, Instant Pot, electric grill and waffle iron', 'Shampoo, conditioner, body wash and hand soap',
+        'Stocked kitchen with a new range and fridge', 'Crockpot, Instant Pot, electric grill and waffle iron', 'Shampoo, conditioner, body wash and hand soap',
         'Washer and dryer, detergent pods included', '55-inch smart TV with streaming', 'Board games and puzzles', 'Back deck', 'Grill, propane included',
         'Fire pit with firewood and roasting sticks', 'Crib and highchair', 'Keypad self check-in', 'Single-level home',
       ],
@@ -429,7 +429,7 @@ const CONFIG = {
       ],
       checkout: [
         { title: 'Check out by 10:00 am', detail: '' },
-        { title: 'Leave all the beds unmade', detail: '' },
+        { title: 'Leave all used beds unmade', detail: '' },
         { title: 'Start a load of towels', detail: 'Gather the towels in the laundry room and start a wash. If you have time, move them to the dryer. It helps our cleaner get ready for the next guests.' },
         { title: 'Wash the dishes and clear the food', detail: 'Wash the dishes; the cleaner will put them away. Take your food out of the fridge, freezer and cupboards.' },
         { title: 'Take out the garbage', detail: 'You can leave the garbage can by the cabins and then pull it out to the road for pickup. Please have the garbage out before Thursday morning.' },   // Robyn, 7 Nov 2026: pickup line off the checkout list (it is in checkin.garbage)

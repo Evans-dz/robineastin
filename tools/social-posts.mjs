@@ -57,15 +57,15 @@ Staying a while? Pine Shadows is open for long-term stays from January to April.
       file: '3 Wilderness Escape Retreat', when: 'Monday 16 November',
       photo: '7cfab41187af4ef6b412abc84016003d',
       sign: 'Wilderness Escape Retreat', title: 'Remodeled and single-level',
-      lede: 'Three bedrooms, two baths, a new range in the kitchen and a fire pit out back, right next door to Pine Shadows.',
+      lede: 'Three bedrooms, two baths, a new range and fridge in the kitchen and a fire pit out back, right next door to Pine Shadows.',
       facts: ['Sleeps 9', '3 bedrooms', '2 baths'],
       foot: `Book at ${SITE}`,
-      facebook: `Wilderness Escape Retreat is our remodeled, single-level cabin: three bedrooms, two baths, a kitchen with a new range, and a back deck and fire pit in the pines. It sleeps 9, with fast Wi-Fi, board games and a 55-inch smart TV for the evenings.
+      facebook: `Wilderness Escape Retreat is our remodeled, single-level cabin: three bedrooms, two baths, a kitchen with a new range and fridge, and a back deck and fire pit in the pines. It sleeps 9, with fast Wi-Fi, board games and a 55-inch smart TV for the evenings.
 
 Book on our website, with no Airbnb or VRBO service fees: ${SITE}/book
 
 Looking for a winter rental? It's open for long-term stays from January to April. ${LONG}`,
-      instagram: `Wilderness Escape Retreat is our remodeled, single-level cabin: three bedrooms, two baths, a kitchen with a new range, and a back deck and fire pit in the pines. It sleeps 9, with fast Wi-Fi, board games and a 55-inch smart TV for the evenings.
+      instagram: `Wilderness Escape Retreat is our remodeled, single-level cabin: three bedrooms, two baths, a kitchen with a new range and fridge, and a back deck and fire pit in the pines. It sleeps 9, with fast Wi-Fi, board games and a 55-inch smart TV for the evenings.
 
 Book on our website with no Airbnb or VRBO service fees (link in bio).
 
